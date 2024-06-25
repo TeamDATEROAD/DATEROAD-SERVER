@@ -1,0 +1,6 @@
+rootProject.name = 'dateroad'
+include 'dateroad-api'
+include 'dateroad-common'
+include 'dateroad-domain'
+include 'dateroad-external'
+

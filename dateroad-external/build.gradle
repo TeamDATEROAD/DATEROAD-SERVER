@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(path: ':dateroad-common')
+}
+
+bootJar.enabled = false
+
+jar.enabled = true
