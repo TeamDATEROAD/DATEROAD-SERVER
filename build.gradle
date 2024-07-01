@@ -46,6 +46,9 @@ subprojects {
 		testAnnotationProcessor 'org.projectlombok:lombok'
 		
 		implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+		//postgresql
+		implementation group:'org.postgresql', name:'postgresql',version:'42.7.3'
 	}
 
 	tasks.named('test') {
