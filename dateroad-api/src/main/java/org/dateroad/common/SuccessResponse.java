@@ -10,6 +10,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Builder(access = PRIVATE)
 public record SuccessResponse<T>(
         int status,
+        String code,
         String message,
         @JsonInclude(value = NON_NULL)
         T data
@@ -17,6 +18,7 @@ public record SuccessResponse<T>(
     public static <T> SuccessResponse<T> of(SuccessCode successCode, T data) {
         return SuccessResponse.<T>builder()
                 .status(successCode.getHttpStatus().value())
+                .code(successCode.getCode())
                 .message(successCode.getMessage())
                 .data(data)
                 .build();
@@ -25,6 +27,7 @@ public record SuccessResponse<T>(
     public static SuccessResponse<?> of(SuccessCode successCode) {
         return SuccessResponse.builder()
                 .status(successCode.getHttpStatus().value())
+                .code(successCode.getCode())
                 .message(successCode.getMessage())
                 .build();
     }
