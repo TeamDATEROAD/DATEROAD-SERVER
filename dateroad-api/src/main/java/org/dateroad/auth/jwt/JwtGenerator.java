@@ -27,15 +27,18 @@ public class JwtGenerator {
     public String generateToken(Long userId, TokenType tokenType) {
         final Date now = new Date();
         final Date expiryDate = generateExpirationDate(now, tokenType);
-        final Key signingKey = Keys.hmacShaKeyFor(encodeSecretKeyToBase64().getBytes());
 
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setSubject(String.valueOf(userId))
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public Key getSigningKey() {
+        return Keys.hmacShaKeyFor(encodeSecretKeyToBase64().getBytes());
     }
 
     private Date generateExpirationDate(Date now, TokenType tokenType) {
