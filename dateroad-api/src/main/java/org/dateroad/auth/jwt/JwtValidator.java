@@ -10,28 +10,11 @@ import org.dateroad.common.FailureResponse;
 import org.dateroad.exception.UnauthorizedException;
 import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 @Component
 public class JwtValidator {
 
     private final JwtGenerator jwtGenerator;
-
-
-    public void validateAccessToken(String accessToken) {
-        try {
-            parseToken(accessToken);
-        } catch (Exception e) {
-            throw new UnauthorizedException(FailureCode.UNAUTHORIZED);
-        }
-    }
-
-    public void validateRefreshToken(String refreshToken) {
-        try {
-            parseToken(refreshToken);
-        } catch (Exception e) {
-            throw new UnauthorizedException(FailureCode.UNAUTHORIZED);
-        }
-    }
 
     public void equalRefreshToken(String refreshToken, String storedRefreshToken) {
         if (!refreshToken.equals(storedRefreshToken)) {

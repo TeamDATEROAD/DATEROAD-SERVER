@@ -3,9 +3,11 @@ package org.dateroad.auth.jwt;
 import io.jsonwebtoken.JwtParser;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.dateroad.code.FailureCode;
+import org.dateroad.exception.UnauthorizedException;
 import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 @Component
 public class JwtProvider {
 
@@ -21,8 +23,12 @@ public class JwtProvider {
 
     public Long getSubject(String token) {
         JwtParser jwtParser = jwtValidator.getJwtParser();
-        return Long.valueOf(jwtParser.parseClaimsJws(token)
-                .getBody()
-                .getSubject());
+        try {
+            return Long.valueOf(jwtParser.parseClaimsJws(token)
+                    .getBody()
+                    .getSubject());
+        } catch (Exception e) {
+            throw new UnauthorizedException(FailureCode.UNAUTHORIZED);
+        }
     }
 }
