@@ -23,7 +23,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtValidator jwtValidator;
     private final JwtProvider jwtProvider;
 
     private static final String[] whiteList = {"/", "/swagger-ui/**", "/error", "/v3/api-docs/**"};
