@@ -39,11 +39,6 @@ public class JwtValidator {
         }
     }
 
-
-
-
-
-
     private void parseToken(String token) {
         JwtParser parser = getJwtParser();
         parser.parseClaimsJws(token);
@@ -54,6 +49,4 @@ public class JwtValidator {
                 .setSigningKey(jwtGenerator.getSigningKey())
                 .build();
     }
-
-
 }
