@@ -1,10 +1,8 @@
 package org.dateroad.auth.jwt;
 
-import io.jsonwebtoken.JwtParser;
-import lombok.AccessLevel;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.RequiredArgsConstructor;
-import org.dateroad.code.FailureCode;
-import org.dateroad.exception.UnauthorizedException;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -21,14 +19,10 @@ public class JwtProvider {
         );
     }
 
-    public Long getSubject(String token) {
-        JwtParser jwtParser = jwtValidator.getJwtParser();
-        try {
-            return Long.valueOf(jwtParser.parseClaimsJws(token)
-                    .getBody()
-                    .getSubject());
-        } catch (Exception e) {
-            throw new UnauthorizedException(FailureCode.UNAUTHORIZED);
-        }
+    public Long getUserIdFromSubject(String token) {
+        Jws<Claims> jws = jwtValidator.parseToken(token);
+        return Long.valueOf(jws
+                .getBody()
+                .getSubject());
     }
 }

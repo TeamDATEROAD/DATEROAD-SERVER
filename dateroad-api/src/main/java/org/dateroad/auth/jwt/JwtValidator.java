@@ -1,8 +1,6 @@
 package org.dateroad.auth.jwt;
 
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
@@ -22,9 +20,15 @@ public class JwtValidator {
         }
     }
 
-    private void parseToken(String token) {
-        JwtParser parser = getJwtParser();
-        parser.parseClaimsJws(token);
+    public Jws<Claims> parseToken(String token) {
+        try {
+            JwtParser jwtParser = getJwtParser();
+            return jwtParser.parseClaimsJws(token);
+        } catch (ExpiredJwtException e) {
+            throw new UnauthorizedException(FailureCode.EXPIRED_ACCESS_TOKEN);
+        } catch (Exception e) {
+            throw new UnauthorizedException(FailureCode.INVALID_ACCESS_TOKEN_VALUE);
+        }
     }
 
     public JwtParser getJwtParser() {

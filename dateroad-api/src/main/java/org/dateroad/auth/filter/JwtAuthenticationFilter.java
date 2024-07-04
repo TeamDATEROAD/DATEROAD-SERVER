@@ -4,10 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.jwt.JwtProvider;
-import org.dateroad.auth.jwt.JwtValidator;
 import org.dateroad.code.FailureCode;
 import org.dateroad.common.Constants;
 import org.dateroad.exception.UnauthorizedException;
@@ -22,14 +20,13 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtValidator jwtValidator;
     private final JwtProvider jwtProvider;
 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String accessToken = getAccessToken(request);
-        final Long userId = jwtProvider.getSubject(accessToken);
+        final Long userId = jwtProvider.getUserIdFromSubject(accessToken);
         doAuthentication(userId);
         filterChain.doFilter(request, response);
     }
