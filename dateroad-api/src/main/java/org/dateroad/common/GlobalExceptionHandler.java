@@ -17,36 +17,36 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<FailureResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
         log.error(">>> handle: MethodArgumentNotValidException ", e);
-        return ApiResponseUtil.failure(FailureCode.BAD_REQUEST);
+        return FailureResponse.failure(FailureCode.BAD_REQUEST);
     }
 
     @ExceptionHandler(BindException.class)
     protected ResponseEntity<FailureResponse> handleBindException(final BindException e) {
         log.error(">>> handle: BindException ", e);
-        return ApiResponseUtil.failure(FailureCode.BAD_REQUEST);
+        return  FailureResponse.failure(FailureCode.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<FailureResponse> handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException e) {
         log.error(">>> handle: MethodArgumentTypeMismatchException ", e);
-        return ApiResponseUtil.failure(FailureCode.BAD_REQUEST);
+        return FailureResponse.failure(FailureCode.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ResponseEntity<FailureResponse> handleHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
         log.error(">>> handle: HttpRequestMethodNotSupportedException ", e);
-        return ApiResponseUtil.failure(FailureCode.METHOD_NOT_ALLOWED);
+        return FailureResponse.failure(FailureCode.METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler(DateRoadException.class)
     protected ResponseEntity<FailureResponse> handleBusinessException(final DateRoadException e) {
         log.error(">>> handle: DateRoadException ", e);
-        return ApiResponseUtil.failure(e.getFailureCode());
+        return FailureResponse.failure(e.getFailureCode());
     }
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<FailureResponse> handleException(final Exception e) {
         log.error(">>> handle: Exception ", e);
-        return ApiResponseUtil.failure(FailureCode.INTERNAL_SERVER_ERROR);
+        return FailureResponse.failure(FailureCode.INTERNAL_SERVER_ERROR);
     }
 }
