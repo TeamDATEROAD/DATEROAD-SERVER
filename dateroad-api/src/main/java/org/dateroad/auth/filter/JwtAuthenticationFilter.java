@@ -16,6 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import static org.dateroad.auth.filter.TokenAuthentication.createTokenAuthentication;
+
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -27,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String accessToken = getAccessToken(request);
         final Long userId = jwtProvider.getUserIdFromSubject(accessToken);
-        doAuthentication(userId);
+        doAuthentication(accessToken, userId);
         filterChain.doFilter(request, response);
     }
 
@@ -36,12 +38,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(accessToken) && accessToken.startsWith(Constants.BEARER)) {
             return accessToken.substring(Constants.BEARER.length());
         }
-        throw new UnauthorizedException(FailureCode.UNAUTHORIZED);
+        throw new UnauthorizedException(FailureCode.INVALID_ACCESS_TOKEN_VALUE);
     }
 
-    private void doAuthentication(Long userId) {
-        UserAuthentication userAuthentication = UserAuthentication.createUserAuthentication(userId);
+    private void doAuthentication(String token, Long userId) {
+        TokenAuthentication tokenAuthentication = createTokenAuthentication(token, userId);
         SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(userAuthentication);
+        securityContext.setAuthentication(tokenAuthentication);
     }
 }
