@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class JwtValidator {
-
+    
     private final JwtGenerator jwtGenerator;
 
     public void equalRefreshToken(String refreshToken, String storedRefreshToken) {
