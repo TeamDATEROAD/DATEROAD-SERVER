@@ -36,9 +36,8 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         }
     }
 
-    private void handleUnauthorizedException(HttpServletResponse response, Exception e) throws IOException {
-        UnauthorizedException unAuthorizedException = (UnauthorizedException) e;
-        FailureCode errorMessage = unAuthorizedException.getFailureCode();
+    private void handleUnauthorizedException(HttpServletResponse response, UnauthorizedException e) throws IOException {
+        FailureCode errorMessage = e.getFailureCode();
         HttpStatus httpStatus = errorMessage.getHttpStatus();
         setResponse(response, httpStatus, errorMessage);
     }

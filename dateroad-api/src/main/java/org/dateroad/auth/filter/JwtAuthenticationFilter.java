@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         throw new UnauthorizedException(FailureCode.INVALID_ACCESS_TOKEN_VALUE);
     }
 
-    private void doAuthentication(String token, Long userId) {
+    private void doAuthentication(final String token, final long userId) {
         TokenAuthentication tokenAuthentication = createTokenAuthentication(token, userId);
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(tokenAuthentication);

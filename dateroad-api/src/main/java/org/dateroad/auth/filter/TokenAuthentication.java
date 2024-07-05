@@ -9,12 +9,12 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class TokenAuthentication implements Authentication {
     private final String token;
-    private final Long userId;
+    private final long userId;
     private boolean isAuthenticated = true;
 
     @Override
     public String getName() {
-        return userId.toString();
+        return String.valueOf(userId);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class TokenAuthentication implements Authentication {
         this.isAuthenticated = isAuthenticated;
     }
 
-    public static TokenAuthentication createTokenAuthentication(String token, Long userId) {
+    public static TokenAuthentication createTokenAuthentication(final String token, final long userId) {
         return new TokenAuthentication(token, userId);
     }
 }
