@@ -8,7 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,26 +30,26 @@ public class User extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false, name = "name")
-    @NotBlank
+    @NotNull
     private String name;
 
     @Column(nullable = false, name = "platform_id")
-    @NotBlank
+    @NotNull
     private String platformId;
 
     @Column(nullable = false, name = "platform")
-    @NotBlank
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Platform platForm;
 
     @Builder.Default
     @Column(nullable = false, name = "free")
-    @NotBlank
+    @NotNull
     private int free = 3;
 
     @Builder.Default
     @Column(nullable = false, name = "total_point")
-    @NotBlank
+    @NotNull
     private int totalPoint = 0;
 
     public static User of(String name, String platformId, Platform platForm) {

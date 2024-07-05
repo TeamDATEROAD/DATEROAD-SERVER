@@ -12,7 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,13 +32,13 @@ public class CourseTag extends BaseTimeEntity {
     private Long id;
 
     @JoinColumn(name = "course_id", nullable = false)
-    @NotBlank
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     private Course course;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "date_tag", nullable = false)
-    @NotBlank
+    @NotNull
     private DateTagType dateTagType;
 
     public static CourseTag of(Course course, DateTagType dateTagType) {

@@ -7,7 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -29,11 +29,11 @@ public class Course extends DateBase {
     private Long id;
 
     @Column(name = "description", nullable = false)
-    @NotBlank
+    @NotNull
     private String description;
 
     @Column(name = "cost", nullable = false)
-    @NotBlank
+    @NotNull
     private int cost;
 
     public static Course of(String title, String description,

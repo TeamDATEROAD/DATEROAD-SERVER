@@ -5,7 +5,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -24,26 +24,26 @@ import org.dateroad.user.domain.User;
 public abstract class DateBase extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @NotBlank
+    @NotNull
     private User user;
 
     @Column(name = "title", nullable = false)
-    @NotBlank
+    @NotNull
     private String title;
 
     @Column(name = "date", nullable = false)
-    @NotBlank
+    @NotNull
     private LocalDate date;
 
     @Column(name = "start_at", nullable = false)
-    @NotBlank
+    @NotNull
     private LocalDateTime startAt;
 
     @Column(name = "country", nullable = false)
-    @NotBlank
+    @NotNull
     private String country;
 
     @Column(name = "city", nullable = false)
-    @NotBlank
+    @NotNull
     private String city;
 }

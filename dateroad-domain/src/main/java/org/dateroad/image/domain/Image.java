@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,11 +30,11 @@ public class Image extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", nullable = false)
-    @NotBlank
+    @NotNull
     private Course course;
 
     @Column(name = "image_url", nullable = false)
-    @NotBlank
+    @NotNull
     private String imageUrl;
 
     public static Image of(Course course, String imageUrl) {

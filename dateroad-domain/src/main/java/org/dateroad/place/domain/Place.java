@@ -5,7 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,10 +25,10 @@ public abstract class Place extends BaseTimeEntity {
     private Long id;
 
     @Column(name = "name", nullable = false)
-    @NotBlank
+    @NotNull
     private String name;
 
     @Column(name = "duration", nullable = false)
-    @NotBlank
+    @NotNull
     private int duration;
 }

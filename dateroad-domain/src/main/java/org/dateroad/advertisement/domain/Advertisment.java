@@ -6,7 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,11 +27,11 @@ public class Advertisment extends BaseTimeEntity {
     private Long id;
 
     @Column(name = "title", nullable = false)
-    @NotBlank
+    @NotNull
     private String title;
 
     @Column(name = "description", nullable = false)
-    @NotBlank
+    @NotNull
     private String description;
 
     public static Advertisment of(String title, String description) {

@@ -11,7 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,20 +32,20 @@ public class Point extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @NotBlank
+    @NotNull
     private User user;
 
     @Column(name = "point", nullable = false)
-    @NotBlank
+    @NotNull
     private int point;
 
     @Column(name = "transcation_type", nullable = false)
-    @NotBlank
+    @NotNull
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
     @Column(name = "description", nullable = false)
-    @NotBlank
+    @NotNull
     private String description;
 
     public static Point of(User user, int point, TransactionType transactionType, String description) {

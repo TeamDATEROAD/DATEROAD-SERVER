@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,17 +28,17 @@ public class DateAccess extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "date_access_id", nullable = false)
-    @NotBlank
+    @NotNull
     private Long id;
 
     @OneToOne
     @JoinColumn(name = "course_id", nullable = false)
-    @NotBlank
+    @NotNull
     private Course course;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @NotBlank
+    @NotNull
     private User user;
 
     public static DateAccess of(Course course, User user) {

@@ -5,7 +5,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -20,7 +20,7 @@ import org.dateroad.date.domain.Date;
 public class DatePlace extends Place {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "date_id", nullable = false)
-    @NotBlank
+    @NotNull
     private Date date;
 
     public static DatePlace of(String name, int duration, Date date) {
