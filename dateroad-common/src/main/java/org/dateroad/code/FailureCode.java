@@ -29,6 +29,7 @@ public enum FailureCode {
      * 404 Not Found
      */
     ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND, "e4040", "대상을 찾을 수 없습니다."),
+    TOKEN_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4041", "찾을 수 없는 토큰 타입입니다."),
 
     /**
      * 405 Method Not Allowed

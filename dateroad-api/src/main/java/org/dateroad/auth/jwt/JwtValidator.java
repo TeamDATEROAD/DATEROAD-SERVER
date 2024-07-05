@@ -1,6 +1,7 @@
 package org.dateroad.auth.jwt;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;

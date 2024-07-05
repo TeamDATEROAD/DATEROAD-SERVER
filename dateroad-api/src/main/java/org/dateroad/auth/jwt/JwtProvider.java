@@ -8,10 +8,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class JwtProvider {
-    private final JwtGenerator jwtGenerator;
     private final JwtValidator jwtValidator;
 
-    public Token issueToken(Long userId) {
+    public Token issueToken(final long userId) {
         return Token.of(
                 jwtGenerator.generateToken(userId, TokenType.ACCESS_TOKEN),
                 jwtGenerator.generateToken(userId, TokenType.REFRESH_TOKEN)
