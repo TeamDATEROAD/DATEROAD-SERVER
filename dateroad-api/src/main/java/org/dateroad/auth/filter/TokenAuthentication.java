@@ -8,7 +8,6 @@ import java.util.Collections;
 
 @RequiredArgsConstructor
 public class TokenAuthentication implements Authentication {
-
     private final String token;
     private final Long userId;
     private boolean isAuthenticated = true;

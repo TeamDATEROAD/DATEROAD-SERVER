@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class JwtProvider {
-
     private final JwtGenerator jwtGenerator;
     private final JwtValidator jwtValidator;
 

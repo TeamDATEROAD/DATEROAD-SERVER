@@ -13,7 +13,6 @@ import java.util.Date;
 
 @Component
 public class JwtGenerator {
-
     @Value("${jwt.secret}")
     private String jwtSecretKey;
 
@@ -22,7 +21,6 @@ public class JwtGenerator {
 
     @Value("${jwt.refresh-token-expire-time}")
     private long REFRESH_TOKEN_EXPIRE_TIME;
-
 
     public String generateToken(Long userId, TokenType tokenType) {
         final Date now = new Date();
