@@ -3,6 +3,7 @@ package org.dateroad.auth.exception;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;
 import org.dateroad.common.Constants;
@@ -17,9 +18,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {

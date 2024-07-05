@@ -7,6 +7,7 @@ import org.dateroad.auth.exception.JwtAuthenticationEntryPoint;
 import org.dateroad.auth.filter.JwtAuthenticationFilter;
 import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.JwtValidator;
+import org.dateroad.config.ObjectMapperConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtProvider jwtProvider;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
     private static final String[] whiteList = {
             "/api/users/signup",
             "/api/users/signup",
@@ -45,7 +47,7 @@ public class SecurityConfig {
                 .exceptionHandling(
                         exceptionHandlingConfigurer -> exceptionHandlingConfigurer.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new ExceptionHandlerFilter(), JwtAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
                 .build();
     }
 
