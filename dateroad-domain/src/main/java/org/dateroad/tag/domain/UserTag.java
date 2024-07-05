@@ -30,13 +30,13 @@ public class UserTag extends BaseTimeEntity {
     @Column(name = "user_tag_id")
     private Long id;
 
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "date_tag", nullable = false)
+    @Column(name = "date_tag")
     @NotNull
     private DateTagType dateTagType;
 

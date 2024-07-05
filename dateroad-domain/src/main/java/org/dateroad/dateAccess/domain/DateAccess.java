@@ -27,17 +27,17 @@ import org.dateroad.user.domain.User;
 public class DateAccess extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "date_access_id", nullable = false)
+    @Column(name = "date_access_id")
     @NotNull
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "course_id", nullable = false)
+    @JoinColumn(name = "course_id")
     @NotNull
     private Course course;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     @NotNull
     private User user;
 

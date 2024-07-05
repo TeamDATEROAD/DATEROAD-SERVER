@@ -31,20 +31,20 @@ public class Point extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     @NotNull
     private User user;
 
-    @Column(name = "point", nullable = false)
+    @Column(name = "point")
     @NotNull
     private int point;
 
-    @Column(name = "transcation_type", nullable = false)
+    @Column(name = "transcation_type")
     @NotNull
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     @NotNull
     private String description;
 

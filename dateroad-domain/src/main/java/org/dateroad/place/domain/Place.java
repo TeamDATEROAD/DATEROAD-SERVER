@@ -24,11 +24,11 @@ public abstract class Place extends BaseTimeEntity {
     @Column(name = "place_id")
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     @NotNull
     private String name;
 
-    @Column(name = "duration", nullable = false)
+    @Column(name = "duration")
     @NotNull
     private int duration;
 }

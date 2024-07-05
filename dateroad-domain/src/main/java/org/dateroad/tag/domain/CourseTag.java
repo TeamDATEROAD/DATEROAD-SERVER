@@ -31,13 +31,13 @@ public class CourseTag extends BaseTimeEntity {
     @Column(name = "course_tag_id")
     private Long id;
 
-    @JoinColumn(name = "course_id", nullable = false)
+    @JoinColumn(name = "course_id")
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     private Course course;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "date_tag", nullable = false)
+    @Column(name = "date_tag")
     @NotNull
     private DateTagType dateTagType;
 

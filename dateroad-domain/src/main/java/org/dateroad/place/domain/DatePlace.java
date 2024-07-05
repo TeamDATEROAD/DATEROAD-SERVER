@@ -19,7 +19,7 @@ import org.dateroad.date.domain.Date;
 @Table(name = "date_places")
 public class DatePlace extends Place {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "date_id", nullable = false)
+    @JoinColumn(name = "date_id")
     @NotNull
     private Date date;
 

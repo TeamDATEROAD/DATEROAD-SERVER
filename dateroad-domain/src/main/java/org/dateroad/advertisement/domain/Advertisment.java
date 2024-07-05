@@ -26,11 +26,11 @@ public class Advertisment extends BaseTimeEntity {
     @Column(name = "advertisment_id")
     private Long id;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title")
     @NotNull
     private String title;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     @NotNull
     private String description;
 

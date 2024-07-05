@@ -31,13 +31,13 @@ public class DateTag extends BaseTimeEntity {
     @Column(name = "date_tag_id")
     private Long id;
 
-    @JoinColumn(name = "date_id", nullable = false)
+    @JoinColumn(name = "date_id")
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     private Date date;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "date_tag", nullable = false)
+    @Column(name = "date_tag")
     @NotNull
     private DateTagType dateTagType;
 

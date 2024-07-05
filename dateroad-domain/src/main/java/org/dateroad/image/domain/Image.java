@@ -29,11 +29,11 @@ public class Image extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", nullable = false)
+    @JoinColumn(name = "course_id")
     @NotNull
     private Course course;
 
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "image_url")
     @NotNull
     private String imageUrl;
 

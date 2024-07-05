@@ -23,27 +23,27 @@ import org.dateroad.user.domain.User;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public abstract class DateBase extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     @NotNull
     private User user;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title")
     @NotNull
     private String title;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "date")
     @NotNull
     private LocalDate date;
 
-    @Column(name = "start_at", nullable = false)
+    @Column(name = "start_at")
     @NotNull
     private LocalDateTime startAt;
 
-    @Column(name = "country", nullable = false)
+    @Column(name = "country")
     @NotNull
     private String country;
 
-    @Column(name = "city", nullable = false)
+    @Column(name = "city")
     @NotNull
     private String city;
 }

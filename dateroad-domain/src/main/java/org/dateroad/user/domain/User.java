@@ -29,26 +29,26 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(nullable = false, name = "name")
+    @Column(name = "name")
     @NotNull
     private String name;
 
-    @Column(nullable = false, name = "platform_id")
+    @Column(name = "platform_id")
     @NotNull
     private String platformId;
 
-    @Column(nullable = false, name = "platform")
+    @Column(name = "platform")
     @NotNull
     @Enumerated(EnumType.STRING)
     private Platform platForm;
 
     @Builder.Default
-    @Column(nullable = false, name = "free")
+    @Column(name = "free")
     @NotNull
     private int free = 3;
 
     @Builder.Default
-    @Column(nullable = false, name = "total_point")
+    @Column(name = "total_point")
     @NotNull
     private int totalPoint = 0;
 

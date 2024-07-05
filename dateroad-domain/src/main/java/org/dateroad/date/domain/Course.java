@@ -28,11 +28,11 @@ public class Course extends DateBase {
     @Column(name = "course_id")
     private Long id;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     @NotNull
     private String description;
 
-    @Column(name = "cost", nullable = false)
+    @Column(name = "cost")
     @NotNull
     private int cost;
 
