@@ -4,23 +4,22 @@ import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
+@RequiredArgsConstructor
 @Component
 public class JwtGenerator {
-    @Value("${jwt.secret}")
-    private String jwtSecretKey;
-
-    @Value("${jwt.access-token-expire-time}")
-    private long ACCESS_TOKEN_EXPIRE_TIME;
-
-    @Value("${jwt.refresh-token-expire-time}")
-    private long REFRESH_TOKEN_EXPIRE_TIME;
+    private final JwtProperties jwtProperties;
 
     public String generateToken(Long userId, TokenType tokenType) {
         final Date now = new Date();
@@ -41,14 +40,15 @@ public class JwtGenerator {
 
     private Date generateExpirationDate(Date now, TokenType tokenType) {
         if ( tokenType == TokenType.ACCESS_TOKEN) {
-            return new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME);
+            return new Date(now.getTime() + jwtProperties.getAccessTokenExpireTime());
         } else {
-            return new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME);
+            return new Date(now.getTime() + jwtProperties.getRefreshTokenExpireTime());
         }
     }
 
     //jwtSecretKey를 Base64로 인코드하는 메서드
+    @Bean
     private String encodeSecretKeyToBase64() {
-        return Base64.getEncoder().encodeToString(jwtSecretKey.getBytes());
+        return Base64.getEncoder().encodeToString(jwtProperties.getSecret().getBytes());
     }
 }
