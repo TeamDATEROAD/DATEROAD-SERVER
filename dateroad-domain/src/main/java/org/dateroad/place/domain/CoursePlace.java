@@ -23,7 +23,7 @@ public class CoursePlace extends Place {
     @NotNull
     private Course course;
 
-    public static CoursePlace of(String name, int duration, Course course) {
+    public static CoursePlace create(String name, int duration, Course course) {
         return CoursePlace.builder()
                 .name(name)
                 .duration(duration)

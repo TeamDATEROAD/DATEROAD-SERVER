@@ -23,7 +23,7 @@ public class DatePlace extends Place {
     @NotNull
     private Date date;
 
-    public static DatePlace of(String name, int duration, Date date) {
+    public static DatePlace create(String name, int duration, Date date) {
         return DatePlace.builder()
                 .name(name)
                 .duration(duration)
