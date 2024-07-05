@@ -21,7 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
-
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtProvider jwtProvider;
     private static final String[] whiteList = {
