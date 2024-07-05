@@ -1,14 +1,20 @@
 package org.dateroad.date.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @SuperBuilder
@@ -23,13 +29,17 @@ public class Course extends DateBase {
     private Long id;
 
     @Column(name = "description", nullable = false)
+    @NotBlank
     private String description;
 
     @Column(name = "cost", nullable = false)
+    @NotBlank
     private int cost;
 
-
-    public static Course of(String title, String description, String country, String city, int cost, LocalDate date, LocalDateTime startAt) {
+    public static Course of(String title, String description,
+                            String country, String city,
+                            int cost, LocalDate date,
+                            LocalDateTime startAt) {
         return Course.builder()
                 .title(title)
                 .description(description)
@@ -40,5 +50,4 @@ public class Course extends DateBase {
                 .startAt(startAt)
                 .build();
     }
-
 }

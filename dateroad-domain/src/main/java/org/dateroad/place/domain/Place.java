@@ -1,7 +1,15 @@
-package org.dateroad.datePlace.domain;
+package org.dateroad.place.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.dateroad.common.BaseTimeEntity;
 
@@ -17,13 +25,10 @@ public abstract class Place extends BaseTimeEntity {
     private Long id;
 
     @Column(name = "name", nullable = false)
+    @NotBlank
     private String name;
 
     @Column(name = "duration", nullable = false)
+    @NotBlank
     private int duration;
-
-    public Place(String name, int duration) {
-        this.name = name;
-        this.duration = duration;
-    }
 }

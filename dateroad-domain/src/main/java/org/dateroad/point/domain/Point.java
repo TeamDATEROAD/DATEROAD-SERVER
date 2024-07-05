@@ -1,6 +1,17 @@
 package org.dateroad.point.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,24 +25,27 @@ import org.dateroad.user.domain.User;
 @Builder(access = AccessLevel.PRIVATE)
 @Table(name = "points")
 public class Point extends BaseTimeEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "point_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @NotBlank
     private User user;
 
     @Column(name = "point", nullable = false)
+    @NotBlank
     private int point;
 
     @Column(name = "transcation_type", nullable = false)
+    @NotBlank
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
     @Column(name = "description", nullable = false)
+    @NotBlank
     private String description;
 
     public static Point of(User user, int point, TransactionType transactionType, String description) {

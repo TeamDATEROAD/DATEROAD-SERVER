@@ -1,31 +1,33 @@
-package org.dateroad.datePlace.domain;
+package org.dateroad.place.domain;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.dateroad.date.domain.Course;
+import org.dateroad.date.domain.Date;
 
 @Entity
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Table(name = "course_places")
-public class CoursePlace extends Place {
+@Table(name = "date_places")
+public class DatePlace extends Place {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "date_id", nullable = false)
+    @NotBlank
+    private Date date;
 
-    @ManyToOne
-    @JoinColumn(name = "course_id", nullable = false)
-    private Course course;
-
-    public static CoursePlace of(String name, int duration, Course course) {
-        return CoursePlace.builder()
+    public static DatePlace of(String name, int duration, Date date) {
+        return DatePlace.builder()
                 .name(name)
                 .duration(duration)
-                .course(course)
+                .date(date)
                 .build();
     }
 }
