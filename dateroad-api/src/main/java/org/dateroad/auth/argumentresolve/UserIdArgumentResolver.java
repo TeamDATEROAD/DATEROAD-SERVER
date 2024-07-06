@@ -2,11 +2,13 @@ package org.dateroad.auth.argumentresolve;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+@Component
 public class UserIdArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -16,7 +18,6 @@ public class UserIdArgumentResolver implements HandlerMethodArgumentResolver {
 
         //parameter의 타입이 long인지 확인 -> 필터에서 이미 long인지 타입이 확인되는데 필요할까? 의문이 생김
         boolean isParamlongType = long.class.equals(parameter.getParameterType());
-
         return isParamHasUserIdAnnotation && isParamlongType;
     }
 
