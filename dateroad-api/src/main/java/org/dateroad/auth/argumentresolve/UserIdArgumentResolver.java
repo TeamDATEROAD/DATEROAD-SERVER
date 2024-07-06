@@ -16,9 +16,9 @@ public class UserIdArgumentResolver implements HandlerMethodArgumentResolver {
         //UserId 어노테이션을 parameter가 가지고 있는지 확인
         boolean isParamHasUserIdAnnotation = parameter.hasParameterAnnotation(UserId.class);
 
-        //parameter의 타입이 long인지 확인 -> 필터에서 이미 long인지 타입이 확인되는데 필요할까? 의문이 생김
-        boolean isParamlongType = long.class.equals(parameter.getParameterType());
-        return isParamHasUserIdAnnotation && isParamlongType;
+        //parameter의 타입이 Long인지 확인
+        boolean isParamLongType = Long.class.equals(parameter.getParameterType());
+        return isParamHasUserIdAnnotation && isParamLongType;
     }
 
     @Override
