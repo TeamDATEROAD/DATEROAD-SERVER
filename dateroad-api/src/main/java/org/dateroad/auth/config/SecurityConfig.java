@@ -26,8 +26,10 @@ public class SecurityConfig {
     private final JwtProvider jwtProvider;
     private final ExceptionHandlerFilter exceptionHandlerFilter;
     private static final String[] whiteList = {
+            "/actuator/health",
             "/api/users/signup",
-            "/api/users/signup",
+            "/api/users/signin",
+            "/api/users/reissue",
             "/",
             "/swagger-ui/**",
             "/error",
