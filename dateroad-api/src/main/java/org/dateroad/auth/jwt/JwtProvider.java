@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
-import org.dateroad.common.FailureResponse;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class JwtProvider {
         Jws<Claims> jws = jwtValidator.parseToken(token);
         String subject = jws.getBody().getSubject();
 
-        //subject가 숫자문자열인지 체크
+        //subject가 숫자문자열인지 예외처리
         try {
             return Long.parseLong(subject);
         } catch (NumberFormatException e) {

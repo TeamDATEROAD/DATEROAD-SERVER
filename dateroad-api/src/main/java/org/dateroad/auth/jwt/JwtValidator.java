@@ -1,18 +1,15 @@
 package org.dateroad.auth.jwt;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
-import org.dateroad.common.FailureResponse;
 import org.dateroad.exception.UnauthorizedException;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
 public class JwtValidator {
-    private final JwtGenerator jwtGenerator;
+    private final KeyProvider keyProvider;
 
     public void equalRefreshToken(String refreshToken, String storedRefreshToken) {
         if (!refreshToken.equals(storedRefreshToken)) {
@@ -33,7 +30,7 @@ public class JwtValidator {
 
     public JwtParser getJwtParser() {
         return Jwts.parserBuilder()
-                .setSigningKey(jwtGenerator.getSigningKey())
+                .setSigningKey(keyProvider.getSigningKey())
                 .build();
     }
 }
