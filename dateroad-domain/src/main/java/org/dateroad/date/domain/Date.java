@@ -24,7 +24,9 @@ public class Date extends DateBase {
     @Column(name = "date_id")
     private Long id;
 
-    public static Date create(String title, String country, String city, LocalDate date, LocalDateTime startAt) {
+    public static Date create(final String title, final String country,
+                              final String city, LocalDate date,
+                              final LocalDateTime startAt) {
         return Date.builder()
                 .title(title)
                 .city(city)

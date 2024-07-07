@@ -48,7 +48,7 @@ public class Point extends BaseTimeEntity {
     @NotNull
     private String description;
 
-    public static Point create(User user, int point, TransactionType transactionType, String description) {
+    public static Point create(User user, int point, final TransactionType transactionType, final String description) {
         return Point.builder()
                 .user(user)
                 .point(point)

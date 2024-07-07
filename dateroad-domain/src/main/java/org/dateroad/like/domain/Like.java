@@ -39,7 +39,7 @@ public class Like extends BaseTimeEntity {
     @NotNull
     private User user;
 
-    public static Like create(Course course, User user) {
+    public static Like create(final Course course, final User user) {
         return Like.builder()
                 .course(course)
                 .user(user)

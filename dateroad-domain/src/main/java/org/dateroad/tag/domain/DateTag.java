@@ -41,7 +41,7 @@ public class DateTag extends BaseTimeEntity {
     @NotNull
     private DateTagType dateTagType;
 
-    public static DateTag create(Date date, DateTagType dateTagType) {
+    public static DateTag create(final Date date, final DateTagType dateTagType) {
         return DateTag.builder()
                 .date(date)
                 .dateTagType(dateTagType)

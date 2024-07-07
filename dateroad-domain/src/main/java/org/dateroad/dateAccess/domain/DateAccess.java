@@ -41,7 +41,7 @@ public class DateAccess extends BaseTimeEntity {
     @NotNull
     private User user;
 
-    public static DateAccess create(Course course, User user) {
+    public static DateAccess create(final Course course, final User user) {
         return DateAccess.builder()
                 .course(course)
                 .user(user)

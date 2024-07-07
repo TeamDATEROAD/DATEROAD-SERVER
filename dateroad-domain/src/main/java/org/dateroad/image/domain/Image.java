@@ -37,10 +37,15 @@ public class Image extends BaseTimeEntity {
     @NotNull
     private String imageUrl;
 
-    public static Image create(Course course, String imageUrl) {
+    @Column(name = "sequence")
+    @NotNull
+    private int sequence;
+
+    public static Image create0(final Course course, final String imageUrl, int sequence) {
         return Image.builder()
                 .course(course)
                 .imageUrl(imageUrl)
+                .sequence(sequence)
                 .build();
     }
 }

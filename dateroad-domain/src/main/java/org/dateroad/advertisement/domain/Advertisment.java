@@ -34,7 +34,7 @@ public class Advertisment extends BaseTimeEntity {
     @NotNull
     private String description;
 
-    public static Advertisment create(String title, String description) {
+    public static Advertisment create(final String title, final String description) {
         return Advertisment.builder()
                 .title(title)
                 .description(description)

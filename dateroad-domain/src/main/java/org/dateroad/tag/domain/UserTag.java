@@ -40,7 +40,7 @@ public class UserTag extends BaseTimeEntity {
     @NotNull
     private DateTagType dateTagType;
 
-    public static UserTag create(User user, DateTagType dateTagType) {
+    public static UserTag create(final User user, final DateTagType dateTagType) {
         return UserTag.builder()
                 .user(user)
                 .dateTagType(dateTagType)
