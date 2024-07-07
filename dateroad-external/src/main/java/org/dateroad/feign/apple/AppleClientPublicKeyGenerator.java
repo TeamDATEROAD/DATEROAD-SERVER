@@ -21,10 +21,13 @@ public class AppleClientPublicKeyGenerator {
     public PublicKey generateClientPublicKeyWithApplePublicKeys(final Map<String, String> headers, final ApplePublicKeys applePublicKeys) {
         ApplePublicKey applePublicKey = applePublicKeys
                 .getMatchesKey(headers.get(ALG), headers.get(KID));
+        return getPublicKey(applePublicKey);
 
+    }
+
+    private PublicKey getPublicKey(final ApplePublicKey applePublicKey) {
         byte[] nBytes = Base64.getUrlDecoder().decode(applePublicKey.n());
         byte[] eBytes = Base64.getUrlDecoder().decode(applePublicKey.e());
-
         RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(
                 new BigInteger(1, nBytes), new BigInteger(1, eBytes));
 
