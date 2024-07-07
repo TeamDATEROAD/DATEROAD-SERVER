@@ -28,6 +28,9 @@ public enum FailureCode {
     INVALID_KAKAO_TOKEN(HttpStatus.UNAUTHORIZED, "e4018", "잘못된 카카오 액세스 토큰 형식입니다"),
     INVALID_APPLE_TOKEN_TYPE(HttpStatus.UNAUTHORIZED, "e4019", "Apple JWT 값의 alg, kid 정보가 올바르지 않습니다."),
     INVALID_APPLE_IDENTITY_TOKEN(HttpStatus.UNAUTHORIZED, "e4020", "잘못된 애플 identity token입니다."),
+    UNABLE_MAKE_APPLE_PUBLIC_KEY(HttpStatus.UNAUTHORIZED, "e4021", "애플 퍼블릭키 생성에 문제가 생겼습니다."),
+    EXPIRED_APPLE_IDENTITY_TOKEN(HttpStatus.UNAUTHORIZED, "e4022", "애플 아이덴티티 토큰이 만료되었습니다."),
+    INVALID_APPLE_IDENTITY_TOKEN_CLAIMS(HttpStatus.UNAUTHORIZED, "e4023", "애플 아이덴티티 토큰의 클레임이 잘못되었습니다."),
 
 
 
