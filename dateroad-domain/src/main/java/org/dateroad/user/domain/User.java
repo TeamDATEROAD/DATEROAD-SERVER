@@ -52,7 +52,7 @@ public class User extends BaseTimeEntity {
     @NotNull
     private int totalPoint = 0;
 
-    public static User create(String name, String platformId, Platform platForm) {
+    public static User create(final String name, final String platformId, final Platform platForm) {
         return User.builder()
                 .name(name)
                 .platformId(platformId)

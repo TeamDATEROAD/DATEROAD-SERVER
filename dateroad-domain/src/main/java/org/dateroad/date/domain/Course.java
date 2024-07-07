@@ -36,10 +36,10 @@ public class Course extends DateBase {
     @NotNull
     private int cost;
 
-    public static Course create(String title, String description,
-                                String country, String city,
-                                int cost, LocalDate date,
-                                LocalDateTime startAt) {
+    public static Course create(final String title, final String description,
+                                final String country, final String city,
+                                final int cost, final LocalDate date,
+                                final LocalDateTime startAt) {
         return Course.builder()
                 .title(title)
                 .description(description)
