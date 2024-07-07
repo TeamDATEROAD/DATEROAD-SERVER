@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtProvider {
     private final JwtGenerator jwtGenerator;
-    private final JwtValidator jwtValidator;
 
     public Token issueToken(final long userId) {
         return Token.of(
@@ -20,7 +19,7 @@ public class JwtProvider {
     }
 
     public long getUserIdFromSubject(String token) {
-        Jws<Claims> jws = jwtValidator.parseToken(token);
+        Jws<Claims> jws = jwtGenerator.parseToken(token);
         String subject = jws.getBody().getSubject();
 
         //subject가 숫자문자열인지 예외처리
