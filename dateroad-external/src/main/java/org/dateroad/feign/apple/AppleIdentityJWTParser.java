@@ -1,7 +1,6 @@
 package org.dateroad.feign.apple;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +32,7 @@ public class AppleIdentityJWTParser {
         }
     }
 
-    public Claims parseWithPublicKeyAndGetClaims(final String identityToken, final PublicKey publicKey) {
+    public Claims parseWithClientPublicKeyAndGetClaims(final String identityToken, final PublicKey publicKey) {
         try {
             return getJwtParser(publicKey)
                     .parseClaimsJws(identityToken)
