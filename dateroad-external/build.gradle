@@ -1,4 +1,7 @@
 dependencies {
+    //feign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.0.3'
+
     implementation project(path: ':dateroad-common')
 }
 
