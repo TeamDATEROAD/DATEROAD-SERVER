@@ -17,7 +17,7 @@ public class ApplePlatformUserIdProvider {
     private final AppleClientPublicKeyGenerator appleClientPublicKeyGenerator;
     private final AppleIdentityJWTValidator appleIdentityJWTValidator;
 
-    public String getKakaoPlatformUserId(final String identityToken) {
+    public String getApplePlatformUserId(final String identityToken) {
         Map<String, String> tokenHeaders = appleIdentityJWTParser.parseHeader(identityToken);
         ApplePublicKeys applePublicKey = appleFeignApi.getApplePublicKeys();
         PublicKey clientPublicKey = appleClientPublicKeyGenerator.generateClientPublicKeyWithApplePublicKeys(tokenHeaders, applePublicKey);
