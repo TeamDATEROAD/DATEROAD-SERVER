@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import static org.dateroad.common.Constants.AUTHORIZATION;
 
 @RequiredArgsConstructor
-@Controller
+@RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService userService;
@@ -29,7 +29,6 @@ public class UserController {
 
     @PostMapping("/hi")
     public ResponseEntity<Void> test() {
-        System.out.println("sdfsadfsadfsadfsadfsdfsadfsfas");
         return ResponseEntity.ok().build();
     }
 }

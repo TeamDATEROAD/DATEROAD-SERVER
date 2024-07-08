@@ -14,7 +14,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Component
 public class KakaoPlatformUserIdProvider {
-    private final KakaoFeignClient kakaoFeignClient;
+    private final KakaoFeignApi kakaoFeignApi;
     private final ObjectMapper objectMapper;
     private static final String TOKEN_TYPE = "Bearer ";
 
@@ -27,19 +27,19 @@ public class KakaoPlatformUserIdProvider {
 
     private KakaoAccessTokenInfoRes getKakaoAccessTokenInfo(final String token) {
         try {
-            return kakaoFeignClient.getKakaoPlatformUserId(token);
+            return kakaoFeignApi.getKakaoPlatformUserId(token);
         } catch (FeignException e) {
-            log.error("ㄷㄷㅋㅋㅋㅋㅋㅋㄷㅋㄷㅋㅋㄷㅋㄷㅋㄷKakao feign exception : ", e);
+            log.error("Kakao feign exception : ", e);
 
             //kakaoResponseDTO로 변경
             KakaoErrorRes errorResponse = convertToKakaoErrorResponse(e.contentUTF8());
 
             //카카오에서 주는 에러 코드가 -1이면 카카오 내부 에러, 나머지는 카카오 액세스 토큰 에러
             if (errorResponse.getCode() == -1) {
-                log.error("ㄷㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㄷㅋㅋㄷㅋㄷㅋㄷKakao feign exception : ", e);
+                log.error("Kakao feign exception : ", e);
                 throw new UnauthorizedException(FailureCode.KAKAO_INTERNER_ERROR);
             } else {
-                log.error("야냐냐냐냐냐냐냐냐냐냐냐냐냐냐 feign exception : ", e);
+                log.error("feign exception : ", e);
                 throw new UnauthorizedException(FailureCode.INVALID_KAKAO_TOKEN);
             }
         }
