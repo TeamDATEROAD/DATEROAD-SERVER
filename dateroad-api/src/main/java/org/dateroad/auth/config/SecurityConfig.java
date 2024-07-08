@@ -1,13 +1,10 @@
 package org.dateroad.auth.config;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.exception.ExceptionHandlerFilter;
 import org.dateroad.auth.exception.JwtAuthenticationEntryPoint;
 import org.dateroad.auth.filter.JwtAuthenticationFilter;
 import org.dateroad.auth.jwt.JwtProvider;
-import org.dateroad.auth.jwt.JwtValidator;
-import org.dateroad.config.ObjectMapperConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
