@@ -26,9 +26,4 @@ public class UserController {
                 .status(HttpStatus.CREATED)
                 .body(userSignUpRes);
     }
-
-    @PostMapping("/hi")
-    public ResponseEntity<Void> test() {
-        return ResponseEntity.ok().build();
-    }
 }

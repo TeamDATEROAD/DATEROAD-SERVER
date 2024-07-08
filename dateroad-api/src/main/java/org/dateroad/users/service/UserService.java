@@ -30,7 +30,7 @@ public class UserService {
     private final ApplePlatformUserIdProvider applePlatformUserIdProvider;
     private final UserTagRepository userTagRepository;
     private final JwtProvider jwtProvider;
-
+    
     public UsersignUpRes signUp(final String token, final UserSignUpReq userSignUpReq) {
         String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
         validateUserTagSize(userSignUpReq.tag());
