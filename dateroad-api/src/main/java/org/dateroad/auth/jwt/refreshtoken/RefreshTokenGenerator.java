@@ -42,8 +42,8 @@ public class RefreshTokenGenerator {
         return findRefreshToken.getUserId();
     }
 
-    public void deleteRefreshToken(final String refreshToken) {
-        refreshTokenRepository.deleteById(refreshToken);
+    public void deleteRefreshToken(final Long userId) {
+        refreshTokenRepository.deleteByUserId(userId);
     }
 
     private SecureRandom createSecureRandom() {
