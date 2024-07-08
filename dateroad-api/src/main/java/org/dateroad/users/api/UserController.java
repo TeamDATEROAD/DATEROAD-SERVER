@@ -2,7 +2,9 @@ package org.dateroad.users.api;
 
 import lombok.RequiredArgsConstructor;
 import org.dateroad.users.dto.request.UserSignUpReq;
+import org.dateroad.users.dto.response.UsersignUpRes;
 import org.dateroad.users.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,12 +17,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> signUp(@RequestHeader(AUTHORIZATION) final String token,
-                                       @RequestBody final UserSignUpReq userSignUPReq) {
+    public ResponseEntity<UsersignUpRes> signUp(@RequestHeader(AUTHORIZATION) final String token,
+                                                @RequestBody final UserSignUpReq userSignUPReq) {
+        UsersignUpRes userSignUpRes = userService.signUp(token, userSignUPReq);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(userSignUpRes);
 
-        userService.signUp(token, userSignUPReq);
-
-        return ResponseEntity.ok().build();
 
     }
 

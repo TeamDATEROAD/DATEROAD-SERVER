@@ -1,8 +1,6 @@
 package org.dateroad.auth.jwt.refreshtoken;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
-import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.code.FailureCode;
 import org.dateroad.exception.UnauthorizedException;
 import org.dateroad.refreshtoken.domain.RefreshToken;
@@ -14,7 +12,6 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -38,7 +35,7 @@ public class RefreshTokenGenerator {
     public Long getUserIdOrThrow(final String refreshToken) {
         byte[] convertedRefreshToken = toBinary(refreshToken);
 
-        RefreshToken findRefreshToken = refreshTokenRepository.findUserIdByToken(Arrays.toString(convertedRefreshToken));
+        RefreshToken findRefreshToken = refreshTokenRepository.findUserIdByToken(Arrays.toString(convertedRefreshToken).getBytes());
         if (findRefreshToken == null) {
             throw new UnauthorizedException(FailureCode.INVALID_REFRESH_TOKEN_VALUE);
         }
