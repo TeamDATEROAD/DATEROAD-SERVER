@@ -58,6 +58,7 @@ public class CourseService {
                 duration
         );
     }
+
     public DataAccessGetAllRes getAllDataAccessCourse(Long userId) {
         List<Course> accesses = dataAccessRepository.findCoursesByUserId(userId);
         List<CourseDtoRes> courseDtoResList = convertToDtoList(accesses, Function.identity());
