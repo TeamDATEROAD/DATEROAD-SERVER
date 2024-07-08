@@ -19,7 +19,7 @@ public class KakaoPlatformUserIdProvider {
     private static final String TOKEN_TYPE = "BEARER :";
 
     //AuthService에서 호출 : 카카오에서 주는 userId 받아오기
-    public String getKakaoPlatformUserId(String accessToken) {
+    public String getKakaoPlatformUserId(final String accessToken) {
         String kakaoAccessTokenWithTokenType = getAccessTokenWithTokenType(accessToken);
 
         try {
