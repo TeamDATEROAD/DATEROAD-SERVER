@@ -1,13 +1,17 @@
 package org.dateroad.course.service;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.response.CourseGetAllRes;
 import org.dateroad.course.dto.response.CourseGetAllRes.CourseDtoRes;
+import org.dateroad.course.dto.response.DataAccessGetAllRes;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.repository.CourseRepository;
+import org.dateroad.dateAccess.domain.DateAccess;
+import org.dateroad.dateAccess.repository.DataAccessRepository;
 import org.dateroad.image.domain.Image;
 import org.dateroad.image.repository.ImageRepository;
 import org.dateroad.like.repository.LikeRepository;
@@ -22,11 +26,20 @@ public class CourseService {
     private final LikeRepository likeRepository;
     private final ImageRepository imageRepository;
     private final CoursePlaceRepository coursePlaceRepository;
+    private final DataAccessRepository dataAccessRepository;
 
     public CourseGetAllRes getAllCourses(CourseGetAllReq courseGetAllReq) {
         Specification<Course> spec = CourseSpecifications.filterByCriteria(courseGetAllReq);
         List<Course> courses = courseRepository.findAll(spec);
-        return CourseGetAllRes.of(courses.stream().map(this::convertToDto).collect(Collectors.toList()));
+        List<CourseDtoRes> courseDtoResList = convertToDtoList(courses, Function.identity());
+        return CourseGetAllRes.of(courseDtoResList);
+    }
+
+    private <T> List<CourseDtoRes> convertToDtoList(List<T> entities, Function<T, Course> converter) {
+        return entities.stream()
+                .map(converter)
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     private CourseDtoRes convertToDto(Course course) {
@@ -35,7 +48,7 @@ public class CourseService {
         String thumbnailUrl = thumbnailImage != null ? thumbnailImage.getImageUrl() : null;
         int duration = coursePlaceRepository.findTotalDurationByCourseId(course.getId());
 
-        return new CourseDtoRes(
+        return CourseDtoRes.of(
                 course.getId(),
                 thumbnailUrl,
                 course.getCity(),
@@ -44,5 +57,10 @@ public class CourseService {
                 course.getCost(),
                 duration
         );
+    }
+    public DataAccessGetAllRes getAllDataAccessCourse(Long userId) {
+        List<Course> accesses = dataAccessRepository.findCoursesByUserId(userId);
+        List<CourseDtoRes> courseDtoResList = convertToDtoList(accesses, Function.identity());
+        return DataAccessGetAllRes.of(courseDtoResList);
     }
 }
