@@ -8,8 +8,7 @@
 ## 💘 Date Road
 <aside>
 장소 중심이 아닌 코스 중심의 데이트 추천 서비스 Date Road 입니다~!<br/>
-유저가 직접 공유한 생생한 데이트 코스를 통해 특별한 데이트를 계획할 수 있어요
-
+유저가 직접 공유한 생생한 데이트 코스를 통해 특별한 데이트를 계획할 수 있습니다.
 </aside>
 
 <br/><br/>
@@ -36,24 +35,24 @@
 
 <hr></hr>
 
-## 폴더 구조
+## 📁 폴더 구조
 
 ```
-├── dateroad-api
+├── 📁 dateroad-api
 │   └── src
 │       └── main
 │           └── java
 │               └── org
-│                   └── dateroad
-│                       ├── auth
+│                   └── 📁 dateroad
+│                       ├── 📁 auth
 │                       │   ├── argumentresolve
 │                       │   ├── config
 │                       │   ├── exception
 │                       │   ├── filter
 │                       │   └── jwt
-│                       ├── common
-│                       ├── config
-│                       └── domain
+│                       ├── 📁 common
+│                       ├── 📁 config
+│                       └── 📁 domain
 │                           ├── api
 │                           ├── dto
 │                           │   ├── request
@@ -64,42 +63,42 @@
 │       └── main
 │           └── java
 │               └── org
-│                   └── dateroad
-│                       ├── code
-│                       ├── common
-│                       └── exception
+│                   └── 📁 dateroad
+│                       ├── 📁 code
+│                       ├── 📁 common
+│                       └── 📁 exception
 ├── dateroad-domain
 │   └── src
 │       └── main
 │           └── java
 │               └── org
-│                   └── dateroad
-│                       ├── advertisement
+│                   └── 📁 dateroad
+│                       ├── 📁 advertisement
 │                       │   └── domain
-│                       ├── common
-│                       ├── config
-│                       ├── date
+│                       ├── 📁 common
+│                       ├── 📁 config
+│                       ├── 📁 date
 │                       │   ├── domain
 │                       │   └── repository
-│                       ├── dataAccess
+│                       ├── 📁 dataAccess
 │                       │   ├── domain
 │                       │   └── repository
-│                       ├── image
+│                       ├── 📁 image
 │                       │   ├── domain
 │                       │   └── repository
-│                       ├── like
+│                       ├── 📁 like
 │                       │   ├── domain
 │                       │   └── repository
-│                       ├── place
+│                       ├── 📁 place
 │                       │   ├── domain
 │                       │   └── repository
-│                       ├── point
+│                       ├── 📁 point
 │                       │   ├── domain
 │                       │   └── repository
-│                       ├── tag
+│                       ├── 📁 tag
 │                       │   ├── domain
 │                       │   └── repository
-│                       ├── user
+│                       ├── 📁 user
 │                           ├── domain
 │                           └── repository
 ├── dateroad-external
@@ -107,7 +106,7 @@
 │       └── main
 │           └── java
 │               └── org
-│                   └── dateroad
+│                   └── 📁 dateroad
 │                       ├── feign
 │                       │   ├── apple
 │                       │   ├── config
@@ -144,14 +143,40 @@
 - **chore** : 의존성 추가, yml 추가와 수정, 패키지 구조 변경, 파일 이동 등의 작업 `chore: yml 수정 (#21)`, `chore: lombok 의존성 추가 (#22)`
 - **test**: 테스트 코드 작성, 수정 `test: 로그인 API 테스트 코드 작성 (#20)`
 - **setting**: 세팅
-- merge: 머지할때
+- **merge**: 머지
+
+<br>
+
+<hr></hr>
+
 
 ## Git Convention 📋
 [데이트로드 서버 팀의 깃 컨벤션이 궁금하다면? ✔️](https://hooooooni.notion.site/Git-Convention-d8f7892977924a76a0fcad3019d3f692?pvs=4)
 
 <br>
+<br>
+<hr></hr>
 
 ## Code Convention 📋
 [데이트로드 서버 팀의 코드 컨벤션이 궁금하다면? ✔️](https://hooooooni.notion.site/Code-Convention-25494a4fa90d4875a277dd51e27e51d6?pvs=4)
+
+<br>
+<hr></hr>
+
+<br>
+
+## Teck Stack ✨
+
+| IDE | IntelliJ |
+|:---|:---|
+| Language | Java 21 |
+| Framework | Spring Boot 3.3.1, Gradle |
+| Authentication | Spring Security, JSON Web Tokens |
+| Orm | Spring Data JPA |
+| Database | PostgreSQL |
+| External | AWS EC2, AWS RDS, Nginx, Docker, Docker-Compose, Redis |
+| CI/CD | Github Action |
+| API Docs | Notion, Swagger |
+| Other Tool | Discord, Postman, Figma |
 
 <br>
