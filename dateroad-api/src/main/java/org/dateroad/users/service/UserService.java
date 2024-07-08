@@ -32,11 +32,10 @@ public class UserService {
     private final JwtProvider jwtProvider;
 
     public UsersignUpRes signUp(final String token, final UserSignUpReq userSignUpReq) {
-        Platform platform = Platform.getEnumPlatformFromStringPlatform(userSignUpReq.platform());
-        String platformUserId = getUserPlatformId(platform, token);
+        String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
         validateUserTagSize(userSignUpReq.tag());
-        validateDuplicatedUser(platform, platformUserId);
-        User newUser = saveUser(userSignUpReq.name(), userSignUpReq.image(), platform, platformUserId);
+        validateDuplicatedUser(userSignUpReq.platform(), platformUserId);
+        User newUser = saveUser(userSignUpReq.name(), userSignUpReq.image(), userSignUpReq.platform(), platformUserId);
         saveUserTag(newUser, userSignUpReq.tag());
         Token issuedToken = jwtProvider.issueToken(newUser.getId());
 
