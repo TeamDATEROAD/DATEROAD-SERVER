@@ -41,7 +41,7 @@ public class CourseTag extends BaseTimeEntity {
     @NotNull
     private DateTagType dateTagType;
 
-    public static CourseTag create(Course course, DateTagType dateTagType) {
+    public static CourseTag create(final Course course, final DateTagType dateTagType) {
         return CourseTag.builder()
                 .course(course)
                 .dateTagType(dateTagType)

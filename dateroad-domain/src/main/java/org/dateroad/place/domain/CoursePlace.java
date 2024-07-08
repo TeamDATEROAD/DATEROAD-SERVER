@@ -23,11 +23,12 @@ public class CoursePlace extends Place {
     @NotNull
     private Course course;
 
-    public static CoursePlace create(String name, int duration, Course course) {
+    public static CoursePlace create(final String name, int duration, final Course course, int sequence) {
         return CoursePlace.builder()
                 .name(name)
                 .duration(duration)
                 .course(course)
+                .sequence(sequence)
                 .build();
     }
 }

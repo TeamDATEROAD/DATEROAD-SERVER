@@ -9,6 +9,13 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+
+    // AWS sdk
+    implementation("software.amazon.awssdk:bom:2.21.0")
+    implementation("software.amazon.awssdk:s3:2.21.0")
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
 }
 
 bootJar.enabled = false

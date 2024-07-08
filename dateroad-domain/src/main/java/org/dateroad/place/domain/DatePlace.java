@@ -23,11 +23,12 @@ public class DatePlace extends Place {
     @NotNull
     private Date date;
 
-    public static DatePlace create(String name, int duration, Date date) {
+    public static DatePlace create(final String name, int duration, final Date date, int sequence) {
         return DatePlace.builder()
                 .name(name)
                 .duration(duration)
                 .date(date)
+                .sequence(sequence)
                 .build();
     }
 }
