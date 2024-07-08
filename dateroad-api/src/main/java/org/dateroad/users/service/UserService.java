@@ -42,7 +42,6 @@ public class UserService {
         return UsersignUpRes.of(newUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
 
-
     private String getUserPlatformId(final Platform platform, final String token) {
         if (platform == Platform.APPLE) {
             return applePlatformUserIdProvider.getApplePlatformUserId(token);
@@ -79,6 +78,4 @@ public class UserService {
             throw new InvalidValueException((FailureCode.WRONG_USER_TAG_SIZE));
         }
     }
-
-
 }
