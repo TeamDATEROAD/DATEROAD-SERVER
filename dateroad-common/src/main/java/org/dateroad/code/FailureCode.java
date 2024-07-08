@@ -13,6 +13,8 @@ public enum FailureCode {
      * 400 Bad Request
      */
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "e4000", "잘못된 요청입니다."),
+    INVALID_PLATFORM_TYPE(HttpStatus.BAD_REQUEST, "e4001", "잘못된 플랫폼 타입입니다."),
+    WRONG_USER_TAG_SIZE(HttpStatus.BAD_REQUEST, "e4002", "유저 태그 개수가 0이거나 3보다 많습니다.."),
 
     /**
      * 401 Unauthorized
@@ -31,9 +33,7 @@ public enum FailureCode {
     UNABLE_MAKE_APPLE_PUBLIC_KEY(HttpStatus.UNAUTHORIZED, "e4021", "애플 퍼블릭키 생성에 문제가 생겼습니다."),
     EXPIRED_APPLE_IDENTITY_TOKEN(HttpStatus.UNAUTHORIZED, "e4022", "애플 아이덴티티 토큰이 만료되었습니다."),
     INVALID_APPLE_IDENTITY_TOKEN_CLAIMS(HttpStatus.UNAUTHORIZED, "e4023", "애플 아이덴티티 토큰의 클레임이 잘못되었습니다."),
-
-
-
+    INVALID_REFRESH_TOKEN_VALUE(HttpStatus.BAD_REQUEST, "e4024", "잘못된 리프레시토큰입니다."),
 
     /**
      * 403 Forbidden
@@ -55,6 +55,8 @@ public enum FailureCode {
      * 409 Conflict
      */
     CONFLICT(HttpStatus.CONFLICT, "e4090", "이미 존재하는 리소스입니다."),
+    DUPLICATE_USER(HttpStatus.CONFLICT, "e4091", "이미 존재하는 유저입니다."),
+
 
     /**
      * 500 Internal Server Error
