@@ -13,7 +13,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.dateroad.common.BaseTimeEntity;
 import org.dateroad.date.domain.Course;
 
@@ -35,6 +37,7 @@ public class Image extends BaseTimeEntity {
 
     @Column(name = "image_url")
     @NotNull
+    @Getter
     private String imageUrl;
 
     @Column(name = "sequence")
