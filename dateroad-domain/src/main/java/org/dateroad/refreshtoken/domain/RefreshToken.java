@@ -34,6 +34,4 @@ public class RefreshToken {
                 .expiredAt(expiredAt)
                 .build();
     }
-
-
 }
