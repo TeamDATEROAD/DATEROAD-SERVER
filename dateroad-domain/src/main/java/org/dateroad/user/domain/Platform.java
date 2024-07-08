@@ -7,7 +7,6 @@ import org.dateroad.exception.InvalidValueException;
 
 import java.util.Arrays;
 
-
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum Platform {
     APPLE("apple"),
