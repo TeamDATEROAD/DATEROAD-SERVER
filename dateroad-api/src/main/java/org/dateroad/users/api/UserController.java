@@ -1,13 +1,11 @@
 package org.dateroad.users.api;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.dateroad.users.dto.request.UserSignUpReq;
 import org.dateroad.users.dto.response.UsersignUpRes;
 import org.dateroad.users.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import static org.dateroad.common.Constants.AUTHORIZATION;
