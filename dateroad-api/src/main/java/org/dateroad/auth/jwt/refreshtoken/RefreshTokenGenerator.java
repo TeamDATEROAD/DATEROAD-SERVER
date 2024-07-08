@@ -21,6 +21,8 @@ public class RefreshTokenGenerator {
 
     public String generateRefreshToken(final long userId) {
         SecureRandom random = createSecureRandom();
+
+        //SecureRandom을 사용하여 45 바이트의 랜덤 토큰을 생성
         byte[] token = new byte[TOKEN_BYTE_SIZE];
         random.nextBytes(token);
         LocalDateTime expireAt = LocalDateTime.now().plusWeeks(2);
@@ -39,6 +41,10 @@ public class RefreshTokenGenerator {
         if (findRefreshToken == null) {
             throw new UnauthorizedException(FailureCode.INVALID_REFRESH_TOKEN_VALUE);
         }
+
+        if (findRefreshToken.getExpiredAt().isBefore(LocalDateTime.now())) {
+            throw new UnauthorizedException(FailureCode.EXPIRED_REFRESH_TOKEN);
+        }
         return findRefreshToken.getUserId();
     }
 
@@ -48,10 +54,13 @@ public class RefreshTokenGenerator {
 
     private SecureRandom createSecureRandom() {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+
+        //현재 시간을 바이트 배열로 변환하여 SecureRandom의 초기값(seed)으로 사용
         buffer.putLong(System.currentTimeMillis());
         return new SecureRandom(buffer.array());
     }
 
+    //Base64 인코딩된 리프레시 토큰 문자열을 바이트 배열
     private byte[] toBinary(String refreshToken) {
         return Base64.getDecoder().decode(refreshToken);
     }
