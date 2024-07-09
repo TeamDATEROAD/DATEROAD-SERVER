@@ -37,14 +37,17 @@ public class AdImage extends BaseTimeEntity {
 
     @Column(name = "image_url")
     @NotNull
-    @Getter
     private String imageUrl;
 
     @Column(name = "sequence")
     @NotNull
     private int sequence;
 
-    public static AdImage create(final Advertisment advertisment, final String imageUrl, int sequence) {
+    public static AdImage create(
+            final Advertisment advertisment,
+            final String imageUrl,
+            final int sequence
+    ) {
         return AdImage.builder()
                 .advertisment(advertisment)
                 .imageUrl(imageUrl)

@@ -45,8 +45,11 @@ public class Advertisment extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private AdTagType tag;
 
-
-    public static Advertisment create(final String title, final String description,final String thumbnail, AdTagType tag) {
+    public static Advertisment create(
+            final String title,
+            final String description,
+            final String thumbnail,
+            final AdTagType tag) {
         return Advertisment.builder()
                 .title(title)
                 .description(description)
@@ -54,5 +57,4 @@ public class Advertisment extends BaseTimeEntity {
                 .tag(tag)
                 .build();
     }
-
 }
