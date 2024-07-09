@@ -2,6 +2,7 @@ package org.dateroad.user.api;
 
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.argumentresolve.UserId;
+import org.dateroad.user.dto.request.AppleWithdrawAuthCodeReq;
 import org.dateroad.user.dto.request.UserSignInReq;
 import org.dateroad.user.dto.request.UserSignUpReq;
 import org.dateroad.user.dto.response.UserSignInRes;
@@ -45,8 +46,9 @@ public class UserController {
     }
 
     @DeleteMapping("/withdraw")
-    public ResponseEntity<Void> withdraw(@UserId final Long userId) {
-        authService.withdraw(userId);
+    public ResponseEntity<Void> withdraw(@UserId final Long userId,
+                                         @RequestBody AppleWithdrawAuthCodeReq appleWithdrawAuthCodeReq) {
+        authService.withdraw(userId, appleWithdrawAuthCodeReq);
         return ResponseEntity
                 .ok()
                 .build();
