@@ -9,7 +9,7 @@ public record AdvGetAllRes(
 ) {
     public record AdvertismentDtoRes(
             Long advertismentId,
-            String imageUrl,
+            String thumbnail,
             String title,
             AdTagType tag
     ){
