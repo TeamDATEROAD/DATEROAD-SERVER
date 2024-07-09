@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Transactional
 @Service
 public class AuthService {
     private final UserRepository userRepository;
@@ -31,6 +30,7 @@ public class AuthService {
     private final UserTagRepository userTagRepository;
     private final JwtProvider jwtProvider;
 
+    @Transactional
     public UsersignUpRes signUp(final String token, final UserSignUpReq userSignUpReq) {
         String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
         validateUserTagSize(userSignUpReq.tag());
