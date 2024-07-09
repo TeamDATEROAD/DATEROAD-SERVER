@@ -46,4 +46,8 @@ public abstract class DateBase extends BaseTimeEntity {
     @Column(name = "city")
     @NotNull
     private String city;
+
+    @Column(name = "thumbnail")
+    @NotNull
+    private String thumbnail;
 }
