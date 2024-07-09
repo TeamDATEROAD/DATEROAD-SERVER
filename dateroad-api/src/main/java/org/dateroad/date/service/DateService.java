@@ -47,10 +47,16 @@ public class DateService {
     }
 
     private void createDateTag(Date date, List<TagCreateReq> tags) {
-        tags.forEach(t -> dateTagRepository.save(DateTag.create(date, t.tag())));
+        List<DateTag> dateTags = tags.stream()
+                .map(t -> DateTag.create(date, t.tag())).toList();
+
+        dateTagRepository.saveAll(dateTags);
     }
 
     private void createDatePlace(Date date, List<PlaceCreateReq> places) {
-        places.forEach(p -> datePlaceRepository.save(DatePlace.create(date, p.name(), p.duration(), p.sequence())));
+        List<DatePlace> datePlaces = places.stream()
+                        .map(p -> DatePlace.create(date, p.name(), p.duration(), p.sequence())).toList();
+
+        datePlaceRepository.saveAll(datePlaces);
     }
 }
