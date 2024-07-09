@@ -25,6 +25,7 @@ public class SecurityConfig {
     private final ExceptionHandlerFilter exceptionHandlerFilter;
     private static final String[] whiteList = {
             "/actuator/health",
+            "/api/v1/users/check",
             "/api/v1/users/signup",
             "/api/users/signin",
             "/api/users/reissue",
