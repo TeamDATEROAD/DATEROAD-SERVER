@@ -25,7 +25,7 @@ public class UserController {
                 .body(userSignUpRes);
     }
 
-    @PostMapping("/check")
+    @GetMapping("/check")
     public ResponseEntity<Void> checkNickname(@RequestParam("name") final String nickname) {
         authService.checkNickname(nickname);
         return ResponseEntity
