@@ -13,6 +13,8 @@ public enum FailureCode {
      * 400 Bad Request
      */
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "e4000", "잘못된 요청입니다."),
+    INVALID_PLATFORM_TYPE(HttpStatus.BAD_REQUEST, "e4001", "잘못된 플랫폼 타입입니다."),
+    WRONG_USER_TAG_SIZE(HttpStatus.BAD_REQUEST, "e4002", "유저 태그 개수가 0이거나 3보다 많습니다.."),
 
     /**
      * 401 Unauthorized
@@ -32,6 +34,9 @@ public enum FailureCode {
     EXPIRED_APPLE_IDENTITY_TOKEN(HttpStatus.UNAUTHORIZED, "e4022", "애플 아이덴티티 토큰이 만료되었습니다."),
     INVALID_APPLE_IDENTITY_TOKEN_CLAIMS(HttpStatus.UNAUTHORIZED, "e4023", "애플 아이덴티티 토큰의 클레임이 잘못되었습니다."),
 
+    INVALID_REFRESH_TOKEN_VALUE(HttpStatus.UNAUTHORIZED, "e4024", "잘못된 리프레시토큰입니다."),
+    EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "e4025", "리프레시 토큰 기간이 만료되었습니다. 재로그인 해주세요"),
+
     /**
      * 403 Forbidden
      */
@@ -42,7 +47,9 @@ public enum FailureCode {
      */
     ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND, "e4040", "대상을 찾을 수 없습니다."),
     TOKEN_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4041", "찾을 수 없는 토큰 타입입니다."),
-    COURSE_THUMBNAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "e4042", "코스 썸네일을 찾을수 없습니다."),
+    COURSE_THUMBNAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "e4043", "코스 썸네일을 찾을수 없습니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "e4042", "존재하지 않는 회원입니다."),
+
     /**
      * 405 Method Not Allowed
      */
@@ -52,6 +59,8 @@ public enum FailureCode {
      * 409 Conflict
      */
     CONFLICT(HttpStatus.CONFLICT, "e4090", "이미 존재하는 리소스입니다."),
+    DUPLICATE_USER(HttpStatus.CONFLICT, "e4091", "이미 존재하는 유저입니다."),
+
 
     /**
      * 500 Internal Server Error

@@ -7,5 +7,5 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @FeignClient(name = "${feign.kakao.name}", url = "${feign.kakao.url}")
 public interface KakaoFeignApi {
     @GetMapping
-    KakaoAccessTokenRes getKakaoPlatformUserId(@RequestHeader("Authorization") String accessTokenWithTokenType);
+    KakaoAccessTokenInfoRes getKakaoPlatformUserId(@RequestHeader("Authorization") String accessTokenWithTokenType);
 }

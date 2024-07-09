@@ -3,6 +3,7 @@ package org.dateroad.auth.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.RequiredArgsConstructor;
+import org.dateroad.auth.jwt.refreshtoken.RefreshTokenGenerator;
 import org.dateroad.code.FailureCode;
 import org.springframework.stereotype.Component;
 
@@ -10,11 +11,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtProvider {
     private final JwtGenerator jwtGenerator;
+    private final RefreshTokenGenerator refreshTokenGenerator;
 
     public Token issueToken(final long userId) {
         return Token.of(
-                jwtGenerator.generateToken(userId, TokenType.ACCESS_TOKEN),
-                jwtGenerator.generateToken(userId, TokenType.REFRESH_TOKEN)
+                jwtGenerator.generateAccessToken(userId),
+                refreshTokenGenerator.generateRefreshToken(userId)
         );
     }
 

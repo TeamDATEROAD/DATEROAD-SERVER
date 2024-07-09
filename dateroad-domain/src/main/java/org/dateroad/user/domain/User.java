@@ -33,14 +33,17 @@ public class User extends BaseTimeEntity {
     @NotNull
     private String name;
 
-    @Column(name = "platform_id")
+    @Column(name = "platform_user_id")
     @NotNull
-    private String platformId;
+    private String platformUserId;
 
     @Column(name = "platform")
     @NotNull
     @Enumerated(EnumType.STRING)
     private Platform platForm;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @Builder.Default
     @Column(name = "free")
@@ -52,11 +55,12 @@ public class User extends BaseTimeEntity {
     @NotNull
     private int totalPoint = 0;
 
-    public static User create(final String name, final String platformId, final Platform platForm) {
+    public static User create(final String name, final String platformUserId, final Platform platForm, final String imageUrl) {
         return User.builder()
                 .name(name)
-                .platformId(platformId)
+                .platformUserId(platformUserId)
                 .platForm(platForm)
+                .imageUrl(imageUrl)
                 .build();
     }
 }
