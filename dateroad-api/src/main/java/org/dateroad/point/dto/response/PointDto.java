@@ -2,15 +2,16 @@ package org.dateroad.point.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
+import lombok.AccessLevel;
 import lombok.Builder;
 import org.dateroad.point.domain.Point;
 import org.dateroad.point.domain.TransactionType;
 
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 public record PointDto(
         int point,
         String description,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
         LocalDate createdAt,
         TransactionType transactionType
 
