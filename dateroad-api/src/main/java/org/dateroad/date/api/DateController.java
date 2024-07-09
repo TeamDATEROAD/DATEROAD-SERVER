@@ -20,4 +20,11 @@ public class DateController {
         dateService.createDate(userId, dateCreateReq);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @DeleteMapping("/{dateId}")
+    public ResponseEntity<Void> deleteDate(@UserId final Long userId,
+                                           @PathVariable final Long dateId) {
+        dateService.deleteDate(userId, dateId);
+        return ResponseEntity.ok().build();
+    }
 }
