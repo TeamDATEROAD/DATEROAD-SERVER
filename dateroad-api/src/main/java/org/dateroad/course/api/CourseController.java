@@ -23,8 +23,6 @@ public class CourseController {
             @ModelAttribute CourseGetAllReq courseGetAllReq
     ) {
         CourseGetAllRes courseAll = courseService.getAllCourses(courseGetAllReq);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(courseAll);
+        return ResponseEntity.ok(courseAll);
     }
 }
