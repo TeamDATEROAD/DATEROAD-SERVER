@@ -34,6 +34,7 @@ public class AuthService {
     public UsersignUpRes signUp(final String token, final UserSignUpReq userSignUpReq) {
         String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
         validateUserTagSize(userSignUpReq.tag());
+        checkNickname(userSignUpReq.name());
         validateDuplicatedUser(userSignUpReq.platform(), platformUserId);
         User newUser = saveUser(userSignUpReq.name(), userSignUpReq.image(), userSignUpReq.platform(), platformUserId);
         saveUserTag(newUser, userSignUpReq.tag());
