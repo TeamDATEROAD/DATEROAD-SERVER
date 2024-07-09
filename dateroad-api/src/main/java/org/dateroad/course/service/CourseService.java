@@ -18,9 +18,7 @@ import org.dateroad.image.repository.ImageRepository;
 import org.dateroad.like.repository.LikeRepository;
 import org.dateroad.place.repository.CoursePlaceRepository;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.ErrorResponseException;
 
 @Service
 @RequiredArgsConstructor
