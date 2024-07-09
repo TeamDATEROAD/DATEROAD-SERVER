@@ -22,8 +22,6 @@ public class PointController {
     ){
         PointGetAllRes pointGetAllRes = pointService.getAllPoints(userId);
         System.out.println(pointGetAllRes);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(pointGetAllRes);
+        return ResponseEntity.ok(pointGetAllRes);
     }
 }
