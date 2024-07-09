@@ -40,6 +40,7 @@ public enum FailureCode {
      * 403 Forbidden
      */
     FORBIDDEN(HttpStatus.FORBIDDEN, "e4030", "리소스 접근 권한이 없습니다."),
+    DATE_DELETE_ACCESS_DENIED(HttpStatus.FORBIDDEN, "e4032", "해당 일정을 삭제할 권한이 없습니다."),
 
     /**
      * 404 Not Found
@@ -48,6 +49,7 @@ public enum FailureCode {
     TOKEN_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4041", "찾을 수 없는 토큰 타입입니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "e4042", "유저를 찾을 수 없습니다."),
     COURSE_THUMBNAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "e4043", "코스 썸네일을 찾을수 없습니다."),
+    DATE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4044", "데이트를 찾을 수 없습니다."),
 
     /**
      * 405 Method Not Allowed
