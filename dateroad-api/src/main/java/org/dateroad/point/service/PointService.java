@@ -19,17 +19,14 @@ public class PointService {
         List<PointDto> points = pointRepository.findAllByUserId(userId)
                 .stream().map(PointDto::of)
                 .toList();
-
-        PointsDto gainedPoints = PointsDto.of(points.stream()
-                .filter(point -> point.transactionType() == TransactionType.POINT_GAINED)
-                .map(PointDtoRes::of)
-                .toList());
-
-        PointsDto usedPoints = PointsDto.of(points.stream()
-                .filter(point -> point.transactionType() == TransactionType.POINT_USED)
-                .map(PointDtoRes::of)
-                .toList());
-
+        PointsDto gainedPoints = pointTypeChecktoList(points, TransactionType.POINT_GAINED);
+        PointsDto usedPoints = pointTypeChecktoList(points, TransactionType.POINT_USED);
         return PointGetAllRes.of(gainedPoints,usedPoints);
+    }
+    public PointsDto pointTypeChecktoList(List<PointDto> points, TransactionType type){
+        return PointsDto.of(points.stream()
+                .filter(point -> point.transactionType() == type)
+                .map(PointDtoRes::of)
+                .toList());
     }
 }
