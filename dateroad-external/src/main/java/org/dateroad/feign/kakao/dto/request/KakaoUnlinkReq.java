@@ -8,10 +8,10 @@ public record KakaoUnlinkReq(
         String target_id_type,
         Long target_id
 ) {
-    public static KakaoUnlinkReq of(String target_id_type, Long target_id) {
+    public static KakaoUnlinkReq of(Long target_id) {
         return KakaoUnlinkReq
                 .builder()
-                .target_id_type(target_id_type)
+                .target_id_type("user_id")
                 .target_id(target_id)
                 .build();
     }

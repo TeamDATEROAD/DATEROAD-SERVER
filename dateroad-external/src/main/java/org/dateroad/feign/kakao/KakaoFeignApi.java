@@ -1,6 +1,7 @@
 package org.dateroad.feign.kakao;
 
 import org.dateroad.feign.kakao.dto.request.KakaoUnlinkReq;
+import org.dateroad.feign.kakao.dto.response.KaKaoUnlinkRes;
 import org.dateroad.feign.kakao.dto.response.KakaoAccessTokenInfoRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,6 @@ public interface KakaoFeignApi {
 
     @PostMapping("/unlink")
     void unlink(@RequestHeader("Authorization") String appAdminKey,
-                @RequestBody KakaoUnlinkReq kakaoUnlinkReq);
+                          @RequestBody KakaoUnlinkReq kakaoUnlinkReq);
 
 }
