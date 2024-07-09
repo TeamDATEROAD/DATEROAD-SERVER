@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.response.CourseGetAllRes;
-import org.dateroad.course.dto.response.DataAccessGetAllRes;
+import org.dateroad.course.dto.response.DateAccessGetAllRes;
 import org.dateroad.course.service.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,18 +24,14 @@ public class CourseController {
             @ModelAttribute CourseGetAllReq courseGetAllReq
     ) {
         CourseGetAllRes courseAll = courseService.getAllCourses(courseGetAllReq);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(courseAll);
+        return ResponseEntity.ok(courseAll);
     }
 
     @GetMapping("/date-access")
-    public ResponseEntity<DataAccessGetAllRes> getAllDataAccesCourse(
+    public ResponseEntity<DateAccessGetAllRes> getAllDataAccesCourse(
             @UserId Long userId
     ) {
-        DataAccessGetAllRes dataAccessGetAllRes = courseService.getAllDataAccessCourse(userId);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(dataAccessGetAllRes);
+        DateAccessGetAllRes dateAccessGetAllRes = courseService.getAllDataAccessCourse(userId);
+        return ResponseEntity.ok(dateAccessGetAllRes);
     }
 }
