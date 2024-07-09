@@ -58,7 +58,7 @@ public class AuthService {
     @Transactional
     public void signout(final long userId) {
         User foundUser = getUserByUserId(userId);
-        refreshTokenRepository.deleteByUserId(foundUser.getId());
+        deleteRefreshToken(foundUser.getId());
     }
 
     private String getUserPlatformId(final Platform platform, final String token) {
@@ -110,5 +110,10 @@ public class AuthService {
         if (userTags.isEmpty() || userTags.size() > 3) {
             throw new InvalidValueException((FailureCode.WRONG_USER_TAG_SIZE));
         }
+    }
+
+    //refreshToken 삭제
+    private void deleteRefreshToken(final long userId) {
+        refreshTokenRepository.deleteByUserId();
     }
 }
