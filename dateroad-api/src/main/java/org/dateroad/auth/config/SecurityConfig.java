@@ -26,8 +26,8 @@ public class SecurityConfig {
     private static final String[] whiteList = {
             "/actuator/health",
             "/api/v1/users/signup",
-            "/api/users/signin",
-            "/api/users/reissue",
+            "/api/v1/users/signin",
+            "/api/v1/users/reissue",
             "/",
             "/swagger-ui/**",
             "/error",
