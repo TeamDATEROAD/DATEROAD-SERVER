@@ -1,12 +1,15 @@
 package org.dateroad.course.dto.response;
 
 import java.util.List;
-import org.dateroad.course.dto.response.CourseGetAllRes.CourseDtoRes;
+import lombok.Builder;
 
-public record DataAccessGetAllRes(
+@Builder
+public record DateAccessGetAllRes(
         List<CourseDtoRes> courses
 ) {
-    public static DataAccessGetAllRes of(List<CourseDtoRes> dataAccessCourse) {
-        return new DataAccessGetAllRes(dataAccessCourse);
+    public static DateAccessGetAllRes of(List<CourseDtoRes> dataAccessCourse) {
+        return DateAccessGetAllRes.builder()
+                .courses(dataAccessCourse)
+                .build();
     }
 }
