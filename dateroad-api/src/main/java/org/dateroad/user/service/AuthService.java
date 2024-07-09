@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class AuthService {
     private final UserRepository userRepository;
@@ -56,6 +57,16 @@ public class AuthService {
         return UserSignInRes.of(foundUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
 
+    @Transactional
+    public void withdraw(final Long userId) {
+
+        //todo: #45브랜치 머지후, 메서드 이용
+        User foundUser = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+
+        //todo: #45브랜치 머지후, 메서드 이용
+        refreshTokenRepository.deleteByUserId(foundUser.getId());
+        userRepository.deleteById(foundUser.getId());
+    }
 
     public void checkNickname(final String nickname) {
         if (!userRepository.existsByName(nickname)) {
@@ -102,6 +113,7 @@ public class AuthService {
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }
 
+    //태그 리스트 사이즈 검증
     private void validateUserTagSize(final List<DateTagType> userTags) {
         if (userTags.isEmpty() || userTags.size() > 3) {
             throw new InvalidValueException((FailureCode.WRONG_USER_TAG_SIZE));
