@@ -16,14 +16,18 @@ import java.io.IOException;
 public class KakaoPlatformUserIdProvider {
     private final KakaoFeignApi kakaoFeignApi;
     private final ObjectMapper objectMapper;
-    private static final String TOKEN_TYPE = "BEARER :";
+    private static final String TOKEN_TYPE = "Bearer ";
 
     //AuthService에서 호출 : 카카오에서 주는 userId 받아오기
-    public String getKakaoPlatformUserId(String accessToken) {
+    public String getKakaoPlatformUserId(final String accessToken) {
         String kakaoAccessTokenWithTokenType = getAccessTokenWithTokenType(accessToken);
+        KakaoAccessTokenInfoRes kakaoAccessTokenInfoRes = getKakaoAccessTokenInfo(kakaoAccessTokenWithTokenType);
+        return String.valueOf(kakaoAccessTokenInfoRes.id());
+    }
 
+    private KakaoAccessTokenInfoRes getKakaoAccessTokenInfo(final String token) {
         try {
-            return String.valueOf(kakaoFeignApi.getKakaoPlatformUserId(kakaoAccessTokenWithTokenType));
+            return kakaoFeignApi.getKakaoPlatformUserId(token);
         } catch (FeignException e) {
             log.error("Kakao feign exception : ", e);
 
@@ -32,15 +36,17 @@ public class KakaoPlatformUserIdProvider {
 
             //카카오에서 주는 에러 코드가 -1이면 카카오 내부 에러, 나머지는 카카오 액세스 토큰 에러
             if (errorResponse.getCode() == -1) {
+                log.error("Kakao feign exception : ", e);
                 throw new UnauthorizedException(FailureCode.KAKAO_INTERNER_ERROR);
             } else {
+                log.error("feign exception : ", e);
                 throw new UnauthorizedException(FailureCode.INVALID_KAKAO_TOKEN);
             }
         }
     }
 
     private String getAccessTokenWithTokenType(String accessToken) {
-        return  TOKEN_TYPE + accessToken;
+        return TOKEN_TYPE + accessToken;
     }
 
     private KakaoErrorRes convertToKakaoErrorResponse(String responseBody) {
