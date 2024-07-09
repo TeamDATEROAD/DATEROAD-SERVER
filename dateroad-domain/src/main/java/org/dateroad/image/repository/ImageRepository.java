@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Long> {
-    Image findFirstByCourseOrderBySequenceAsc(Course course);
+    Optional<Image> findFirstByCourseOrderBySequenceAsc(Course course);
 }

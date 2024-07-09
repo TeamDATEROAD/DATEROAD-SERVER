@@ -5,16 +5,20 @@ import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.Token;
 import org.dateroad.code.FailureCode;
 import org.dateroad.exception.ConflictException;
+import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.exception.InvalidValueException;
 import org.dateroad.feign.apple.ApplePlatformUserIdProvider;
 import org.dateroad.feign.kakao.KakaoPlatformUserIdProvider;
+import org.dateroad.refreshtoken.repository.RefreshTokenRepository;
 import org.dateroad.tag.domain.DateTagType;
 import org.dateroad.tag.domain.UserTag;
 import org.dateroad.tag.repository.UserTagRepository;
 import org.dateroad.user.domain.Platform;
 import org.dateroad.user.domain.User;
 import org.dateroad.user.repository.UserRepository;
+import org.dateroad.user.dto.request.UserSignInReq;
 import org.dateroad.user.dto.request.UserSignUpReq;
+import org.dateroad.user.dto.response.UserSignInRes;
 import org.dateroad.user.dto.response.UsersignUpRes;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +33,7 @@ public class AuthService {
     private final ApplePlatformUserIdProvider applePlatformUserIdProvider;
     private final UserTagRepository userTagRepository;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public UsersignUpRes signUp(final String token, final UserSignUpReq userSignUpReq) {
@@ -43,6 +48,12 @@ public class AuthService {
         return UsersignUpRes.of(newUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
 
+    @Transactional
+    public UserSignInRes signIn(final String token, final UserSignInReq userSignInReq) {
+        String platformUserId = getUserPlatformId(userSignInReq.platform(), token);
+        User foundUser = getUser(userSignInReq.platform(), platformUserId);
+        Token issuedToken = jwtProvider.issueToken(foundUser.getId());
+        return UserSignInRes.of(foundUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     public void checkNickname(final String nickname) {
         if (!userRepository.existsByName(nickname)) {
             return;
@@ -80,6 +91,12 @@ public class AuthService {
                 .map(dateTagType -> UserTag.create(savedUser, dateTagType))
                 .map(userTagRepository::save)
                 .toList();
+    }
+
+    //유저 가져오기(검색)
+    private User getUser(final Platform platform, final String platformUserId) {
+        return userRepository.findUserByPlatFormAndPlatformUserId(platform, platformUserId)
+                .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }
 
     private void validateUserTagSize(final List<DateTagType> userTags) {
