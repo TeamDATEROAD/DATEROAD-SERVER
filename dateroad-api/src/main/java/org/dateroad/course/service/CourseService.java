@@ -5,12 +5,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.course.dto.request.CourseGetAllReq;
+import org.dateroad.course.dto.response.CourseDtoRes;
 import org.dateroad.course.dto.response.CourseGetAllRes;
-import org.dateroad.course.dto.response.CourseGetAllRes.CourseDtoRes;
-import org.dateroad.course.dto.response.DataAccessGetAllRes;
+import org.dateroad.course.dto.response.DateAccessGetAllRes;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.repository.CourseRepository;
-import org.dateroad.dateAccess.domain.DateAccess;
 import org.dateroad.dateAccess.repository.DataAccessRepository;
 import org.dateroad.image.domain.Image;
 import org.dateroad.image.repository.ImageRepository;
@@ -46,7 +45,7 @@ public class CourseService {
         int likeCount = likeRepository.countByCourse(course);
         Image thumbnailImage = imageRepository.findFirstByCourseOrderBySequenceAsc(course);
         String thumbnailUrl = thumbnailImage != null ? thumbnailImage.getImageUrl() : null;
-        int duration = coursePlaceRepository.findTotalDurationByCourseId(course.getId());
+        float duration = coursePlaceRepository.findTotalDurationByCourseId(course.getId());
 
         return CourseDtoRes.of(
                 course.getId(),
@@ -59,9 +58,9 @@ public class CourseService {
         );
     }
 
-    public DataAccessGetAllRes getAllDataAccessCourse(Long userId) {
+    public DateAccessGetAllRes getAllDataAccessCourse(Long userId) {
         List<Course> accesses = dataAccessRepository.findCoursesByUserId(userId);
         List<CourseDtoRes> courseDtoResList = convertToDtoList(accesses, Function.identity());
-        return DataAccessGetAllRes.of(courseDtoResList);
+        return DateAccessGetAllRes.of(courseDtoResList);
     }
 }
