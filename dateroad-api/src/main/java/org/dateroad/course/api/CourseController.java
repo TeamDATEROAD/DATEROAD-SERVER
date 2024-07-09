@@ -25,6 +25,7 @@ public class CourseController {
     ) {
         CourseGetAllRes courseAll = courseService.getAllCourses(courseGetAllReq);
         return ResponseEntity.ok(courseAll);
+
     }
 
     @GetMapping("/date-access")

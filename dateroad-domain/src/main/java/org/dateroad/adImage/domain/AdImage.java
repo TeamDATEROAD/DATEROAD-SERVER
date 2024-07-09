@@ -1,9 +1,7 @@
-package org.dateroad.point.domain;
+package org.dateroad.adImage.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,45 +15,43 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.dateroad.advertisement.domain.Advertisment;
 import org.dateroad.common.BaseTimeEntity;
-import org.dateroad.user.domain.User;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
-@Table(name = "points")
-public class Point extends BaseTimeEntity {
+@Table(name = "ad_images")
+public class AdImage extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "point_id")
+    @Column(name = "image_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "advertisment_id")
     @NotNull
-    private User user;
+    private Advertisment advertisment;
 
-    @Column(name = "point")
+    @Column(name = "image_url")
     @NotNull
-    private int point;
+    private String imageUrl;
 
-    @Column(name = "transcation_type")
+    @Column(name = "sequence")
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private TransactionType transactionType;
+    private int sequence;
 
-    @Column(name = "description")
-    @NotNull
-    private String description;
-
-    public static Point create(User user, int point, final TransactionType transactionType, final String description) {
-        return Point.builder()
-                .user(user)
-                .point(point)
-                .transactionType(transactionType)
-                .description(description)
+    public static AdImage create(
+            final Advertisment advertisment,
+            final String imageUrl,
+            final int sequence
+    ) {
+        return AdImage.builder()
+                .advertisment(advertisment)
+                .imageUrl(imageUrl)
+                .sequence(sequence)
                 .build();
     }
 }
