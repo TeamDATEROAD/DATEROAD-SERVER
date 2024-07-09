@@ -1,6 +1,7 @@
 package org.dateroad.user.api;
 
 import lombok.RequiredArgsConstructor;
+import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.user.dto.request.UserSignInReq;
 import org.dateroad.user.dto.request.UserSignUpReq;
 import org.dateroad.user.dto.response.UserSignInRes;
@@ -34,6 +35,14 @@ public class UserController {
         return ResponseEntity
                 .ok(userSignInRes);
     }
+
+    @DeleteMapping("/signout")
+    public ResponseEntity<Void> signout(@UserId final Long userId) {
+        authService.signout(userId);
+		return ResponseEntity
+			    .ok()
+				.build();
+	}
 
     @GetMapping("/check")
     public ResponseEntity<Void> checkNickname(@RequestParam("name") final String nickname) {
