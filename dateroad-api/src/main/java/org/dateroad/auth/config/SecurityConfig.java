@@ -26,7 +26,6 @@ public class SecurityConfig {
     private static final String[] whiteList = {
             "/actuator/health",
             "/api/v1/users/signup",
-            "/**", //todo: 삭제해야됨
             "/api/users/signin",
             "/api/users/reissue",
             "/",

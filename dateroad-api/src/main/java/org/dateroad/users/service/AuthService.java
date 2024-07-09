@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class UserService {
+public class AuthService {
     private final UserRepository userRepository;
     private final KakaoPlatformUserIdProvider kakaoPlatformUserIdProvider;
     private final ApplePlatformUserIdProvider applePlatformUserIdProvider;
