@@ -124,6 +124,6 @@ public class AuthService {
 
     //refreshToken 삭제
     private void deleteRefreshToken(final long userId) {
-        refreshTokenRepository.deleteByUserId();
+        refreshTokenRepository.deleteByUserId(userId);
     }
 }
