@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.dateroad.code.FailureCode;
 import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.response.CourseDtoRes;
 import org.dateroad.course.dto.response.CourseGetAllRes;
@@ -11,12 +12,15 @@ import org.dateroad.course.dto.response.DateAccessGetAllRes;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.dateAccess.repository.DataAccessRepository;
+import org.dateroad.exception.DateRoadException;
 import org.dateroad.image.domain.Image;
 import org.dateroad.image.repository.ImageRepository;
 import org.dateroad.like.repository.LikeRepository;
 import org.dateroad.place.repository.CoursePlaceRepository;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.ErrorResponseException;
 
 @Service
 @RequiredArgsConstructor
@@ -42,8 +46,12 @@ public class CourseService {
     }
 
     private CourseDtoRes convertToDto(Course course) {
-        int likeCount = likeRepository.countByCourse(course);
-        Image thumbnailImage = imageRepository.findFirstByCourseOrderBySequenceAsc(course);
+        int likeCount = likeRepository.countByCourse(course)
+                .orElse(0);
+        Image thumbnailImage = imageRepository.findFirstByCourseOrderBySequenceAsc(course)
+                .orElseThrow(
+                        () -> new DateRoadException(FailureCode.COURSE_THUMBNAIL_NOT_FOUND)
+                );
         String thumbnailUrl = thumbnailImage != null ? thumbnailImage.getImageUrl() : null;
         float duration = coursePlaceRepository.findTotalDurationByCourseId(course.getId());
 

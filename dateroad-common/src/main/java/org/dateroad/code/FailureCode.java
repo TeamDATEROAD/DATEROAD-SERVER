@@ -32,9 +32,6 @@ public enum FailureCode {
     EXPIRED_APPLE_IDENTITY_TOKEN(HttpStatus.UNAUTHORIZED, "e4022", "애플 아이덴티티 토큰이 만료되었습니다."),
     INVALID_APPLE_IDENTITY_TOKEN_CLAIMS(HttpStatus.UNAUTHORIZED, "e4023", "애플 아이덴티티 토큰의 클레임이 잘못되었습니다."),
 
-
-
-
     /**
      * 403 Forbidden
      */
@@ -45,7 +42,7 @@ public enum FailureCode {
      */
     ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND, "e4040", "대상을 찾을 수 없습니다."),
     TOKEN_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4041", "찾을 수 없는 토큰 타입입니다."),
-
+    COURSE_THUMBNAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "e4042", "코스 썸네일을 찾을수 없습니다."),
     /**
      * 405 Method Not Allowed
      */
