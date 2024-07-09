@@ -21,7 +21,6 @@ public class PointController {
             @UserId Long userId
     ){
         PointGetAllRes pointGetAllRes = pointService.getAllPoints(userId);
-        System.out.println(pointGetAllRes);
         return ResponseEntity.ok(pointGetAllRes);
     }
 }

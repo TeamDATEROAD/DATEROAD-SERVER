@@ -10,4 +10,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsUserByPlatFormAndPlatformUserId(final Platform platform, final String platformUserId);
 
     Optional<User> findUserByPlatFormAndPlatformUserId(final Platform platform, final String platformUserId);
+    boolean existsByName(final String name);
 }
