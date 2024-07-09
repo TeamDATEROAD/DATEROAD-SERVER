@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(accessToken) && accessToken.startsWith(Constants.BEARER)) {
             return accessToken.substring(Constants.BEARER.length());
         }
-        throw new UnauthorizedException(FailureCode.INVALID_ACCESS_TOKEN_VALUE);
+        throw new UnauthorizedException(FailureCode.UNAUTHORIZED);
     }
 
     private void doAuthentication(final String token, final long userId) {

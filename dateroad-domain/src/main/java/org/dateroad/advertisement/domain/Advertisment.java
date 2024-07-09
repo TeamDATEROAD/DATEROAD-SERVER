@@ -2,6 +2,8 @@ package org.dateroad.advertisement.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,10 +36,25 @@ public class Advertisment extends BaseTimeEntity {
     @NotNull
     private String description;
 
-    public static Advertisment create(final String title, final String description) {
+    @Column(name = "thumbnail")
+    @NotNull
+    private String thumbnail;
+
+    @Column(name = "tag")
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private AdTagType tag;
+
+    public static Advertisment create(
+            final String title,
+            final String description,
+            final String thumbnail,
+            final AdTagType tag) {
         return Advertisment.builder()
                 .title(title)
                 .description(description)
+                .thumbnail(thumbnail)
+                .tag(tag)
                 .build();
     }
 }
