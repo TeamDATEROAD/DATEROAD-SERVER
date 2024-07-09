@@ -33,6 +33,8 @@ public class UserController {
         UserSignInRes userSignInRes = authService.signIn(token, userSignInReq);
         return ResponseEntity
                 .ok(userSignInRes);
+    }
+
     @GetMapping("/check")
     public ResponseEntity<Void> checkNickname(@RequestParam("name") final String nickname) {
         authService.checkNickname(nickname);

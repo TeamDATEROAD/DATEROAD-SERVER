@@ -15,8 +15,8 @@ import org.dateroad.tag.domain.UserTag;
 import org.dateroad.tag.repository.UserTagRepository;
 import org.dateroad.user.domain.Platform;
 import org.dateroad.user.domain.User;
-import org.dateroad.user.repository.UserRepository;
 import org.dateroad.user.dto.request.UserSignInReq;
+import org.dateroad.user.repository.UserRepository;
 import org.dateroad.user.dto.request.UserSignUpReq;
 import org.dateroad.user.dto.response.UserSignInRes;
 import org.dateroad.user.dto.response.UsersignUpRes;
@@ -54,6 +54,9 @@ public class AuthService {
         User foundUser = getUser(userSignInReq.platform(), platformUserId);
         Token issuedToken = jwtProvider.issueToken(foundUser.getId());
         return UserSignInRes.of(foundUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
+    }
+
+
     public void checkNickname(final String nickname) {
         if (!userRepository.existsByName(nickname)) {
             return;
@@ -104,7 +107,4 @@ public class AuthService {
             throw new InvalidValueException((FailureCode.WRONG_USER_TAG_SIZE));
         }
     }
-
-
-
 }

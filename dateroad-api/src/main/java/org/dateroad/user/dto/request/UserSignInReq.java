@@ -1,4 +1,4 @@
-package org.dateroad.users.dto.request;
+package org.dateroad.user.dto.request;
 
 import org.dateroad.user.domain.Platform;
 
