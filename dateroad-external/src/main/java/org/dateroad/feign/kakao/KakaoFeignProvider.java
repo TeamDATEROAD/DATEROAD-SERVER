@@ -6,9 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;
 import org.dateroad.exception.UnauthorizedException;
-import org.dateroad.feign.kakao.dto.request.KakaoUnlinkReq;
 import org.dateroad.feign.kakao.dto.response.KaKaoErrorRes;
-import org.dateroad.feign.kakao.dto.response.KaKaoUnlinkRes;
 import org.dateroad.feign.kakao.dto.response.KakaoAccessTokenInfoRes;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +19,8 @@ public class KakaoFeignProvider {
     private final KakaoProperties kakaoProperties;
     private final KakaoFeignApi kakaoFeignApi;
     private final ObjectMapper objectMapper;
-    private static final String TOKEN_TYPE = "Bearer ";
+
+    private final String TARGETIDTYPE = "user_id";
 
     //AuthService에서 호출 : 카카오에서 주는 userId 받아오기
     public String getKakaoPlatformUserId(final String kakaoAccessToken) {
@@ -30,21 +29,15 @@ public class KakaoFeignProvider {
         return String.valueOf(kakaoAccessTokenInfoRes.id());
     }
 
-    //AuthService에서 호출 : 회원탈퇴 할 때, 카카오톡과도 연결 끊기
+    //AuthService에서 호출 : 회원탈퇴 할 때, 카카오톡과 연결 끊기
     public void unLinkWithKakao(final String kakaoPlatformUserId) {
-        String kakaoRequestHeader = getKakaoRequestHeader(KakaoRequestType.UN_LINK, null);
-        KakaoUnlinkReq kakaoUnlinkReq = KakaoUnlinkReq.of(Long.valueOf(kakaoPlatformUserId));
-        unLinkWithKakaoFeign(kakaoRequestHeader, kakaoUnlinkReq);
-    }
-
-    private void unLinkWithKakaoFeign(final String kakaoRequestHeader, final KakaoUnlinkReq kakaoUnlinkReq) {
+        String kakaoRequestHeader = getKakaoRequestHeader(KakaoRequestType.UN_LINK, kakaoPlatformUserId);
         try {
-            kakaoFeignApi.unlink(kakaoRequestHeader, kakaoUnlinkReq);
+            kakaoFeignApi.unlink(kakaoRequestHeader, TARGETIDTYPE, Long.valueOf(kakaoPlatformUserId));
         } catch (FeignException e) {
             throw new UnauthorizedException(FailureCode.UN_LINK_WITH_KAKAO_UNAUTHORIZED);
         }
     }
-
 
     private KakaoAccessTokenInfoRes getKakaoAccessTokenInfoFeign(final String accessTokenWithTokenType) {
         try {
