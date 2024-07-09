@@ -1,4 +1,4 @@
-package org.dateroad.users.dto.response;
+package org.dateroad.user.dto.response;
 
 import lombok.AccessLevel;
 import lombok.Builder;

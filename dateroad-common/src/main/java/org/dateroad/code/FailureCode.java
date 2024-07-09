@@ -60,6 +60,7 @@ public enum FailureCode {
      */
     CONFLICT(HttpStatus.CONFLICT, "e4090", "이미 존재하는 리소스입니다."),
     DUPLICATE_USER(HttpStatus.CONFLICT, "e4091", "이미 존재하는 유저입니다."),
+    DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "e4092", "이미 존재하는 닉네임입니다."),
 
 
     /**

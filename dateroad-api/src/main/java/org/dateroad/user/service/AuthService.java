@@ -1,4 +1,4 @@
-package org.dateroad.users.service;
+package org.dateroad.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.jwt.JwtProvider;
@@ -15,11 +15,11 @@ import org.dateroad.tag.domain.UserTag;
 import org.dateroad.tag.repository.UserTagRepository;
 import org.dateroad.user.domain.Platform;
 import org.dateroad.user.domain.User;
+import org.dateroad.user.dto.request.UserSignInReq;
 import org.dateroad.user.repository.UserRepository;
-import org.dateroad.users.dto.request.UserSignInReq;
-import org.dateroad.users.dto.request.UserSignUpReq;
-import org.dateroad.users.dto.response.UserSignInRes;
-import org.dateroad.users.dto.response.UsersignUpRes;
+import org.dateroad.user.dto.request.UserSignUpReq;
+import org.dateroad.user.dto.response.UserSignInRes;
+import org.dateroad.user.dto.response.UsersignUpRes;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +39,7 @@ public class AuthService {
     public UsersignUpRes signUp(final String token, final UserSignUpReq userSignUpReq) {
         String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
         validateUserTagSize(userSignUpReq.tag());
+        checkNickname(userSignUpReq.name());
         validateDuplicatedUser(userSignUpReq.platform(), platformUserId);
         User newUser = saveUser(userSignUpReq.name(), userSignUpReq.image(), userSignUpReq.platform(), platformUserId);
         saveUserTag(newUser, userSignUpReq.tag());
@@ -53,6 +54,15 @@ public class AuthService {
         User foundUser = getUser(userSignInReq.platform(), platformUserId);
         Token issuedToken = jwtProvider.issueToken(foundUser.getId());
         return UserSignInRes.of(foundUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
+    }
+
+
+    public void checkNickname(final String nickname) {
+        if (!userRepository.existsByName(nickname)) {
+            return;
+        } else {
+            throw new ConflictException(FailureCode.DUPLICATE_NICKNAME);
+        }
     }
 
     private String getUserPlatformId(final Platform platform, final String token) {
