@@ -9,6 +9,7 @@ import org.dateroad.date.dto.request.TagCreateReq;
 import org.dateroad.date.repository.DatePlaceRepository;
 import org.dateroad.date.repository.DateTagRepository;
 import org.dateroad.exception.EntityNotFoundException;
+import org.dateroad.exception.ForbiddenException;
 import org.dateroad.place.domain.DatePlace;
 import org.dateroad.tag.domain.DateTag;
 import org.dateroad.user.domain.User;
@@ -35,6 +36,16 @@ public class DateService {
         createDatePlace(date, dateCreateReq.places());
     }
 
+    @Transactional
+    public void deleteDate(Long userId, Long dateId) {
+        User findUser = getUser(userId);
+        Date findDate = getDate(dateId);
+        validateDate(findUser, findDate);
+        datePlaceRepository.deleteByDateId(dateId);
+        dateTagRepository.deleteByDateId(dateId);
+        dateRepository.deleteById(dateId);
+    }
+
     private User getUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
@@ -49,14 +60,23 @@ public class DateService {
     private void createDateTag(Date date, List<TagCreateReq> tags) {
         List<DateTag> dateTags = tags.stream()
                 .map(t -> DateTag.create(date, t.tag())).toList();
-
         dateTagRepository.saveAll(dateTags);
     }
 
     private void createDatePlace(Date date, List<PlaceCreateReq> places) {
         List<DatePlace> datePlaces = places.stream()
                         .map(p -> DatePlace.create(date, p.name(), p.duration(), p.sequence())).toList();
-
         datePlaceRepository.saveAll(datePlaces);
+    }
+
+    private Date getDate(Long dateId) {
+        return dateRepository.findById(dateId)
+                .orElseThrow(() -> new EntityNotFoundException(FailureCode.DATE_NOT_FOUND));
+    }
+
+    private void validateDate(User findUser, Date findDate) {
+        if (!findUser.equals(findDate.getUser())) {
+            throw new ForbiddenException(FailureCode.DATE_DELETE_ACCESS_DENIED);
+        }
     }
 }
