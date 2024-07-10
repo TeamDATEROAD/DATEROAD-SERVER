@@ -5,9 +5,11 @@ import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.user.dto.request.AppleWithdrawAuthCodeReq;
 import org.dateroad.user.dto.request.UserSignInReq;
 import org.dateroad.user.dto.request.UserSignUpReq;
+import org.dateroad.user.dto.response.UserInfoGetMyPageRes;
 import org.dateroad.user.dto.response.UserSignInRes;
 import org.dateroad.user.dto.response.UsersignUpRes;
 import org.dateroad.user.service.AuthService;
+import org.dateroad.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import static org.dateroad.common.Constants.AUTHORIZATION;
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final AuthService authService;
+    private final UserService userService;
 
     @PostMapping("/signup")
     public ResponseEntity<UsersignUpRes> signUp(@RequestHeader(AUTHORIZATION) final String token,
@@ -60,5 +63,11 @@ public class UserController {
         return ResponseEntity
                 .ok()
                 .build();
+    }
+
+    @GetMapping
+    public ResponseEntity<UserInfoGetMyPageRes> getUserInfoMyPage(@UserId final Long userId) {
+        UserInfoGetMyPageRes userInfoGetMyPageRes = userService.getUserInfoMyPage(userId);
+        return ResponseEntity.ok(userInfoGetMyPageRes);
     }
 }
