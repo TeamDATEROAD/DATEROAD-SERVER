@@ -52,10 +52,10 @@ public class UserController {
     }
 
     @PatchMapping("/reissue")
-    public ResponseEntity<UserJwtInfoRes> reissue(@RequestHeader(AUTHORIZATION) String refreshToken) {
+    public ResponseEntity<UserJwtInfoRes> reissue(@RequestHeader(AUTHORIZATION) final String refreshToken) {
         UserJwtInfoRes userJwtInfoRes = authService.reissue(refreshToken);
         return ResponseEntity
                 .ok(userJwtInfoRes);
-        
+
     }
 }
