@@ -54,7 +54,7 @@ public class KakaoPlatformUserIdProvider {
             return objectMapper.readValue(responseBody, KakaoErrorRes.class);
         } catch (IOException e) {
             log.error("Convert To KakaoErrorResponse Error : ", e);
-            throw new UnauthorizedException(FailureCode.INVALID_KAKAO_TOKEN);
+            throw new UnauthorizedException(FailureCode.UNAUTHORIZED);
         }
     }
 }
