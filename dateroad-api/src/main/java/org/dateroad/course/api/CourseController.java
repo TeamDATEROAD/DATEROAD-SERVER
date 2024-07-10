@@ -56,6 +56,7 @@ public class CourseController {
             @RequestHeader Long userId,
             @ModelAttribute CourseCreateReq courseCreateReq
     ) {
+        System.out.println(courseCreateReq);
         return ResponseEntity.created(
                 URI.create(courseService.createCourse(userId, courseCreateReq))).build();
     }

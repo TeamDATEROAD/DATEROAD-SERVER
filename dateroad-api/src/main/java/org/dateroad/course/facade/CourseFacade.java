@@ -5,11 +5,11 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.Image.service.ImageService;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
-import org.dateroad.course.dto.request.TagCreateReq;
 import org.dateroad.course.service.CoursePlaceService;
 import org.dateroad.course.service.CourseTagService;
 import org.dateroad.date.domain.Course;
 import org.dateroad.image.domain.Image;
+import org.dateroad.tag.domain.DateTagType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +36,7 @@ public class CourseFacade {
     }
 
     @Async
-    public void createCourseTags(final List<TagCreateReq> tags, final Course course) {
+    public void createCourseTags(final List<DateTagType> tags, final Course course) {
         courseTagService.createCourseTags(tags, course);
     }
 

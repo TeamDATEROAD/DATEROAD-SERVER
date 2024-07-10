@@ -3,7 +3,7 @@ package org.dateroad.course.dto.response;
 import lombok.Builder;
 
 @Builder
-public record CourseDtoRes(
+public record CourseDtoGetRes(
         Long courseId,
         String thumbnail,
         String city,
@@ -12,14 +12,14 @@ public record CourseDtoRes(
         int cost,
         float duration
 ) {
-    public static CourseDtoRes of(Long courseId,
-                                  String thumbnail,
-                                  String city,
-                                  String title,
-                                  int like,
-                                  int cost,
-                                  float duration) {
-        return CourseDtoRes.builder()
+    public static CourseDtoGetRes of(Long courseId,
+                                     String thumbnail,
+                                     String city,
+                                     String title,
+                                     int like,
+                                     int cost,
+                                     float duration) {
+        return CourseDtoGetRes.builder()
                 .courseId(courseId)
                 .thumbnail(thumbnail)
                 .city(city)
