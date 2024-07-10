@@ -38,6 +38,10 @@ public class Course extends DateBase {
     @NotNull
     private int cost;
 
+    @Column(name = "thumbnail")
+    @NotNull
+    private String thumbnail;
+
     public static Course create(final String title, final String description,
                                 final String country, final String city,
                                 final int cost, final LocalDate date,
