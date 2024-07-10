@@ -7,7 +7,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,7 +37,7 @@ public abstract class DateBase extends BaseTimeEntity {
 
     @Column(name = "start_at")
     @NotNull
-    private LocalDateTime startAt;
+    private LocalTime startAt;
 
     @Column(name = "country")
     @NotNull

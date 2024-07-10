@@ -7,11 +7,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.dateroad.user.domain.User;
 
 @Entity
 @SuperBuilder
@@ -24,15 +25,16 @@ public class Date extends DateBase {
     @Column(name = "date_id")
     private Long id;
 
-    public static Date create(final String title, final String country,
-                              final String city, LocalDate date,
-                              final LocalDateTime startAt) {
+    public static Date create(final User user, final String title,
+                              final LocalDate date, final LocalTime startAt,
+                              final String country, final String city) {
         return Date.builder()
+                .user(user)
                 .title(title)
-                .city(city)
-                .country(country)
                 .date(date)
                 .startAt(startAt)
+                .country(country)
+                .city(city)
                 .build();
     }
 }

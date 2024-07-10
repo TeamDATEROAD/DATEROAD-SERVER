@@ -1,8 +1,9 @@
 package org.dateroad.course.dto.response;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 public record CourseDtoRes(
         Long courseId,
         String thumbnail,

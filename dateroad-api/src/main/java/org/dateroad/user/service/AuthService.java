@@ -53,7 +53,7 @@ public class AuthService {
     @Transactional
     public UserSignInRes signIn(final String token, final UserSignInReq userSignInReq) {
         String platformUserId = getUserPlatformId(userSignInReq.platform(), token);
-        User foundUser = getUser(userSignInReq.platform(), platformUserId);
+        User foundUser = getUserByPlatformAndPlatformUserId(userSignInReq.platform(), platformUserId);
         Token issuedToken = jwtProvider.issueToken(foundUser.getId());
         return UserSignInRes.of(foundUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
@@ -84,6 +84,12 @@ public class AuthService {
         } else {
             throw new ConflictException(FailureCode.DUPLICATE_NICKNAME);
         }
+	}
+
+    @Transactional
+    public void signout(final long userId) {
+        User foundUser = getUserByUserId(userId);
+        deleteRefreshToken(foundUser.getId());
     }
 
     //플랫폼 유저 아이디 가져오기 (카카오 or 애플)
@@ -118,10 +124,18 @@ public class AuthService {
                 .toList();
     }
 
-    //유저 가져오기(검색)
-    private User getUser(final Platform platform, final String platformUserId) {
+    //유저 가져오기(platform이랑 platformUserId 사용)
+    private User getUserByPlatformAndPlatformUserId(final Platform platform, final String platformUserId) {
         return userRepository.findUserByPlatFormAndPlatformUserId(platform, platformUserId)
-                .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND)
+                );
+    }
+
+    //유저 가져오기(userId 사용)
+    private User getUserByUserId(final long userId) {
+        return userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND)
+        );
     }
 
     //태그 리스트 사이즈 검증
@@ -129,5 +143,10 @@ public class AuthService {
         if (userTags.isEmpty() || userTags.size() > 3) {
             throw new BadRequestException((FailureCode.WRONG_USER_TAG_SIZE));
         }
+    }
+
+    //refreshToken 삭제
+    private void deleteRefreshToken(final long userId) {
+        refreshTokenRepository.deleteByUserId(userId);
     }
 }

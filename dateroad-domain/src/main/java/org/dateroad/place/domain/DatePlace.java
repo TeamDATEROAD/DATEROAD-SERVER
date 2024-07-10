@@ -23,7 +23,7 @@ public class DatePlace extends Place {
     @NotNull
     private Date date;
 
-    public static DatePlace create(final String name, float duration, final Date date, final int sequence) {
+    public static DatePlace create(final Date date, final String name, final float duration, final int sequence) {
         return DatePlace.builder()
                 .name(name)
                 .duration(duration)

@@ -37,6 +37,14 @@ public class UserController {
                 .ok(userSignInRes);
     }
 
+    @DeleteMapping("/signout")
+    public ResponseEntity<Void> signout(@UserId final Long userId) {
+        authService.signout(userId);
+		return ResponseEntity
+			    .ok()
+				.build();
+	}
+
     @GetMapping("/check")
     public ResponseEntity<Void> checkNickname(@RequestParam("name") final String nickname) {
         authService.checkNickname(nickname);

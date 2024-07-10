@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,10 +38,14 @@ public class Course extends DateBase {
     @NotNull
     private int cost;
 
+    @Column(name = "thumbnail")
+    @NotNull
+    private String thumbnail;
+
     public static Course create(final String title, final String description,
                                 final String country, final String city,
                                 final int cost, final LocalDate date,
-                                final LocalDateTime startAt) {
+                                final LocalTime startAt) {
         return Course.builder()
                 .title(title)
                 .description(description)
