@@ -138,19 +138,12 @@ public class AuthService {
 
     public RefreshToken getRefreshTokenByToken(final String refreshToken) {
         try {
-//            byte[] decodedRefreshToken = Base64.getDecoder().decode(refreshToken);
-            RefreshToken optionalRefreshToken = refreshTokenRepository.findByToken(refreshToken)
+            return refreshTokenRepository.findByToken(refreshToken)
                     .orElseThrow(() -> new UnauthorizedException(FailureCode.UNAUTHORIZED));
-            if (optionalRefreshToken == null) {
-                throw new UnauthorizedException(FailureCode.UNAUTHORIZED);
-            }
-            return optionalRefreshToken;
         } catch (IllegalArgumentException e) {
-            // Base64 decoding failed
             log.error(e.getMessage());
             throw new UnauthorizedException(FailureCode.INVALID_REFRESH_TOKEN_VALUE);
         } catch (Exception e) {
-            // Log the actual exception
             log.info(e.getMessage());
             throw new RuntimeException("An unexpected error occurred", e);
         }
@@ -159,9 +152,5 @@ public class AuthService {
     //refreshToken 삭제
     private void deleteRefreshToken(final long userId) {
         refreshTokenRepository.deleteByUserId(userId);
-    }
-
-    public byte[] toBinary(String token) {
-        return Base64.getDecoder().decode(token);
     }
 }
