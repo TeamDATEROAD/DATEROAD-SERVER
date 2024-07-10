@@ -27,7 +27,6 @@ import java.util.Map;
 @Component
 public class AppleClientSecretGenerator {
     private final AppleProperties appleProperties;
-    private final AppleFeignApi appleFeignApi;
 
     public String createClientSecret() throws IOException {
         Date expirationDate = Date.from(LocalDateTime.now().plusDays(29).atZone(ZoneId.systemDefault()).toInstant());
@@ -54,21 +53,5 @@ public class AppleClientSecretGenerator {
         JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
         PrivateKeyInfo object = (PrivateKeyInfo) pemParser.readObject();
         return converter.getPrivateKey(object);
-    }
-
-    public String getAppleAccessToken(String clientSecret, String authCode){
-        try {
-            AppleTokenRes appleTokenRes = appleFeignApi
-                    .getAppleToken(
-                            clientSecret,
-                            authCode,
-                            appleProperties.getType(),
-                            appleProperties.getClientId()
-                    );
-
-            return appleTokenRes.access_token();
-        } catch (Exception e) {
-            throw new UnauthorizedException(FailureCode.INVALID_APPLE_TOKEN_ACCESS);
-        }
     }
 }
