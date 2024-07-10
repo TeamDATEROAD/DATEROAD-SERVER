@@ -35,6 +35,9 @@ public enum FailureCode {
 
     INVALID_REFRESH_TOKEN_VALUE(HttpStatus.UNAUTHORIZED, "e4024", "잘못된 리프레시토큰입니다."),
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "e4025", "리프레시 토큰 기간이 만료되었습니다. 재로그인 해주세요"),
+    INVALID_KAKAO_ACCESS(HttpStatus.UNAUTHORIZED, "e4026", "잘못된 카카오 통신 접근입니다."),
+    UN_LINK_WITH_KAKAO_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "e4027", "카카오 연결 끊기 통신에 실패했습니다"),
+    INVALID_APPLE_TOKEN_ACCESS(HttpStatus.UNAUTHORIZED, "e4028", "잘못된 애플 토큰 통신 접근입니다."),
 
     /**
      * 403 Forbidden
