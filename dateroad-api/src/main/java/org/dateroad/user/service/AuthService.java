@@ -60,6 +60,7 @@ public class AuthService {
     public UserJwtInfoRes signIn(final String token, final UserSignInReq userSignInReq) {
         String platformUserId = getUserPlatformId(userSignInReq.platform(), token);
         User foundUser = getUserByPlatformAndPlatformUserId(userSignInReq.platform(), platformUserId);
+        deleteRefreshToken(foundUser.getId());
         Token issuedToken = jwtProvider.issueToken(foundUser.getId());
         return UserJwtInfoRes.of(foundUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
