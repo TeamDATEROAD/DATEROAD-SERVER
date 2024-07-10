@@ -55,14 +55,14 @@ public class DateService {
         LocalTime currentTime = LocalTime.now();
         User findUser = getUser(userId);
         Date nearest = findNearestDate(findUser.getId(), currentDate, currentTime); ;
-        int dDay = calculateDDay(nearest.getDateDay(), currentDate);
+        int dDay = calculateDDay(nearest.getDate(), currentDate);
         return DateGetNearestRes
                 .of(
                         nearest.getId(),
                         dDay,
                         nearest.getTitle(),
-                        nearest.getDateDay().getMonthValue(),
-                        nearest.getDateDay().getDayOfMonth(),
+                        nearest.getDate().getMonthValue(),
+                        nearest.getDate().getDayOfMonth(),
                         nearest.getStartAt()
                 );
     }
