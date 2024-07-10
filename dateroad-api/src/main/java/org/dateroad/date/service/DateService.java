@@ -29,7 +29,7 @@ public class DateService {
     private final DatePlaceRepository datePlaceRepository;
 
     @Transactional
-    public void createDate(Long userId, DateCreateReq dateCreateReq) {
+    public void createDate(final Long userId, final DateCreateReq dateCreateReq) {
         User findUser = getUser(userId);
         Date date = createDate(findUser, dateCreateReq);
         createDateTag(date, dateCreateReq.tags());
@@ -37,7 +37,7 @@ public class DateService {
     }
 
     @Transactional
-    public void deleteDate(Long userId, Long dateId) {
+    public void deleteDate(final Long userId, final Long dateId) {
         User findUser = getUser(userId);
         Date findDate = getDate(dateId);
         validateDate(findUser, findDate);
