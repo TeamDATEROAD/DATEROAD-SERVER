@@ -6,6 +6,7 @@ import org.dateroad.date.domain.Date;
 import org.dateroad.date.dto.request.DateCreateReq;
 import org.dateroad.date.dto.request.PlaceCreateReq;
 import org.dateroad.date.dto.request.TagCreateReq;
+import org.dateroad.date.dto.response.DateDetailRes;
 import org.dateroad.date.repository.DatePlaceRepository;
 import org.dateroad.date.repository.DateTagRepository;
 import org.dateroad.exception.EntityNotFoundException;
@@ -34,6 +35,15 @@ public class DateService {
         Date date = createDate(findUser, dateCreateReq);
         createDateTag(date, dateCreateReq.tags());
         createDatePlace(date, dateCreateReq.places());
+    }
+
+    public DateDetailRes getDateDetail(final Long userId, final Long dateId) {
+        User findUser = getUser(userId);
+        Date findDate = getDate(dateId);
+        validateDate(findUser, findDate);
+        List<DateTag> findDateTags = getDateTag(findDate);
+        List<DatePlace> findDatePlaces = getDatePlace(findDate);
+        return DateDetailRes.of(findDate, findDateTags, findDatePlaces);
     }
 
     @Transactional
@@ -78,5 +88,21 @@ public class DateService {
         if (!findUser.equals(findDate.getUser())) {
             throw new ForbiddenException(FailureCode.DATE_DELETE_ACCESS_DENIED);
         }
+    }
+
+    private List<DateTag> getDateTag(Date date) {
+        List<DateTag> dateTags = dateTagRepository.findByDate(date);
+        if (dateTags == null | dateTags.isEmpty()) {
+            throw new EntityNotFoundException(FailureCode.DATE_TAG_NOT_FOUND);
+        }
+        return dateTags;
+    }
+
+    private List<DatePlace> getDatePlace(Date date) {
+        List<DatePlace> datePlaces = datePlaceRepository.findByDate(date);
+        if (datePlaces == null | datePlaces.isEmpty()) {
+            throw new EntityNotFoundException(FailureCode.DATE_PLACE_NOT_FOUND);
+        }
+        return datePlaces;
     }
 }
