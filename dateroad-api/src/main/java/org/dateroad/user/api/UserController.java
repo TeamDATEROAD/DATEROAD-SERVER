@@ -47,7 +47,7 @@ public class UserController {
 
     @DeleteMapping("/withdraw")
     public ResponseEntity<Void> withdraw(@UserId final Long userId,
-                                         @RequestBody AppleWithdrawAuthCodeReq appleWithdrawAuthCodeReq) {
+                                         @RequestBody final AppleWithdrawAuthCodeReq appleWithdrawAuthCodeReq) {
         authService.withdraw(userId, appleWithdrawAuthCodeReq);
         return ResponseEntity
                 .ok()
