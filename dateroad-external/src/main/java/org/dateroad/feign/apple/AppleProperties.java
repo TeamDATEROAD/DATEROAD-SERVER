@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
-@ConfigurationProperties("feign.apple")
+@ConfigurationProperties(prefix = "feign.apple")
 @Component
 public class AppleProperties {
     private String iss;

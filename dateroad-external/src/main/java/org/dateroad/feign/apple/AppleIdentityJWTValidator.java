@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class AppleIdentityJWTValidator {
-    AppleProperties appleProperties;
+    private final AppleProperties appleProperties;
 
     public boolean isValidAppleIdentityToken(final Claims claims) {
         return claims.getIssuer().contains(appleProperties.getAud())
