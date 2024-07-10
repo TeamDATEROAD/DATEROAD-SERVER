@@ -53,6 +53,7 @@ public enum FailureCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "e4042", "유저를 찾을 수 없습니다."),
     COURSE_THUMBNAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "e4043", "코스 썸네일을 찾을수 없습니다."),
     DATE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4044", "데이트를 찾을 수 없습니다."),
+    NEAREST_DATE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4045", "다가오는 데이트를 찾을 수 없습니다."),
 
     /**
      * 405 Method Not Allowed

@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.dateroad.user.domain.User;
@@ -18,6 +19,7 @@ import org.dateroad.user.domain.User;
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
 @Table(name = "dates")
 public class Date extends DateBase {
     @Id
