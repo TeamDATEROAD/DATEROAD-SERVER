@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class Date extends DateBase {
 
     public static Date create(final String title, final String country,
                               final String city, LocalDate date,
-                              final LocalDateTime startAt) {
+                              final LocalTime startAt) {
         return Date.builder()
                 .title(title)
                 .city(city)
