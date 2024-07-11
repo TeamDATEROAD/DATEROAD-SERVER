@@ -3,6 +3,8 @@ package org.dateroad.course.service;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import io.micrometer.core.instrument.Tags;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
@@ -14,11 +16,21 @@ import org.dateroad.course.dto.response.CourseGetAllRes;
 import org.dateroad.course.dto.response.DateAccessGetAllRes;
 import org.dateroad.course.facade.AsyncService;
 import org.dateroad.date.domain.Course;
+import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.dateroad.date.repository.CourseRepository;
+import org.dateroad.dateAccess.domain.DateAccess;
 import org.dateroad.dateAccess.repository.DateAccessRepository;
 import org.dateroad.exception.DateRoadException;
+import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.image.domain.Image;
+import org.dateroad.image.repository.ImageRepository;
 import org.dateroad.like.repository.LikeRepository;
+import org.dateroad.place.domain.CoursePlace;
+import org.dateroad.place.domain.Place;
+import org.dateroad.place.repository.CoursePlaceRepository;
+import org.dateroad.tag.domain.CourseTag;
+import org.dateroad.tag.domain.DateTagType;
+import org.dateroad.tag.repository.CourseTagRepository;
 import org.dateroad.user.domain.User;
 import org.dateroad.user.repository.UserRepository;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,6 +47,10 @@ public class CourseService {
     private final DateAccessRepository dateAccessRepository;
     private final UserRepository userRepository;
     private final AsyncService asyncService;
+    private final ImageRepository imageRepository;
+    private final CoursePlaceRepository coursePlaceRepository;
+    private final CourseTagRepository courseTagRepository;
+
 
     public CourseGetAllRes getAllCourses(CourseGetAllReq courseGetAllReq) {
         Specification<Course> spec = CourseSpecifications.filterByCriteria(courseGetAllReq);
@@ -51,8 +67,7 @@ public class CourseService {
     }
 
     private CourseDtoGetRes convertToDto(Course course) {
-        int likeCount = likeRepository.countByCourse(course)
-                .orElse(0);
+        int likeCount = likeRepository.countByCourse(course);
         Image thumbnailImage = asyncService.findFirstByCourseOrderBySequenceAsc(course);
         String thumbnailUrl = thumbnailImage != null ? thumbnailImage.getImageUrl() : null;
         float duration = asyncService.findTotalDurationByCourseId(course.getId());
@@ -99,5 +114,93 @@ public class CourseService {
         String thumnailUrl = imageList.getLast().getImageUrl();
         course.setThumbnail(thumnailUrl);
         return saveCourse;
+    }
+
+    public CourseGetDetailRes getCourseDetail(final Long userId, final Long courseId) {
+        //user - userId, free, totalPoint,
+        User foundUser = findUserById(userId);
+
+        //course - courseId, title, date, start_at, description, totalCost, city, totalTime
+        Course foundCourse = findCourseByUserId(foundUser.getId());
+
+        //나머지 - images, places, tags, isAccess, likes
+        List<Image> foundImages = imageRepository.findAllByCourseId(foundCourse.getId());
+        validateImage(foundImages);
+
+        List<CourseGetDetailRes.ImagesList> images = foundImages.stream()
+                .map(imageList -> CourseGetDetailRes.ImagesList.of(
+                        imageList.getImageUrl(),
+                        imageList.getSequence())
+                ).toList();
+
+        List<CoursePlace> foundCoursePlaces = coursePlaceRepository.findAllCoursePlacesByCourseId(courseId);
+        validateCoursePlace(foundCoursePlaces);
+
+        List<CourseGetDetailRes.Places> places = foundCoursePlaces.stream()
+                .map(placesList -> CourseGetDetailRes.Places.of(
+                        placesList.getSequence(),
+                        placesList.getName(),
+                        placesList.getDuration())
+                ).toList();
+
+        List<CourseTag> foundTags = courseTagRepository.findAllCourseTagByCourseId(foundCourse.getId());
+        validateCourseTag(foundTags);
+
+        List<CourseGetDetailRes.CourseTag> tags = foundTags.stream()
+                .map(tagList -> CourseGetDetailRes.CourseTag.of(
+                        tagList.getDateTagType())
+                ).toList();
+
+        boolean isAccess = dateAccessRepository.existsDateAccessByUserIdAndCourseId(foundUser.getId(), foundCourse.getId());
+
+        int likesCount = likeRepository.countByCourse(foundCourse);
+
+        return CourseGetDetailRes.of(
+                foundCourse.getId(),
+                images,
+                likesCount,
+                foundCourse.getTime(),
+                foundCourse.getDate(),
+                foundCourse.getCity(),
+                foundCourse.getTitle(),
+                foundCourse.getDescription(),
+                foundCourse.getStartAt(),
+                places,
+                foundCourse.getCost(),
+                tags,
+                isAccess,
+                foundUser.getFree(),
+                foundUser.getTotalPoint()
+        );
+    }
+
+    private User findUserById(final Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND)
+        );
+    }
+
+    private Course findCourseByUserId(final Long userId) {
+        return courseRepository.findCourseByUserId(userId).orElseThrow(
+                () -> new EntityNotFoundException(FailureCode.COURSE_NOT_FOUND)
+        );
+    }
+
+    private void validateCoursePlace(final List<CoursePlace> coursePlaces) {
+        if (coursePlaces.isEmpty()) {
+            throw new EntityNotFoundException(FailureCode.COURSE_PLACE_NOT_FOUND);
+        }
+    }
+
+    private void validateImage(final List<Image> images) {
+        if (images.isEmpty()) {
+            throw new EntityNotFoundException(FailureCode.IMAGE_NOT_FOUND);
+        }
+    }
+
+    private void validateCourseTag(final List<CourseTag> courseTags) {
+        if (courseTags.isEmpty()) {
+            throw new EntityNotFoundException(FailureCode.COURSE_TAG_NOT_FOUND);
+        }
     }
 }
