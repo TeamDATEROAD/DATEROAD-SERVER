@@ -42,7 +42,7 @@ public class DateService {
         createDatePlace(date, dateCreateReq.places());
     }
 
-    public DatesGetRes getDates(Long userId, String time) {
+    public DatesGetRes getDates(final Long userId, final String time) {
         LocalDate currentDate = LocalDate.now();
         List<Date> dates = fetchDatesByUserIdAndTime(userId, time, currentDate);
         List<DateGetRes> dateGetResList = dates.stream()
@@ -70,30 +70,30 @@ public class DateService {
         dateRepository.deleteById(dateId);
     }
 
-    private User getUser(Long userId) {
+    private User getUser(final Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }
 
-    private Date createDate(User findUser, DateCreateReq dateCreateReq) {
+    private Date createDate(final User findUser, final DateCreateReq dateCreateReq) {
         Date date = Date.create(findUser, dateCreateReq.title(), dateCreateReq.date(),
                 dateCreateReq.startAt(), dateCreateReq.country(), dateCreateReq.city());
         return dateRepository.save(date);
     }
 
-    private void createDateTag(Date date, List<TagCreateReq> tags) {
+    private void createDateTag(final Date date, final List<TagCreateReq> tags) {
         List<DateTag> dateTags = tags.stream()
                 .map(t -> DateTag.create(date, t.tag())).toList();
         dateTagRepository.saveAll(dateTags);
     }
 
-    private void createDatePlace(Date date, List<PlaceCreateReq> places) {
+    private void createDatePlace(final Date date, final List<PlaceCreateReq> places) {
         List<DatePlace> datePlaces = places.stream()
                         .map(p -> DatePlace.create(date, p.name(), p.duration(), p.sequence())).toList();
         datePlaceRepository.saveAll(datePlaces);
     }
 
-    private List<Date> fetchDatesByUserIdAndTime(Long userId, String time, LocalDate currentDate) {
+    private List<Date> fetchDatesByUserIdAndTime(final Long userId, final String time, final LocalDate currentDate) {
         if (time.equalsIgnoreCase("PAST")) {
             return dateRepository.findPastDatesByUserId(userId, currentDate);
         }
@@ -105,28 +105,28 @@ public class DateService {
         }
     }
 
-    private DateGetRes createDateGetRes(Date date, LocalDate currentDate) {
+    private DateGetRes createDateGetRes(final Date date, final LocalDate currentDate) {
         int dDay = calculateDday(date.getDate(), currentDate);
         List<DateTag> dateTags = getDateTag(date);
         return DateGetRes.of(date, dateTags, dDay);
     }
 
-    private int calculateDday(LocalDate date, LocalDate currentDate) {
+    private int calculateDday(final LocalDate date, final LocalDate currentDate) {
         return (int) ChronoUnit.DAYS.between(currentDate, date);
     }
 
-    private Date getDate(Long dateId) {
+    private Date getDate(final Long dateId) {
         return dateRepository.findById(dateId)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.DATE_NOT_FOUND));
     }
 
-    private void validateDate(User findUser, Date findDate) {
+    private void validateDate(final User findUser, final Date findDate) {
         if (!findUser.equals(findDate.getUser())) {
             throw new ForbiddenException(FailureCode.DATE_DELETE_ACCESS_DENIED);
         }
     }
 
-    private List<DateTag> getDateTag(Date date) {
+    private List<DateTag> getDateTag(final Date date) {
         List<DateTag> dateTags = dateTagRepository.findByDate(date);
         if (dateTags == null | dateTags.isEmpty()) {
             throw new EntityNotFoundException(FailureCode.DATE_TAG_NOT_FOUND);
@@ -134,7 +134,7 @@ public class DateService {
         return dateTags;
     }
 
-    private List<DatePlace> getDatePlace(Date date) {
+    private List<DatePlace> getDatePlace(final Date date) {
         List<DatePlace> datePlaces = datePlaceRepository.findByDate(date);
         if (datePlaces == null | datePlaces.isEmpty()) {
             throw new EntityNotFoundException(FailureCode.DATE_PLACE_NOT_FOUND);
