@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;
 import org.dateroad.exception.UnauthorizedException;
-import org.dateroad.feign.kakao.dto.response.KaKaoErrorRes;
+import org.dateroad.feign.kakao.dto.response.KakaoErrorRes;
 import org.dateroad.feign.kakao.dto.response.KakaoAccessTokenInfoRes;
 import org.springframework.stereotype.Component;
 
@@ -46,7 +46,7 @@ public class KakaoFeignProvider {
             log.error("Kakao feign exception : ", e);
 
             //kakaoResponseDTO로 변경
-            KaKaoErrorRes errorResponse = convertToKakaoErrorResponse(e.contentUTF8());
+            KakaoErrorRes errorResponse = convertToKakaoErrorResponse(e.contentUTF8());
 
             //카카오에서 주는 에러 코드가 -1이면 카카오 내부 에러, 나머지는 카카오 액세스 토큰 에러
             if (errorResponse.code() == -1) {
@@ -69,9 +69,9 @@ public class KakaoFeignProvider {
         }
     }
 
-    private KaKaoErrorRes convertToKakaoErrorResponse(String responseBody) {
+    private KakaoErrorRes convertToKakaoErrorResponse(String responseBody) {
         try {
-            return objectMapper.readValue(responseBody, KaKaoErrorRes.class);
+            return objectMapper.readValue(responseBody, KakaoErrorRes.class);
         } catch (IOException e) {
             log.error("Convert To KakaoErrorResponse Error : ", e);
             throw new UnauthorizedException(FailureCode.INVALID_KAKAO_TOKEN);
