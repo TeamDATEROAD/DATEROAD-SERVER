@@ -65,4 +65,11 @@ public class CourseController {
         courseService.createCourseLike(userId, courseId);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{courseId}/likes")
+    public ResponseEntity<Void> deleteCourseLike(@RequestHeader final Long userId,
+                                                  @PathVariable final Long courseId) {
+        courseService.deleteCourseLike(userId, courseId);
+        return ResponseEntity.ok().build();
+    }
 }
