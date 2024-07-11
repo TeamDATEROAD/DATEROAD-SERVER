@@ -145,8 +145,8 @@ public class AuthService {
             log.error(e.getMessage());
             throw new UnauthorizedException(FailureCode.INVALID_REFRESH_TOKEN_VALUE);
         } catch (Exception e) {
-            log.info(e.getMessage());
-            throw new RuntimeException("An unexpected error occurred", e);
+            log.error(e.getMessage());
+            throw new UnauthorizedException((FailureCode.UNAUTHORIZED));
         }
     }
 
