@@ -2,8 +2,8 @@ package org.dateroad.feign.kakao.dto.response;
 
 import lombok.Getter;
 
-public record KaKaoErrorRes(
-    String error,
+public record KakaoErrorRes(
+    String msg,
     int code
 ) {
 }
