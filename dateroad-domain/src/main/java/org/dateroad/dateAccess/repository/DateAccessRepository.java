@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DataAccessRepository extends JpaRepository<DateAccess,Long> {
+public interface DateAccessRepository extends JpaRepository<DateAccess,Long> {
     @Query("SELECT da.course FROM DateAccess da WHERE da.user.id = :userId")
     List<Course> findCoursesByUserId(@Param("userId") Long userId);
 }
