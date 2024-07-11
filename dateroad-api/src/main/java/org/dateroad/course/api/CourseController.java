@@ -1,7 +1,6 @@
 package org.dateroad.course.api;
 
 
-import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.argumentresolve.UserId;
