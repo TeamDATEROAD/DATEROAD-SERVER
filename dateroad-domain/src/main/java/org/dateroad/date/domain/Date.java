@@ -17,6 +17,7 @@ import org.dateroad.user.domain.User;
 
 @Entity
 @SuperBuilder
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter

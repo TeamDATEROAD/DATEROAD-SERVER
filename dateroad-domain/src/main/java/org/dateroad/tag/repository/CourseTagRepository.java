@@ -1,9 +1,9 @@
 package org.dateroad.tag.repository;
 
-import org.dateroad.tag.domain.UserTag;
+import org.dateroad.tag.domain.CourseTag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-public interface UserTagRepository extends JpaRepository<UserTag, Long> {
-
+@Repository
+public interface CourseTagRepository extends JpaRepository<CourseTag,Long> {
 }

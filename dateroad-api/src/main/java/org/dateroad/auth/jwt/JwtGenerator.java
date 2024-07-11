@@ -19,13 +19,13 @@ public class JwtGenerator {
 
     public String generateAccessToken(final long userId) {
         final Date now = new Date();
-        final Date expiryDate = generateExpirationDate(now);
+        final Date expireDate = generateExpirationDate(now);
 
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setSubject(String.valueOf(userId))
                 .setIssuedAt(now)
-                .setExpiration(expiryDate)
+                .setExpiration(expireDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
