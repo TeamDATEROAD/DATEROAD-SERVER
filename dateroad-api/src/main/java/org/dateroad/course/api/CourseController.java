@@ -69,9 +69,16 @@ public class CourseController {
     }
 
     @PostMapping("/{courseId}/likes")
-    public ResponseEntity<Void> createCourseLlike(@UserId final Long userId,
+    public ResponseEntity<Void> createCourseLike(@UserId final Long userId,
                                                   @PathVariable final Long courseId) {
         courseService.createCourseLike(userId, courseId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{courseId}/likes")
+    public ResponseEntity<Void> deleteCourseLike(@RequestHeader final Long userId,
+                                                  @PathVariable final Long courseId) {
+        courseService.deleteCourseLike(userId, courseId);
         return ResponseEntity.ok().build();
     }
 }
