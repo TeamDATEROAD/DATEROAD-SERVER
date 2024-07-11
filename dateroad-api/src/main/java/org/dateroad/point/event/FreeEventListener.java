@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class pointEventListener implements StreamListener<String, MapRecord<String, String, String>> {
+public class FreeEventListener implements StreamListener<String, MapRecord<String, String, String>> {
     private final UserRepository userRepository;
 
     @Override
@@ -25,8 +25,8 @@ public class pointEventListener implements StreamListener<String, MapRecord<Stri
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new DateRoadException(FailureCode.USER_NOT_FOUND)
         );
-        int point = Integer.parseInt(map.get("point")); // 감소시킬 포인트
-        user.setTotalPoint(user.getTotalPoint() - point);
+        int userPoint = user.getFree();
+        user.setFree(userPoint -1);
         userRepository.save(user);
     }
 }
