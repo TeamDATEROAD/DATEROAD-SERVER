@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.dateroad.code.FailureCode;
 import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CourseCreateReq;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
@@ -15,11 +16,15 @@ import org.dateroad.course.facade.CourseFacade;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.dateAccess.repository.DateAccessRepository;
+import org.dateroad.exception.DateRoadException;
 import org.dateroad.image.domain.Image;
 import org.dateroad.like.repository.LikeRepository;
+import org.dateroad.user.domain.User;
+import org.dateroad.user.repository.UserRepository;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,6 +33,7 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final LikeRepository likeRepository;
     private final DateAccessRepository dateAccessRepository;
+    private final UserRepository userRepository;
     private final CourseFacade courseFacade;
 
     public CourseGetAllRes getAllCourses(CourseGetAllReq courseGetAllReq) {
@@ -68,26 +74,28 @@ public class CourseService {
     }
 
     @Transactional
-    public String createCourse(Long userId, CourseCreateReq courseRegisterReq) {
-        System.out.println(courseRegisterReq);
-        final float totalTime = courseRegisterReq.places().stream()
-                .map(CoursePlaceGetReq::duration) // 각 CoursePlaceGetReq 객체의 duration 값을 추출
-                .reduce(0.0f, Float::sum); // 모든 duration 값을 합산
-
-        final Course course = Course.create(
-                courseRegisterReq.title(),
-                courseRegisterReq.description(),
-                courseRegisterReq.country(),
-                courseRegisterReq.city(),
-                courseRegisterReq.cost(),
-                courseRegisterReq.date(),
-                courseRegisterReq.startAt(),
+    public Course createCourse(final Long userId, final CourseCreateReq courseRegisterReq,
+                               final List<CoursePlaceGetReq> places, final List<MultipartFile> images) {
+        final float totalTime = places.stream()
+                .map(CoursePlaceGetReq::getDuration)
+                .reduce(0.0f, Float::sum);
+        User user = userRepository.findById(userId)
+                .orElseThrow(
+                        () -> new DateRoadException(FailureCode.ENTITY_NOT_FOUND)
+                );
+        Course course = Course.create(
+                user,
+                courseRegisterReq.getTitle(),
+                courseRegisterReq.getDescription(),
+                courseRegisterReq.getCountry(),
+                courseRegisterReq.getCity(),
+                courseRegisterReq.getCost(),
+                courseRegisterReq.getDate(),
+                courseRegisterReq.getStartAt(),
                 totalTime
         );
-        courseFacade.createImage(courseRegisterReq.images(), course);
-        courseFacade.createCoursePlaces(courseRegisterReq.places(), course);
-        courseFacade.createCourseTags(courseRegisterReq.tags(), course);
-
-        return courseRepository.save(course).getId().toString();
+        Course saveCourse = courseRepository.save(course);
+        course.setThumbnail(courseFacade.createImage(images, saveCourse));
+        return saveCourse;
     }
 }

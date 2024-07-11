@@ -8,6 +8,7 @@ import org.dateroad.course.dto.request.CoursePlaceGetReq;
 import org.dateroad.date.domain.Course;
 import org.dateroad.place.domain.CoursePlace;
 import org.dateroad.place.repository.CoursePlaceRepository;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,16 +21,17 @@ public class CoursePlaceService {
         return coursePlaceRepository.findTotalDurationByCourseId(id);
     }
 
+    @Async
     @Transactional
     public void createCoursePlace(final List<CoursePlaceGetReq> places, final Course course) {
         List<CoursePlace> coursePlaces = places.stream()
                 .map(placeReq -> CoursePlace.create(
-                        placeReq.title(),
-                        placeReq.duration(),
+                        placeReq.getTitle(),
+                        placeReq.getDuration(),
                         course,
-                        placeReq.sequence()
+                        placeReq.getSequence()
                 ))
                 .collect(Collectors.toList());
-        coursePlaceRepository.saveAll(coursePlaces);
+        coursePlaceRepository.saveAllAndFlush(coursePlaces);
     }
 }

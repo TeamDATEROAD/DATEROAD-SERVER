@@ -18,21 +18,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ImageService {
     private final ImageRepository imageRepository;
     private final S3Service s3Service;
     @Value("${s3.bucket.path}")
     private String path;
+    @Value("${cloudfront.domain}")
+    private String cachePath;
 
-    @Transactional
-    public void saveImages(final List<MultipartFile> images, final Course course) {
+    public String saveImages(final List<MultipartFile> images, final Course course) {
         AtomicInteger sequence = new AtomicInteger();
         List<Image> courseimages = images.stream()
                 .map(img -> {
                     try {
                         return Image.create(
                                 course,
-                                s3Service.uploadImage(path, img).get(),
+                                cachePath + s3Service.uploadImage(path, img).get(),
                                 sequence.getAndIncrement()
                         );
                     } catch (IOException | ExecutionException | InterruptedException e) {
@@ -40,7 +42,7 @@ public class ImageService {
                     }
                 })
                 .toList();
-        imageRepository.saveAll(courseimages);
+        return imageRepository.saveAll(courseimages).getFirst().getImageUrl();
     }
 
     public Image findFirstByCourseOrderBySequenceAsc(Course course) {
