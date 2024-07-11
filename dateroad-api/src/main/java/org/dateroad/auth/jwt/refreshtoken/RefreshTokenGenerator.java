@@ -12,6 +12,7 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -22,30 +23,19 @@ public class RefreshTokenGenerator {
     public String generateRefreshToken(final long userId) {
         SecureRandom random = createSecureRandom();
 
-        //SecureRandom을 사용하여 45 바이트의 랜덤 토큰을 생성
-        byte[] token = new byte[TOKEN_BYTE_SIZE];
-        random.nextBytes(token);
-        LocalDateTime expireAt = LocalDateTime.now().plusWeeks(2);
+        // SecureRandom을 사용하여 45 바이트의 랜덤 토큰을 생성
+        byte[] tokenBytes = new byte[TOKEN_BYTE_SIZE];
+        random.nextBytes(tokenBytes);
+
+        // 바이트 배열을 Base64 인코딩하여 문자열로 변환
+        String token = Base64.getEncoder().encodeToString(tokenBytes);
+
+        LocalDateTime expireAt = LocalDateTime.now().plusWeeks(4);
 
         RefreshToken newRefreshToken = RefreshToken.create(token, userId, expireAt);
         refreshTokenRepository.save(newRefreshToken);
 
-        return Base64.getEncoder().encodeToString(token);
-    }
-
-    //refreshToken 재발급할 때 검증
-    public Long getUserIdOrThrow(final String refreshToken) {
-        byte[] convertedRefreshToken = toBinary(refreshToken);
-
-        RefreshToken findRefreshToken = refreshTokenRepository.findUserIdByToken(Arrays.toString(convertedRefreshToken).getBytes());
-        if (findRefreshToken == null) {
-            throw new UnauthorizedException(FailureCode.INVALID_REFRESH_TOKEN_VALUE);
-        }
-
-        if (findRefreshToken.getExpiredAt().isBefore(LocalDateTime.now())) {
-            throw new UnauthorizedException(FailureCode.EXPIRED_REFRESH_TOKEN);
-        }
-        return findRefreshToken.getUserId();
+        return token;
     }
 
     public void deleteRefreshToken(final Long userId) {
@@ -60,8 +50,4 @@ public class RefreshTokenGenerator {
         return new SecureRandom(buffer.array());
     }
 
-    //Base64 인코딩된 리프레시 토큰 문자열을 바이트 배열
-    private byte[] toBinary(String refreshToken) {
-        return Base64.getDecoder().decode(refreshToken);
-    }
 }
