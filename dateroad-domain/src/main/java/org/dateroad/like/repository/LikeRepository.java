@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LikeRepository extends JpaRepository<Like, Long> {
-    Optional<Integer> countByCourse(Course course);
+    int countByCourse(Course course);
+    boolean existsByUserIdAndCourseId(Long userId, Long courseId);
     Optional<Like> findByUserAndCourse(User user, Course course);
 }
