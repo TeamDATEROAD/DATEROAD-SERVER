@@ -1,10 +1,8 @@
 package org.dateroad.course.api;
 
 
-import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CourseCreateReq;

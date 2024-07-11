@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 // CourseRepository.java
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> , JpaSpecificationExecutor<Course> {
-    Optional<Course> findCourseByUserId(Long userId);
+    boolean existsByUserId(Long userId);
+
 }
 
