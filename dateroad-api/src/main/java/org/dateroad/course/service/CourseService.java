@@ -18,6 +18,7 @@ import org.dateroad.course.facade.AsyncService;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.dateroad.date.repository.CourseRepository;
+import org.dateroad.date.service.DateRepository;
 import org.dateroad.dateAccess.domain.DateAccess;
 import org.dateroad.dateAccess.repository.DateAccessRepository;
 import org.dateroad.exception.DateRoadException;
@@ -50,6 +51,7 @@ public class CourseService {
     private final ImageRepository imageRepository;
     private final CoursePlaceRepository coursePlaceRepository;
     private final CourseTagRepository courseTagRepository;
+    private final DateRepository dateRepository;
 
 
     public CourseGetAllRes getAllCourses(CourseGetAllReq courseGetAllReq) {
@@ -117,11 +119,12 @@ public class CourseService {
     }
 
     public CourseGetDetailRes getCourseDetail(final Long userId, final Long courseId) {
-        //user - userId, free, totalPoint,
-        User foundUser = findUserById(userId);
 
         //course - courseId, title, date, start_at, description, totalCost, city, totalTime
-        Course foundCourse = findCourseByUserId(foundUser.getId());
+        Course foundCourse = findCourseById(courseId);
+
+        //user - userId, free, totalPoint,
+        User foundUser = findUserById(userId);
 
         //나머지 - images, places, tags, isAccess, likes
         List<Image> foundImages = imageRepository.findAllByCourseId(foundCourse.getId());
@@ -133,7 +136,7 @@ public class CourseService {
                         imageList.getSequence())
                 ).toList();
 
-        List<CoursePlace> foundCoursePlaces = coursePlaceRepository.findAllCoursePlacesByCourseId(courseId);
+        List<CoursePlace> foundCoursePlaces = coursePlaceRepository.findAllCoursePlacesByCourseId(foundCourse.getId());
         validateCoursePlace(foundCoursePlaces);
 
         List<CourseGetDetailRes.Places> places = foundCoursePlaces.stream()
@@ -155,6 +158,14 @@ public class CourseService {
 
         int likesCount = likeRepository.countByCourse(foundCourse);
 
+        boolean isCourseMine = courseRepository.existsByUserId(foundUser.getId());
+
+        boolean isUserLiked = likeRepository.existsByUserIdAndCourseId(foundUser.getId(), foundCourse.getId());
+
+        if (isCourseMine) {
+            isUserLiked = false;
+        }
+
         return CourseGetDetailRes.of(
                 foundCourse.getId(),
                 images,
@@ -170,7 +181,9 @@ public class CourseService {
                 tags,
                 isAccess,
                 foundUser.getFree(),
-                foundUser.getTotalPoint()
+                foundUser.getTotalPoint(),
+                isCourseMine,
+                isUserLiked
         );
     }
 
@@ -180,8 +193,8 @@ public class CourseService {
         );
     }
 
-    private Course findCourseByUserId(final Long userId) {
-        return courseRepository.findCourseByUserId(userId).orElseThrow(
+    private Course findCourseById(final Long courseId) {
+        return courseRepository.findById(courseId).orElseThrow(
                 () -> new EntityNotFoundException(FailureCode.COURSE_NOT_FOUND)
         );
     }

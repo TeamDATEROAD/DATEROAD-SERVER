@@ -27,7 +27,9 @@ public record CourseGetDetailRes(
         List<CourseTag> tags,
         boolean isAccess,
         int free,
-        int totalPoint
+        int totalPoint,
+        boolean isCourseMine,
+        boolean isUserLiked
 ) {
 
     public static CourseGetDetailRes of(Long courseId,
@@ -44,7 +46,9 @@ public record CourseGetDetailRes(
                                         List<CourseTag> tags,
                                         boolean isAccess,
                                         int free,
-                                        int totalPoint) {
+                                        int totalPoint,
+                                        boolean isCourseMine,
+                                        boolean isUserLiked) {
         return CourseGetDetailRes.builder()
                 .courseId(courseId)
                 .images(images)
@@ -61,6 +65,8 @@ public record CourseGetDetailRes(
                 .isAccess(isAccess)
                 .free(free)
                 .totalPoint(totalPoint)
+                .isCourseMine(isCourseMine)
+                .isUserLiked(isUserLiked)
                 .build();
     }
 
