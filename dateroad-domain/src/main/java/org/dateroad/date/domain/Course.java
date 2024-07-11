@@ -15,7 +15,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.dateroad.user.domain.User;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -43,11 +45,16 @@ public class Course extends DateBase {
     @NotNull
     private float time;
 
-    public static Course create(final String title, final String description,
+    @Setter
+    @Column(name = "thumbnail")
+    private String thumbnail;
+
+    public static Course create(final User user, final String title, final String description,
                                 final String country, final String city,
                                 final int cost, final LocalDate date,
                                 final LocalTime startAt, final float time) {
         return Course.builder()
+                .user(user)
                 .title(title)
                 .description(description)
                 .city(city)
