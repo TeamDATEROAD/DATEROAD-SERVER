@@ -6,9 +6,9 @@ import lombok.Builder;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record DateAccessGetAllRes(
-        List<CourseDtoRes> courses
+        List<CourseDtoGetRes> courses
 ) {
-    public static DateAccessGetAllRes of(List<CourseDtoRes> dataAccessCourse) {
+    public static DateAccessGetAllRes of(List<CourseDtoGetRes> dataAccessCourse) {
         return DateAccessGetAllRes.builder()
                 .courses(dataAccessCourse)
                 .build();

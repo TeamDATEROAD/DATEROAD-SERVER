@@ -6,12 +6,13 @@ import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.Token;
 import org.dateroad.auth.jwt.refreshtoken.RefreshTokenGenerator;
 import org.dateroad.code.FailureCode;
+import org.dateroad.exception.*;
+import org.dateroad.feign.apple.AppleFeignProvider;
+import org.dateroad.feign.kakao.KakaoFeignApi;
+import org.dateroad.feign.kakao.KakaoFeignProvider;
 import org.dateroad.exception.ConflictException;
 import org.dateroad.exception.EntityNotFoundException;
-import org.dateroad.exception.InvalidValueException;
 import org.dateroad.exception.UnauthorizedException;
-import org.dateroad.feign.apple.ApplePlatformUserIdProvider;
-import org.dateroad.feign.kakao.KakaoPlatformUserIdProvider;
 import org.dateroad.refreshtoken.domain.RefreshToken;
 import org.dateroad.refreshtoken.repository.RefreshTokenRepository;
 import org.dateroad.tag.domain.DateTagType;
@@ -19,6 +20,7 @@ import org.dateroad.tag.domain.UserTag;
 import org.dateroad.tag.repository.UserTagRepository;
 import org.dateroad.user.domain.Platform;
 import org.dateroad.user.domain.User;
+import org.dateroad.user.dto.request.AppleWithdrawAuthCodeReq;
 import org.dateroad.user.dto.request.UserSignInReq;
 import org.dateroad.user.repository.UserRepository;
 import org.dateroad.user.dto.request.UserSignUpReq;
@@ -33,15 +35,17 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 @Slf4j
 public class AuthService {
     private final UserRepository userRepository;
-    private final KakaoPlatformUserIdProvider kakaoPlatformUserIdProvider;
-    private final ApplePlatformUserIdProvider applePlatformUserIdProvider;
+    private final KakaoFeignProvider kakaoFeignProvider;
+    private final AppleFeignProvider appleFeignProvider;
     private final UserTagRepository userTagRepository;
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final KakaoFeignApi kakaoFeignApi;
 
     @Transactional
     public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq) {
@@ -73,7 +77,25 @@ public class AuthService {
         Token newToken = jwtProvider.issueToken(userId);
         return UserJwtInfoRes.of(userId, newToken.accessToken(), newToken.refreshToken());
     }
+    public void withdraw(final Long userId, final AppleWithdrawAuthCodeReq AppleWithdrawAuthCodeReq) {
 
+        //todo: #45브랜치 머지후, 메서드 이용
+        User foundUser = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+
+        if (foundUser.getPlatForm() == Platform.KAKAO) {    //카카오 유저면 카카오와 연결 끊기
+            kakaoFeignProvider.unLinkWithKakao(foundUser.getPlatformUserId());
+        } else if (foundUser.getPlatForm() == Platform.APPLE) {    //애플 유저면 애플이랑 연결 끊기
+            appleFeignProvider.revokeUser(AppleWithdrawAuthCodeReq.authCode());
+        } else {
+            throw new BadRequestException(FailureCode.INVALID_PLATFORM_TYPE);
+        }
+
+        //todo: #45브랜치 머지후, 메서드 이용
+        refreshTokenRepository.deleteByUserId(foundUser.getId());
+        userRepository.deleteById(foundUser.getId());
+    }
+
+    //닉네임 중복체크
     public void checkNickname(final String nickname) {
         if (userRepository.existsByName(nickname)) {
             throw new ConflictException(FailureCode.DUPLICATE_NICKNAME);
@@ -86,13 +108,14 @@ public class AuthService {
         deleteRefreshToken(foundUser.getId());
     }
 
+    //플랫폼 유저 아이디 가져오기 (카카오 or 애플)
     private String getUserPlatformId(final Platform platform, final String token) {
         if (platform == Platform.APPLE) {
-            return applePlatformUserIdProvider.getApplePlatformUserId(token);
+            return appleFeignProvider.getApplePlatformUserId(token);
         } else if (platform == Platform.KAKAO) {
-            return kakaoPlatformUserIdProvider.getKakaoPlatformUserId(token);
+            return kakaoFeignProvider.getKakaoPlatformUserId(token);
         } else {
-            throw new InvalidValueException(FailureCode.INVALID_PLATFORM_TYPE);
+            throw new BadRequestException(FailureCode.INVALID_PLATFORM_TYPE);
         }
     }
 
@@ -131,9 +154,10 @@ public class AuthService {
         );
     }
 
+    //태그 리스트 사이즈 검증
     private void validateUserTagSize(final List<DateTagType> userTags) {
         if (userTags.isEmpty() || userTags.size() > 3) {
-            throw new InvalidValueException((FailureCode.WRONG_USER_TAG_SIZE));
+            throw new BadRequestException((FailureCode.WRONG_USER_TAG_SIZE));
         }
     }
 

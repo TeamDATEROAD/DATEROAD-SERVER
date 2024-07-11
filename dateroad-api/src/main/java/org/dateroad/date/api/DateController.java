@@ -3,6 +3,8 @@ package org.dateroad.date.api;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.date.dto.request.DateCreateReq;
+import org.dateroad.date.dto.response.DateDetailRes;
+import org.dateroad.date.dto.response.DatesGetRes;
 import org.dateroad.date.service.DateService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,20 @@ public class DateController {
                                            @RequestBody final DateCreateReq dateCreateReq) {
         dateService.createDate(userId, dateCreateReq);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<DatesGetRes> getDates(@UserId final Long userId,
+                                                @RequestParam final String time) {
+        DatesGetRes datesGetRes = dateService.getDates(userId, time);
+        return ResponseEntity.ok(datesGetRes);
+    }
+
+    @GetMapping("/{dateId}")
+    public ResponseEntity<DateDetailRes> getDateDetail(@UserId final Long userId,
+                                                       @PathVariable final Long dateId) {
+        DateDetailRes dateDetailRes = dateService.getDateDetail(userId, dateId);
+        return ResponseEntity.ok(dateDetailRes);
     }
 
     @DeleteMapping("/{dateId}")
