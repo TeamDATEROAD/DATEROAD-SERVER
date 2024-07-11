@@ -23,7 +23,7 @@ public class DateController {
     }
 
     @GetMapping("/{dateId}")
-    public ResponseEntity<DateDetailRes> getDateDetail(@RequestHeader final Long userId,
+    public ResponseEntity<DateDetailRes> getDateDetail(@UserId final Long userId,
                                                        @PathVariable final Long dateId) {
         DateDetailRes dateDetailRes = dateService.getDateDetail(userId, dateId);
         return ResponseEntity.ok(dateDetailRes);
