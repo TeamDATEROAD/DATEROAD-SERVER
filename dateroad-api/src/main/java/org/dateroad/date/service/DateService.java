@@ -9,6 +9,7 @@ import org.dateroad.date.dto.request.TagCreateReq;
 import org.dateroad.date.dto.response.DateDetailRes;
 import org.dateroad.date.dto.response.DateGetRes;
 import org.dateroad.date.dto.response.DatesGetRes;
+import org.dateroad.date.dto.response.DateGetNearestRes;
 import org.dateroad.date.repository.DatePlaceRepository;
 import org.dateroad.date.repository.DateTagRepository;
 import org.dateroad.exception.EntityNotFoundException;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -70,7 +72,24 @@ public class DateService {
         dateRepository.deleteById(dateId);
     }
 
-    private User getUser(final Long userId) {
+    public DateGetNearestRes getNearestDate(final Long userId) {
+        LocalDate currentDate = LocalDate.now();
+        LocalTime currentTime = LocalTime.now();
+        User findUser = getUser(userId);
+        Date nearest = findNearestDate(findUser.getId(), currentDate, currentTime); ;
+        int dDay = calculateDDay(nearest.getDate(), currentDate);
+        return DateGetNearestRes
+                .of(
+                        nearest.getId(),
+                        dDay,
+                        nearest.getTitle(),
+                        nearest.getDate().getMonthValue(),
+                        nearest.getDate().getDayOfMonth(),
+                        nearest.getStartAt()
+                );
+    }
+
+    private User getUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }
@@ -141,4 +160,19 @@ public class DateService {
         }
         return datePlaces;
     }
+    //dDay 계산
+    private int calculateDDay(LocalDate eventDate, LocalDate currentDate) {
+        if (eventDate.isEqual(currentDate)) {
+            return 0;
+        } else {
+            return (int) ChronoUnit.DAYS.between(currentDate, eventDate);
+        }
+    }
+
+    //가장 가까운 데이트 가져오기
+    private Date findNearestDate(Long userId, LocalDate currentDate, LocalTime currentTime) {
+        return dateRepository.findFirstByUserIdAndDateAfterOrDateAndStartAtAfterOrderByDateAscStartAtAsc(userId, currentDate, currentDate, currentTime)
+                .orElseThrow(() -> new EntityNotFoundException(FailureCode.DATE_NOT_FOUND));
+    }
+
 }
