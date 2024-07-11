@@ -37,9 +37,9 @@ public class DateService {
     @Transactional
     public void createDate(final Long userId, final DateCreateReq dateCreateReq) {
         User findUser = getUser(userId);
-        Date date = createDate(findUser, dateCreateReq);
-        createDateTag(date, dateCreateReq.tags());
-        createDatePlace(date, dateCreateReq.places());
+        Date date = saveDate(findUser, dateCreateReq);
+        saveDateTag(date, dateCreateReq.tags());
+        saveDatePlace(date, dateCreateReq.places());
     }
 
     public DatesGetRes getDates(final Long userId, final String time) {
@@ -75,19 +75,19 @@ public class DateService {
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }
 
-    private Date createDate(final User findUser, final DateCreateReq dateCreateReq) {
+    private Date saveDate(final User findUser, final DateCreateReq dateCreateReq) {
         Date date = Date.create(findUser, dateCreateReq.title(), dateCreateReq.date(),
                 dateCreateReq.startAt(), dateCreateReq.country(), dateCreateReq.city());
         return dateRepository.save(date);
     }
 
-    private void createDateTag(final Date date, final List<TagCreateReq> tags) {
+    private void saveDateTag(final Date date, final List<TagCreateReq> tags) {
         List<DateTag> dateTags = tags.stream()
                 .map(t -> DateTag.create(date, t.tag())).toList();
         dateTagRepository.saveAll(dateTags);
     }
 
-    private void createDatePlace(final Date date, final List<PlaceCreateReq> places) {
+    private void saveDatePlace(final Date date, final List<PlaceCreateReq> places) {
         List<DatePlace> datePlaces = places.stream()
                         .map(p -> DatePlace.create(date, p.name(), p.duration(), p.sequence())).toList();
         datePlaceRepository.saveAll(datePlaces);
