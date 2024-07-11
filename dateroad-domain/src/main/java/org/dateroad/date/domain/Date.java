@@ -20,7 +20,6 @@ import org.dateroad.user.domain.User;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Getter
 @Table(name = "dates")
 public class Date extends DateBase {
     @Id
