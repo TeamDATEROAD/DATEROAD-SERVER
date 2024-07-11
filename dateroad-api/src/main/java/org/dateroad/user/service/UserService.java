@@ -20,9 +20,8 @@ public class UserService {
         return UserInfoMainRes.of(foundUser.getName(), foundUser.getTotalPoint(), foundUser.getImageUrl());
     }
 
-    private User findUserById(Long userId) {
+    private User findUserById(final Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }
-
 }
