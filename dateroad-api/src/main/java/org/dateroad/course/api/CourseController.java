@@ -44,7 +44,7 @@ public class CourseController {
         return ResponseEntity.ok(dateAccessGetAllRes);
     }
 
-    @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<CourseCreateRes> createCourse(
             @UserId final Long userId,
             @RequestPart("course") final CourseCreateReq courseCreateReq,
@@ -66,5 +66,12 @@ public class CourseController {
         CourseGetDetailRes courseGetDetailRes = courseService.getCourseDetail(userId, courseId);
 
         return ResponseEntity.ok(courseGetDetailRes);
+    }
+
+    @PostMapping("/{courseId}/likes")
+    public ResponseEntity<Void> createCourseLlike(@UserId final Long userId,
+                                                  @PathVariable final Long courseId) {
+        courseService.createCourseLike(userId, courseId);
+        return ResponseEntity.ok().build();
     }
 }

@@ -9,8 +9,10 @@ import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.code.FailureCode;
 import org.dateroad.common.Constants;
 import org.dateroad.exception.UnauthorizedException;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -20,6 +22,7 @@ import static org.dateroad.auth.filter.TokenAuthentication.createTokenAuthentica
 
 
 @RequiredArgsConstructor
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
 
