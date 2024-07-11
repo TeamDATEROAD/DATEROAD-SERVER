@@ -38,6 +38,7 @@ public enum FailureCode {
     INVALID_KAKAO_ACCESS(HttpStatus.UNAUTHORIZED, "e4026", "잘못된 카카오 통신 접근입니다."),
     UN_LINK_WITH_KAKAO_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "e4027", "카카오 연결 끊기 통신에 실패했습니다"),
     INVALID_APPLE_TOKEN_ACCESS(HttpStatus.UNAUTHORIZED, "e4028", "잘못된 애플 토큰 통신 접근입니다."),
+    INVALID_DATE_GET_TYPE(HttpStatus.UNAUTHORIZED, "e4029", "잘못된 데이트 타입 검색입니다."),
 
     /**
      * 403 Forbidden
