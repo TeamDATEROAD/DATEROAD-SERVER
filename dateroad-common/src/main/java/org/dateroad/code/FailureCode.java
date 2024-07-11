@@ -58,6 +58,7 @@ public enum FailureCode {
     DATE_PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4046", "데이트 장소를 찾을 수 없습니다."),
     COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4047", "데이트 코스를 찾을 수 없습니다."),
     NEAREST_DATE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4048", "다가오는 데이트를 찾을 수 없습니다."),
+    LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4048", "해당 데이트 코스에 좋아요를 찾을 수 없습니다."),
 
     /**
      * 405 Method Not Allowed
