@@ -56,7 +56,8 @@ public enum FailureCode {
     DATE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4044", "데이트를 찾을 수 없습니다."),
     DATE_TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "e4045", "데이트 태그를 찾을 수 없습니다."),
     DATE_PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4046", "데이트 장소를 찾을 수 없습니다."),
-    NEAREST_DATE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4047", "다가오는 데이트를 찾을 수 없습니다."),
+    COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4047", "데이트 코스를 찾을 수 없습니다."),
+    NEAREST_DATE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4048", "다가오는 데이트를 찾을 수 없습니다."),
 
     /**
      * 405 Method Not Allowed
@@ -69,6 +70,7 @@ public enum FailureCode {
     CONFLICT(HttpStatus.CONFLICT, "e4090", "이미 존재하는 리소스입니다."),
     DUPLICATE_USER(HttpStatus.CONFLICT, "e4091", "이미 존재하는 유저입니다."),
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "e4092", "이미 존재하는 닉네임입니다."),
+    DUPLICATE_COURSE_LIKE(HttpStatus.CONFLICT, "e4093", "해당 데이트 코스에 좋아요가 이미 존재합니다."),
 
 
     /**
