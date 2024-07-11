@@ -22,7 +22,6 @@ import static org.dateroad.auth.filter.TokenAuthentication.createTokenAuthentica
 
 
 @RequiredArgsConstructor
-@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
 
