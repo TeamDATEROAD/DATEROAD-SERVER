@@ -55,6 +55,10 @@ public enum FailureCode {
     DATE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4044", "데이트를 찾을 수 없습니다."),
     DATE_TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "e4045", "데이트 태그를 찾을 수 없습니다."),
     DATE_PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4046", "데이트 장소를 찾을 수 없습니다."),
+    COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4047", "데이트 코스를 찾을 수 없습니다."),
+    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4048", "이미지를 찾을 수 없습니다."),
+    COURSE_PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4049", "코스 장소를 찾을 수 없습니다."),
+    COURSE_TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "e40410", "데이트 태그를 찾을 수 없습니다."),
 
     /**
      * 405 Method Not Allowed

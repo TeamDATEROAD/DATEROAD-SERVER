@@ -15,11 +15,10 @@ dependencies {
     implementation("software.amazon.awssdk:s3:2.21.0")
 
     // apple secretKey
-    implementation 'org.bouncycastle:bcprov-jdk18on:1.75'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
     implementation 'org.bouncycastle:bcpkix-jdk18on:1.75'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
 }
 
 bootJar.enabled = false
