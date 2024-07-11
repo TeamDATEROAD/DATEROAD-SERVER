@@ -4,6 +4,7 @@ package org.dateroad.course.api;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CourseCreateReq;
@@ -15,15 +16,11 @@ import org.dateroad.course.dto.response.DateAccessGetAllRes;
 import org.dateroad.course.facade.AsyncService;
 import org.dateroad.course.service.CourseService;
 import org.dateroad.date.domain.Course;
+import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -63,5 +60,13 @@ public class CourseController {
         return ResponseEntity.status(
                 HttpStatus.CREATED
         ).body(CourseCreateRes.of(course.getId()));
+    }
+
+    @GetMapping("/{courseId}")
+    public ResponseEntity<CourseGetDetailRes> getCourseDetail(@UserId Long userId,
+                                                              @PathVariable("courseId") Long courseId) {
+        CourseGetDetailRes courseGetDetailRes = courseService.getCourseDetail(userId, courseId);
+
+        return ResponseEntity.ok(courseGetDetailRes);
     }
 }
