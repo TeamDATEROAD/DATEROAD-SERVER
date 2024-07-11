@@ -50,14 +50,14 @@ public class RedisStreamConfig {
         return new LettuceConnectionFactory(host, port);
     }
 
-    public void createStreamConsumerGroup(String streamKey, String consumerGroupName) {
+    public void createStreamConsumerGroup(final String streamKey, final String consumerGroupName) {
         // Stream이 존재 하지 않으면, MKSTREAM 옵션을 통해 만들고, ConsumerGroup또한 생성한다
         System.out.println(streamKey + consumerGroupName);
         // Stream이 존재하지 않으면, MKSTREAM 옵션을 통해 스트림과 소비자 그룹을 생성
         if (Boolean.FALSE.equals(redisTemplate().hasKey(streamKey))) {
             RedisAsyncCommands<String, String> commands = (RedisAsyncCommands<String, String>) Objects.requireNonNull(
-                    redisTemplate()
-                    .getConnectionFactory())
+                            redisTemplate()
+                                    .getConnectionFactory())
                     .getConnection()
                     .getNativeConnection();
 
@@ -78,8 +78,9 @@ public class RedisStreamConfig {
             }
         }
     }
+
     // ConsumerGroup 존재 여부 확인
-    public boolean isStreamConsumerGroupExist(String streamKey, String consumerGroupName) {
+    public boolean isStreamConsumerGroupExist(final String streamKey, final String consumerGroupName) {
         Iterator<StreamInfo.XInfoGroup> iterator = redisTemplate()
                 .opsForStream().groups(streamKey).stream().iterator();
 
@@ -103,7 +104,7 @@ public class RedisStreamConfig {
                 containerOptions);
 
         Subscription subscription = container.receiveAutoAck(Consumer.from("courseGroup", "instance-1"),
-                StreamOffset.create("course", ReadOffset.lastConsumed()), pointEventListener);
+                StreamOffset.create("coursePoint", ReadOffset.lastConsumed()), pointEventListener);
         container.start();
         return subscription;
     }
