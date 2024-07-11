@@ -25,7 +25,7 @@ public class DateController {
 
     @GetMapping
     public ResponseEntity<DatesGetRes> getDates(@UserId final Long userId,
-                                                  @RequestParam final String time) {
+                                                @RequestParam final String time) {
         DatesGetRes datesGetRes = dateService.getDates(userId, time);
         return ResponseEntity.ok(datesGetRes);
     }
