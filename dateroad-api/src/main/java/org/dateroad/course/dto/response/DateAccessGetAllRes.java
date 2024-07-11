@@ -1,9 +1,10 @@
 package org.dateroad.course.dto.response;
 
 import java.util.List;
+import lombok.AccessLevel;
 import lombok.Builder;
 
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 public record DateAccessGetAllRes(
         List<CourseDtoGetRes> courses
 ) {
