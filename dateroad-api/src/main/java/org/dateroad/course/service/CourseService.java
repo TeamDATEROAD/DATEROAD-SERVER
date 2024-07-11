@@ -18,8 +18,10 @@ import org.dateroad.date.domain.Course;
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.dateAccess.domain.DateAccess;
 import org.dateroad.dateAccess.repository.DateAccessRepository;
-import org.dateroad.exception.DateRoadException;
+import org.dateroad.exception.ConflictException;
+import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.image.domain.Image;
+import org.dateroad.like.domain.Like;
 import org.dateroad.like.repository.LikeRepository;
 import org.dateroad.point.domain.Point;
 import org.dateroad.point.repository.PointRepository;
@@ -46,6 +48,15 @@ public class CourseService {
         List<Course> courses = courseRepository.findAll(spec);
         List<CourseDtoGetRes> courseDtoGetResList = convertToDtoList(courses, Function.identity());
         return CourseGetAllRes.of(courseDtoGetResList);
+    }
+
+
+    @Transactional
+    public void createCourseLike(final Long userId, final Long courseId) {
+        User findUser = getUser(userId);
+        Course findCourse = getCourse(courseId);
+        validateCourseLike(findUser, findCourse);
+        saveCourseLike(findUser, findCourse);
     }
 
     private <T> List<CourseDtoGetRes> convertToDtoList(final List<T> entities, final Function<T, Course> converter) {
@@ -78,16 +89,34 @@ public class CourseService {
         return DateAccessGetAllRes.of(courseDtoGetResList);
     }
 
+    private User getUser(final Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
+    }
+
+    private Course getCourse(final Long courseId) {
+        return courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException(FailureCode.COURSE_NOT_FOUND));
+    }
+
+    private void validateCourseLike(User findUser, Course findCourse) {
+        if (likeRepository.findByUserAndCourse(findUser, findCourse).isPresent()) {
+            throw new ConflictException(FailureCode.DUPLICATE_COURSE_LIKE);
+        }
+    }
+
+    private void saveCourseLike(User user, Course course) {
+        Like like = Like.create(course, user);
+        likeRepository.save(like);
+    }
+
     @Transactional
     public Course createCourse(final Long userId, final CourseCreateReq courseRegisterReq,
                                final List<CoursePlaceGetReq> places, final List<MultipartFile> images) {
         final float totalTime = places.stream()
                 .map(CoursePlaceGetReq::getDuration)
                 .reduce(0.0f, Float::sum);
-        User user = userRepository.findById(userId)
-                .orElseThrow(
-                        () -> new DateRoadException(FailureCode.ENTITY_NOT_FOUND)
-                );
+        User user = getUser(userId);
         Course course = Course.create(
                 user,
                 courseRegisterReq.getTitle(),
@@ -101,8 +130,8 @@ public class CourseService {
         );
         Course saveCourse = courseRepository.save(course);
         List<Image> imageList = asyncService.createImage(images, saveCourse);
-        String thumnailUrl = imageList.getLast().getImageUrl();
-        course.setThumbnail(thumnailUrl);
+        String thumbnailUrl = imageList.getLast().getImageUrl();
+        course.setThumbnail(thumbnailUrl);
         return saveCourse;
     }
 

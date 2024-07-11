@@ -1,5 +1,6 @@
 package org.dateroad.date.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Builder;
 import org.dateroad.date.domain.Date;
@@ -14,9 +15,11 @@ import java.util.List;
 public record DateDetailRes(
     Long dateId,
     String title,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
     LocalTime startAt,
     String city,
     List<TagGetRes> tags,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
     LocalDate date,
     List<PlaceGetRes> places
 ) {

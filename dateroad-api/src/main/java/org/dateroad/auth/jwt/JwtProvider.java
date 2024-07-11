@@ -5,7 +5,14 @@ import io.jsonwebtoken.Jws;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.jwt.refreshtoken.RefreshTokenGenerator;
 import org.dateroad.code.FailureCode;
+import org.dateroad.exception.UnauthorizedException;
+import org.dateroad.refreshtoken.domain.RefreshToken;
+import org.dateroad.refreshtoken.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Base64;
 
 @RequiredArgsConstructor
 @Component
@@ -18,6 +25,18 @@ public class JwtProvider {
                 jwtGenerator.generateAccessToken(userId),
                 refreshTokenGenerator.generateRefreshToken(userId)
         );
+    }
+
+    //refreshToken 재발급할 때 검증
+    public void validateRefreshToken(LocalDateTime expireDate) {
+        if (expireDate.isBefore(LocalDateTime.now())) {
+            throw new UnauthorizedException(FailureCode.EXPIRED_REFRESH_TOKEN);
+        }
+    }
+
+    //Base64 인코딩된 리프레시 토큰 문자열을 바이트 배열
+    private byte[] toBinary(String refreshToken) {
+        return Base64.getDecoder().decode(refreshToken);
     }
 
     public long getUserIdFromSubject(String token) {

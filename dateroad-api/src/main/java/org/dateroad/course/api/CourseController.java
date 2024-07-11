@@ -1,7 +1,6 @@
 package org.dateroad.course.api;
 
 
-import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.argumentresolve.UserId;
@@ -19,15 +18,7 @@ import org.dateroad.date.domain.Course;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -39,7 +30,7 @@ public class CourseController {
 
     @GetMapping
     public ResponseEntity<CourseGetAllRes> getAllCourse(
-            @ModelAttribute CourseGetAllReq courseGetAllReq
+            final @ModelAttribute CourseGetAllReq courseGetAllReq
     ) {
         CourseGetAllRes courseAll = courseService.getAllCourses(courseGetAllReq);
         return ResponseEntity.ok(courseAll);
@@ -47,13 +38,13 @@ public class CourseController {
 
     @GetMapping("/date-access")
     public ResponseEntity<DateAccessGetAllRes> getAllDataAccesCourse(
-            @UserId Long userId
+            final @UserId Long userId
     ) {
         DateAccessGetAllRes dateAccessGetAllRes = courseService.getAllDataAccessCourse(userId);
         return ResponseEntity.ok(dateAccessGetAllRes);
     }
 
-    @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<CourseCreateRes> createCourse(
             @UserId final Long userId,
             @RequestPart("course") final CourseCreateReq courseCreateReq,
@@ -76,6 +67,12 @@ public class CourseController {
             @RequestBody final PointUseReq pointUseReq
     ) {
         courseService.openCourse(userId,courseId,pointUseReq);
+    }
+  
+    @PostMapping("/{courseId}/likes")
+    public ResponseEntity<Void> createCourseLlike(@UserId final Long userId,
+                                                  @PathVariable final Long courseId) {
+        courseService.createCourseLike(userId, courseId);
         return ResponseEntity.ok().build();
     }
 }
