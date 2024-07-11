@@ -23,6 +23,7 @@ import org.dateroad.date.domain.Course;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
+@Getter
 @Table(name = "images")
 public class Image extends BaseTimeEntity {
     @Id

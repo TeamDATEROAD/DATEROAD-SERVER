@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.dateroad.code.FailureCode;
-import org.dateroad.exception.UnauthorizedException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 

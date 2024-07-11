@@ -14,6 +14,7 @@ import org.dateroad.course.dto.response.DateAccessGetAllRes;
 import org.dateroad.course.facade.AsyncService;
 import org.dateroad.course.service.CourseService;
 import org.dateroad.date.domain.Course;
+import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +58,14 @@ public class CourseController {
         return ResponseEntity.status(
                 HttpStatus.CREATED
         ).body(CourseCreateRes.of(course.getId()));
+    }
+
+    @GetMapping("/{courseId}")
+    public ResponseEntity<CourseGetDetailRes> getCourseDetail(@UserId Long userId,
+                                                              @PathVariable("courseId") Long courseId) {
+        CourseGetDetailRes courseGetDetailRes = courseService.getCourseDetail(userId, courseId);
+
+        return ResponseEntity.ok(courseGetDetailRes);
     }
 
     @PostMapping("/{courseId}/likes")
