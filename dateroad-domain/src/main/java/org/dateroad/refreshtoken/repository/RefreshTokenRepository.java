@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, byte[]> {
-    public RefreshToken findUserIdByToken(@NotNull byte[] token);
+    RefreshToken findUserIdByToken(@NotNull byte[] token);
 
     void deleteByUserId(final Long userId);
 }

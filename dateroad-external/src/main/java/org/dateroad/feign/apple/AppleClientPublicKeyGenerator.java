@@ -22,7 +22,6 @@ public class AppleClientPublicKeyGenerator {
         ApplePublicKey applePublicKey = applePublicKeys
                 .getMatchesKey(headers.get(ALG), headers.get(KID));
         return getPublicKey(applePublicKey);
-
     }
 
     private PublicKey getPublicKey(final ApplePublicKey applePublicKey) {
@@ -30,7 +29,6 @@ public class AppleClientPublicKeyGenerator {
         byte[] eBytes = Base64.getUrlDecoder().decode(applePublicKey.e());
         RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(
                 new BigInteger(1, nBytes), new BigInteger(1, eBytes));
-
         try {
             KeyFactory keyFactory = KeyFactory.getInstance(applePublicKey.kty());
             return keyFactory.generatePublic(rsaPublicKeySpec);

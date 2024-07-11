@@ -6,7 +6,6 @@ import org.dateroad.auth.exception.JwtAuthenticationEntryPoint;
 import org.dateroad.auth.filter.JwtAuthenticationFilter;
 import org.dateroad.auth.jwt.JwtProvider;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;

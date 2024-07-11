@@ -1,6 +1,5 @@
 package org.dateroad.user.repository;
 
-import java.util.List;
 import org.dateroad.user.domain.Platform;
 import org.dateroad.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;

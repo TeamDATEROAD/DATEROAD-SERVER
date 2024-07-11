@@ -1,13 +1,6 @@
 package org.dateroad.user.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,6 +8,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dateroad.common.BaseTimeEntity;
+import org.dateroad.tag.domain.UserTag;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -54,6 +51,9 @@ public class User extends BaseTimeEntity {
     @Column(name = "total_point")
     @NotNull
     private int totalPoint = 0;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<UserTag> userTags;
 
     public static User create(final String name, final String platformUserId, final Platform platForm, final String imageUrl) {
         return User.builder()
