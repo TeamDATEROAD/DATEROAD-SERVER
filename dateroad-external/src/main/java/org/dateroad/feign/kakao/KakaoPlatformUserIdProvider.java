@@ -15,33 +15,21 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class KakaoFeignProvider {
-    private final KakaoProperties kakaoProperties;
+public class KakaoPlatformUserIdProvider {
     private final KakaoFeignApi kakaoFeignApi;
     private final ObjectMapper objectMapper;
-
-    private final String TARGETIDTYPE = "user_id";
+    private static final String TOKEN_TYPE = "Bearer ";
 
     //AuthService에서 호출 : 카카오에서 주는 userId 받아오기
-    public String getKakaoPlatformUserId(final String kakaoAccessToken) {
-        String kakaoRequestHeader = getKakaoRequestHeader(KakaoRequestType.ACCESS_TOKEN_INFO, kakaoAccessToken);
-        KakaoAccessTokenInfoRes kakaoAccessTokenInfoRes = getKakaoAccessTokenInfoFeign(kakaoRequestHeader);
+    public String getKakaoPlatformUserId(final String accessToken) {
+        String kakaoAccessTokenWithTokenType = getAccessTokenWithTokenType(accessToken);
+        KakaoAccessTokenInfoRes kakaoAccessTokenInfoRes = getKakaoAccessTokenInfo(kakaoAccessTokenWithTokenType);
         return String.valueOf(kakaoAccessTokenInfoRes.id());
     }
 
-    //AuthService에서 호출 : 회원탈퇴 할 때, 카카오톡과 연결 끊기
-    public void unLinkWithKakao(final String kakaoPlatformUserId) {
-        String kakaoRequestHeader = getKakaoRequestHeader(KakaoRequestType.UN_LINK, kakaoPlatformUserId);
+    private KakaoAccessTokenInfoRes getKakaoAccessTokenInfo(final String token) {
         try {
-            kakaoFeignApi.unlink(kakaoRequestHeader, TARGETIDTYPE, Long.valueOf(kakaoPlatformUserId));
-        } catch (FeignException e) {
-            throw new UnauthorizedException(FailureCode.UN_LINK_WITH_KAKAO_UNAUTHORIZED);
-        }
-    }
-
-    private KakaoAccessTokenInfoRes getKakaoAccessTokenInfoFeign(final String accessTokenWithTokenType) {
-        try {
-            return kakaoFeignApi.getKakaoPlatformUserId(accessTokenWithTokenType);
+            return kakaoFeignApi.getKakaoPlatformUserId(token);
         } catch (FeignException e) {
             log.error("Kakao feign exception : ", e);
 
@@ -59,14 +47,8 @@ public class KakaoFeignProvider {
         }
     }
 
-    private String getKakaoRequestHeader(final KakaoRequestType kakaoRequestType, final String accessToken) {
-        if (kakaoRequestType == KakaoRequestType.ACCESS_TOKEN_INFO) {
-            return KakaoHeaderType.BEARER.getTokenType() + accessToken;
-        } else if (kakaoRequestType == KakaoRequestType.UN_LINK) {
-            return KakaoHeaderType.KAKAOAK.getTokenType() + kakaoProperties.getAdminKey();
-        } else {
-            throw new UnauthorizedException(FailureCode.INVALID_KAKAO_ACCESS);
-        }
+    private String getAccessTokenWithTokenType(String accessToken) {
+        return TOKEN_TYPE + accessToken;
     }
 
     private KakaoErrorRes convertToKakaoErrorResponse(String responseBody) {
@@ -74,7 +56,7 @@ public class KakaoFeignProvider {
             return objectMapper.readValue(responseBody, KakaoErrorRes.class);
         } catch (IOException e) {
             log.error("Convert To KakaoErrorResponse Error : ", e);
-            throw new UnauthorizedException(FailureCode.INVALID_KAKAO_TOKEN);
+            throw new UnauthorizedException(FailureCode.UNAUTHORIZED);
         }
     }
 }
