@@ -50,7 +50,7 @@ public class CourseController {
 
     @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> createCourse(
-            @RequestHeader final Long userId,
+            @UserId final Long userId,
             @RequestPart("course") final CourseCreateReq courseCreateReq,
             @RequestPart("tags") final List<TagCreateReq> tags,
             @RequestPart("places") final List<CoursePlaceGetReq> places,
