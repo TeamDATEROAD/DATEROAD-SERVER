@@ -19,7 +19,6 @@ import java.util.Base64;
 public class JwtProvider {
     private final JwtGenerator jwtGenerator;
     private final RefreshTokenGenerator refreshTokenGenerator;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     public Token issueToken(final long userId) {
         return Token.of(
@@ -28,14 +27,12 @@ public class JwtProvider {
         );
     }
 
-
     //refreshToken 재발급할 때 검증
     public void validateRefreshToken(LocalDateTime expireDate) {
         if (expireDate.isBefore(LocalDateTime.now())) {
             throw new UnauthorizedException(FailureCode.EXPIRED_REFRESH_TOKEN);
         }
     }
-
 
     //Base64 인코딩된 리프레시 토큰 문자열을 바이트 배열
     private byte[] toBinary(String refreshToken) {
