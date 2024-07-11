@@ -9,11 +9,13 @@ import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CourseCreateReq;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
 import org.dateroad.course.dto.request.TagCreateReq;
+import org.dateroad.course.dto.response.CourseCreateRes;
 import org.dateroad.course.dto.response.CourseGetAllRes;
 import org.dateroad.course.dto.response.DateAccessGetAllRes;
 import org.dateroad.course.facade.AsyncService;
 import org.dateroad.course.service.CourseService;
 import org.dateroad.date.domain.Course;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +50,7 @@ public class CourseController {
     }
 
     @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> createCourse(
+    public ResponseEntity<CourseCreateRes> createCourse(
             @UserId final Long userId,
             @RequestPart("course") final CourseCreateReq courseCreateReq,
             @RequestPart("tags") final List<TagCreateReq> tags,
@@ -58,7 +60,8 @@ public class CourseController {
         Course course = courseService.createCourse(userId, courseCreateReq, places, images);
         asyncService.createCoursePlace(places, course);
         asyncService.createCourseTags(tags, course);
-        return ResponseEntity.created(
-                URI.create(course.getId().toString())).build();
+        return ResponseEntity.status(
+                HttpStatus.CREATED
+        ).body(CourseCreateRes.of(course.getId()));
     }
 }
