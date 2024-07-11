@@ -1,4 +1,4 @@
-package org.dateroad.feign.kakao.dto.response;
+package org.dateroad.feign.kakao;
 
 public record KakaoAccessTokenInfoRes(
         Long id,

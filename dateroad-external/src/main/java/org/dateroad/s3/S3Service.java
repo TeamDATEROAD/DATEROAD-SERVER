@@ -1,7 +1,11 @@
 package org.dateroad.s3;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -15,7 +19,6 @@ import java.util.UUID;
 
 @Component
 public class S3Service {
-
     private final String bucketName;
     private final AWSConfig awsConfig;
     private static final List<String> IMAGE_EXTENSIONS = Arrays.asList("image/jpeg", "image/png", "image/jpg", "image/webp");
@@ -26,8 +29,8 @@ public class S3Service {
         this.awsConfig = awsConfig;
     }
 
-
-    public String uploadImage(String directoryPath, MultipartFile image) throws IOException {
+    @Async
+    public Future<String> uploadImage(String directoryPath, MultipartFile image) throws IOException {
         final String key = directoryPath + generateImageFileName();
         final S3Client s3Client = awsConfig.getS3Client();
 
@@ -43,7 +46,7 @@ public class S3Service {
 
         RequestBody requestBody = RequestBody.fromBytes(image.getBytes());
         s3Client.putObject(request, requestBody);
-        return key;
+        return CompletableFuture.completedFuture(key);
     }
 
     public void deleteImage(String key) throws IOException {

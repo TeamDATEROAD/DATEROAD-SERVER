@@ -44,6 +44,3 @@ out/
 ### Yml ###
 dateroad-api/src/main/resources/application.yml
 dateroad-api/src/test/resources/application.yml
-
-### File ###
-**/static/*.p8
