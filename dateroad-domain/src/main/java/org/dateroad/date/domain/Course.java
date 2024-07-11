@@ -41,7 +41,6 @@ public class Course extends DateBase {
     @NotNull
     private int cost;
 
-<<<<<<< HEAD
     @Column(name = "time")
     @NotNull
     private float time;
@@ -54,16 +53,6 @@ public class Course extends DateBase {
                                 final String country, final String city,
                                 final int cost, final LocalDate date,
                                 final LocalTime startAt, final float time) {
-=======
-    @Column(name = "thumbnail")
-    @NotNull
-    private String thumbnail;
-
-    public static Course create(final String title, final String description,
-                                final String country, final String city,
-                                final int cost, final LocalDate date,
-                                final LocalTime startAt) {
->>>>>>> develop
         return Course.builder()
                 .user(user)
                 .title(title)
