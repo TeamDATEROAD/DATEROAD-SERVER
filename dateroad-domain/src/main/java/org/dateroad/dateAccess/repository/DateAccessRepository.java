@@ -12,4 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface DateAccessRepository extends JpaRepository<DateAccess,Long> {
     @Query("SELECT da.course FROM DateAccess da WHERE da.user.id = :userId")
     List<Course> findCoursesByUserId(@Param("userId") Long userId);
+
+    boolean existsDateAccessByUserIdAndCourseId(Long userId, Long courseId);
 }

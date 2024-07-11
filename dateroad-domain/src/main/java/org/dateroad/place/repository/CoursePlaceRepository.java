@@ -12,4 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface CoursePlaceRepository extends JpaRepository<CoursePlace,Long> {
     @Query("SELECT SUM(p.duration) FROM CoursePlace p WHERE p.course.id = :courseId")
     Integer findTotalDurationByCourseId(@Param("courseId") Long courseId);
+
+    List<CoursePlace> findAllCoursePlacesByCourseId(Long courseId);
 }
