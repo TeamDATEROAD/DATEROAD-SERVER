@@ -10,6 +10,7 @@ import org.dateroad.code.FailureCode;
 import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CourseCreateReq;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
+import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.response.CourseDtoGetRes;
 import org.dateroad.course.dto.response.CourseGetAllRes;
 import org.dateroad.course.dto.response.DateAccessGetAllRes;
@@ -17,14 +18,17 @@ import org.dateroad.course.facade.AsyncService;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.dateroad.date.repository.CourseRepository;
-import org.dateroad.date.service.DateRepository;
+import org.dateroad.dateAccess.domain.DateAccess;
 import org.dateroad.dateAccess.repository.DateAccessRepository;
+import org.dateroad.exception.DateRoadException;
 import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.image.domain.Image;
 import org.dateroad.image.repository.ImageRepository;
 import org.dateroad.exception.ConflictException;
 import org.dateroad.like.domain.Like;
 import org.dateroad.like.repository.LikeRepository;
+import org.dateroad.point.domain.Point;
+import org.dateroad.point.repository.PointRepository;
 import org.dateroad.place.domain.CoursePlace;
 import org.dateroad.place.repository.CoursePlaceRepository;
 import org.dateroad.tag.domain.CourseTag;
@@ -45,21 +49,22 @@ public class CourseService {
     private final DateAccessRepository dateAccessRepository;
     private final UserRepository userRepository;
     private final AsyncService asyncService;
+    private final PointRepository pointRepository;
     private final ImageRepository imageRepository;
     private final CoursePlaceRepository coursePlaceRepository;
     private final CourseTagRepository courseTagRepository;
-    private final DateRepository dateRepository;
 
 
-    public CourseGetAllRes getAllCourses(CourseGetAllReq courseGetAllReq) {
+    public CourseGetAllRes getAllCourses(final CourseGetAllReq courseGetAllReq) {
         Specification<Course> spec = CourseSpecifications.filterByCriteria(courseGetAllReq);
         List<Course> courses = courseRepository.findAll(spec);
         List<CourseDtoGetRes> courseDtoGetResList = convertToDtoList(courses, Function.identity());
         return CourseGetAllRes.of(courseDtoGetResList);
     }
 
+
     @Transactional
-    public void createCourseLike(Long userId, Long courseId) {
+    public void createCourseLike(final Long userId, final Long courseId) {
         User findUser = getUser(userId);
         Course findCourse = getCourse(courseId);
         validateCourseLike(findUser, findCourse);
@@ -74,14 +79,14 @@ public class CourseService {
         likeRepository.delete(findLike);
     }
 
-    private <T> List<CourseDtoGetRes> convertToDtoList(List<T> entities, Function<T, Course> converter) {
+    private <T> List<CourseDtoGetRes> convertToDtoList(final List<T> entities, final Function<T, Course> converter) {
         return entities.stream()
                 .map(converter)
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
-    private CourseDtoGetRes convertToDto(Course course) {
+    private CourseDtoGetRes convertToDto(final Course course) {
         int likeCount = likeRepository.countByCourse(course);
         Image thumbnailImage = asyncService.findFirstByCourseOrderBySequenceAsc(course);
         String thumbnailUrl = thumbnailImage != null ? thumbnailImage.getImageUrl() : null;
@@ -97,7 +102,7 @@ public class CourseService {
         );
     }
 
-    public DateAccessGetAllRes getAllDataAccessCourse(Long userId) {
+    public DateAccessGetAllRes getAllDataAccessCourse(final Long userId) {
         List<Course> accesses = dateAccessRepository.findCoursesByUserId(userId);
         List<CourseDtoGetRes> courseDtoGetResList = convertToDtoList(accesses, Function.identity());
         return DateAccessGetAllRes.of(courseDtoGetResList);
@@ -152,6 +157,38 @@ public class CourseService {
         String thumbnailUrl = imageList.getLast().getImageUrl();
         course.setThumbnail(thumbnailUrl);
         return saveCourse;
+    }
+
+    @Transactional
+    public void openCourse(final Long userId, final Long courseId, final PointUseReq pointUseReq) {
+        User user = getUser(userId);
+        Course course = getCourse(courseId);
+        Point point = Point.create(user, pointUseReq.point(), pointUseReq.type(), pointUseReq.description());
+        CoursePaymentType coursePaymentType = validateUserFreeOrPoint(user, pointUseReq.point());
+        processCoursePayment(coursePaymentType, user, point, pointUseReq);
+        dateAccessRepository.save(DateAccess.create(course, user));
+    }
+
+    private CoursePaymentType validateUserFreeOrPoint(final User user, final int requiredPoints) {
+        if (user.getFree() > 0) {
+            return CoursePaymentType.FREE; // User가 free를 갖고 있으면 true를 반환
+        } else if (user.getTotalPoint() < requiredPoints) {
+            throw new DateRoadException(FailureCode.INSUFFICIENT_USER_POINTS);
+        }
+        return CoursePaymentType.POINT;
+    }
+
+    public void processCoursePayment(final CoursePaymentType coursePaymentType, final User user, final Point point,
+                                     final PointUseReq pointUseReq) {
+        switch (coursePaymentType) {
+            case FREE -> {
+                asyncService.publishEventUserFree(user);
+            }
+            case POINT -> {
+                pointRepository.save(point);
+                asyncService.publishEvenUserPoint(user, pointUseReq);
+            }
+        }
     }
 
     public CourseGetDetailRes getCourseDetail(final Long userId, final Long courseId) {

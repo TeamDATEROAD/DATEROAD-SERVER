@@ -7,6 +7,7 @@ import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CourseCreateReq;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
+import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.request.TagCreateReq;
 import org.dateroad.course.dto.response.CourseCreateRes;
 import org.dateroad.course.dto.response.CourseGetAllRes;
@@ -30,7 +31,7 @@ public class CourseController {
 
     @GetMapping
     public ResponseEntity<CourseGetAllRes> getAllCourse(
-            @ModelAttribute CourseGetAllReq courseGetAllReq
+            final @ModelAttribute CourseGetAllReq courseGetAllReq
     ) {
         CourseGetAllRes courseAll = courseService.getAllCourses(courseGetAllReq);
         return ResponseEntity.ok(courseAll);
@@ -38,7 +39,7 @@ public class CourseController {
 
     @GetMapping("/date-access")
     public ResponseEntity<DateAccessGetAllRes> getAllDataAccesCourse(
-            @UserId Long userId
+            final @UserId Long userId
     ) {
         DateAccessGetAllRes dateAccessGetAllRes = courseService.getAllDataAccessCourse(userId);
         return ResponseEntity.ok(dateAccessGetAllRes);
@@ -60,6 +61,16 @@ public class CourseController {
         ).body(CourseCreateRes.of(course.getId()));
     }
 
+    @PostMapping("/{courseId}/date-access")
+    public ResponseEntity<Void> openCourse(
+            @UserId final Long userId,
+            @PathVariable final Long courseId,
+            @RequestBody final PointUseReq pointUseReq
+    ) {
+        courseService.openCourse(userId,courseId,pointUseReq);
+        return ResponseEntity.ok().build();
+    }
+  
     @GetMapping("/{courseId}")
     public ResponseEntity<CourseGetDetailRes> getCourseDetail(@UserId Long userId,
                                                               @PathVariable("courseId") Long courseId) {

@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.dateroad.common.BaseTimeEntity;
 import org.dateroad.date.domain.Course;
@@ -28,7 +29,6 @@ public class DateAccess extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "date_access_id")
-    @NotNull
     private Long id;
 
     @OneToOne
