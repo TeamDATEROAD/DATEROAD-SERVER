@@ -12,7 +12,7 @@ import org.dateroad.course.dto.request.CoursePlaceGetReq;
 import org.dateroad.course.dto.response.CourseDtoGetRes;
 import org.dateroad.course.dto.response.CourseGetAllRes;
 import org.dateroad.course.dto.response.DateAccessGetAllRes;
-import org.dateroad.course.facade.CourseFacade;
+import org.dateroad.course.facade.AsyncService;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.dateAccess.repository.DateAccessRepository;
@@ -34,7 +34,7 @@ public class CourseService {
     private final LikeRepository likeRepository;
     private final DateAccessRepository dateAccessRepository;
     private final UserRepository userRepository;
-    private final CourseFacade courseFacade;
+    private final AsyncService asyncService;
 
     public CourseGetAllRes getAllCourses(CourseGetAllReq courseGetAllReq) {
         Specification<Course> spec = CourseSpecifications.filterByCriteria(courseGetAllReq);
@@ -53,9 +53,9 @@ public class CourseService {
     private CourseDtoGetRes convertToDto(Course course) {
         int likeCount = likeRepository.countByCourse(course)
                 .orElse(0);
-        Image thumbnailImage = courseFacade.findFirstByCourseOrderBySequenceAsc(course);
+        Image thumbnailImage = asyncService.findFirstByCourseOrderBySequenceAsc(course);
         String thumbnailUrl = thumbnailImage != null ? thumbnailImage.getImageUrl() : null;
-        float duration = courseFacade.findTotalDurationByCourseId(course.getId());
+        float duration = asyncService.findTotalDurationByCourseId(course.getId());
         return CourseDtoGetRes.of(
                 course.getId(),
                 thumbnailUrl,
@@ -95,7 +95,9 @@ public class CourseService {
                 totalTime
         );
         Course saveCourse = courseRepository.save(course);
-        course.setThumbnail(courseFacade.createImage(images, saveCourse));
+        List<Image> imageList = asyncService.createImage(images, saveCourse);
+        String thumnailUrl = imageList.getLast().getImageUrl();
+        course.setThumbnail(thumnailUrl);
         return saveCourse;
     }
 }

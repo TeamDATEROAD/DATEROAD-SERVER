@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Transactional(readOnly = true)
-public class CourseFacade {
+public class AsyncService {
     private final CoursePlaceService coursePlaceService;
     private final CourseTagService courseTagService;
     private final ImageService imageService;
@@ -32,7 +32,7 @@ public class CourseFacade {
     }
 
     @Transactional
-    public String createImage(final List<MultipartFile> images, final Course course) {
+    public List<Image> createImage(final List<MultipartFile> images, final Course course) {
         return imageService.saveImages(images, course);
     }
 

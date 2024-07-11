@@ -27,7 +27,7 @@ public class ImageService {
     @Value("${cloudfront.domain}")
     private String cachePath;
 
-    public String saveImages(final List<MultipartFile> images, final Course course) {
+    public List<Image> saveImages(final List<MultipartFile> images, final Course course) {
         AtomicInteger sequence = new AtomicInteger();
         List<Image> courseimages = images.stream()
                 .map(img -> {
@@ -42,7 +42,7 @@ public class ImageService {
                     }
                 })
                 .toList();
-        return imageRepository.saveAll(courseimages).getFirst().getImageUrl();
+        return imageRepository.saveAll(courseimages);
     }
 
     public Image findFirstByCourseOrderBySequenceAsc(Course course) {
