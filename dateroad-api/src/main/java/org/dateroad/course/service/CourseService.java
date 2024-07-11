@@ -41,21 +41,21 @@ public class CourseService {
     private final AsyncService asyncService;
     private final PointRepository pointRepository;
 
-    public CourseGetAllRes getAllCourses(CourseGetAllReq courseGetAllReq) {
+    public CourseGetAllRes getAllCourses(final CourseGetAllReq courseGetAllReq) {
         Specification<Course> spec = CourseSpecifications.filterByCriteria(courseGetAllReq);
         List<Course> courses = courseRepository.findAll(spec);
         List<CourseDtoGetRes> courseDtoGetResList = convertToDtoList(courses, Function.identity());
         return CourseGetAllRes.of(courseDtoGetResList);
     }
 
-    private <T> List<CourseDtoGetRes> convertToDtoList(List<T> entities, Function<T, Course> converter) {
+    private <T> List<CourseDtoGetRes> convertToDtoList(final List<T> entities, final Function<T, Course> converter) {
         return entities.stream()
                 .map(converter)
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
-    private CourseDtoGetRes convertToDto(Course course) {
+    private CourseDtoGetRes convertToDto(final Course course) {
         int likeCount = likeRepository.countByCourse(course)
                 .orElse(0);
         Image thumbnailImage = asyncService.findFirstByCourseOrderBySequenceAsc(course);
@@ -108,16 +108,24 @@ public class CourseService {
 
     @Transactional
     public void openCourse(final Long userId, final Long courseId, final PointUseReq pointUseReq) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new DateRoadException(FailureCode.USER_NOT_FOUND)
-        );
-        Course course = courseRepository.findById(courseId).orElseThrow(
-                () -> new DateRoadException(FailureCode.COURSE_NOT_FOUND)
-        );
+        User user = getUser(userId);
+        Course course = getCourse(courseId);
         Point point = Point.create(user, pointUseReq.point(), pointUseReq.type(), pointUseReq.description());
         CoursePaymentType coursePaymentType = validateUserFreeOrPoint(user, pointUseReq.point());
         processCoursePayment(coursePaymentType, user, point, pointUseReq);
         dateAccessRepository.save(DateAccess.create(course, user));
+    }
+
+    private Course getCourse(final Long courseId) {
+        return courseRepository.findById(courseId).orElseThrow(
+                () -> new DateRoadException(FailureCode.COURSE_NOT_FOUND)
+        );
+    }
+
+    private User getUser(final Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+                () -> new DateRoadException(FailureCode.USER_NOT_FOUND)
+        );
     }
 
     private CoursePaymentType validateUserFreeOrPoint(final User user, final int requiredPoints) {
@@ -129,7 +137,7 @@ public class CourseService {
         return CoursePaymentType.POINT;
     }
 
-    public void processCoursePayment(final CoursePaymentType coursePaymentType, User user, final Point point,
+    public void processCoursePayment(final CoursePaymentType coursePaymentType, final User user, final Point point,
                                      final PointUseReq pointUseReq) {
         switch (coursePaymentType) {
             case FREE -> {

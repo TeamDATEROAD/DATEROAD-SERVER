@@ -22,11 +22,15 @@ public class FreeEventListener implements StreamListener<String, MapRecord<Strin
     public void onMessage(final MapRecord<String, String, String> message) {
         Map<String, String> map = message.getValue();
         Long userId = Long.valueOf(map.get("userId"));
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new DateRoadException(FailureCode.USER_NOT_FOUND)
-        );
+        User user = getUser(userId);
         int userPoint = user.getFree();
         user.setFree(userPoint -1);
         userRepository.save(user);
+    }
+
+    private User getUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+                () -> new DateRoadException(FailureCode.USER_NOT_FOUND)
+        );
     }
 }

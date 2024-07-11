@@ -22,11 +22,15 @@ public class pointEventListener implements StreamListener<String, MapRecord<Stri
     public void onMessage(final MapRecord<String, String, String> message) {
         Map<String, String> map = message.getValue();
         Long userId = Long.valueOf(map.get("userId"));
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new DateRoadException(FailureCode.USER_NOT_FOUND)
-        );
+        User user = getUser(userId);
         int point = Integer.parseInt(map.get("point")); // 감소시킬 포인트
         user.setTotalPoint(user.getTotalPoint() - point);
         userRepository.save(user);
+    }
+
+    private User getUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+                () -> new DateRoadException(FailureCode.USER_NOT_FOUND)
+        );
     }
 }
