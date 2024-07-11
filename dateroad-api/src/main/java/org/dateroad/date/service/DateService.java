@@ -7,10 +7,13 @@ import org.dateroad.date.dto.request.DateCreateReq;
 import org.dateroad.date.dto.request.PlaceCreateReq;
 import org.dateroad.date.dto.request.TagCreateReq;
 import org.dateroad.date.dto.response.DateDetailRes;
+import org.dateroad.date.dto.response.DateGetRes;
+import org.dateroad.date.dto.response.DatesGetRes;
 import org.dateroad.date.repository.DatePlaceRepository;
 import org.dateroad.date.repository.DateTagRepository;
 import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.exception.ForbiddenException;
+import org.dateroad.exception.UnauthorizedException;
 import org.dateroad.place.domain.DatePlace;
 import org.dateroad.tag.domain.DateTag;
 import org.dateroad.user.domain.User;
@@ -18,6 +21,8 @@ import org.dateroad.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -35,6 +40,15 @@ public class DateService {
         Date date = createDate(findUser, dateCreateReq);
         createDateTag(date, dateCreateReq.tags());
         createDatePlace(date, dateCreateReq.places());
+    }
+
+    public DatesGetRes getDates(Long userId, String time) {
+        LocalDate currentDate = LocalDate.now();
+        List<Date> dates = fetchDatesByUserIdAndTime(userId, time, currentDate);
+        List<DateGetRes> dateGetResList = dates.stream()
+                .map(date -> createDateGetRes(date, currentDate))
+                .toList();
+        return DatesGetRes.of(dateGetResList);
     }
 
     public DateDetailRes getDateDetail(final Long userId, final Long dateId) {
@@ -77,6 +91,28 @@ public class DateService {
         List<DatePlace> datePlaces = places.stream()
                         .map(p -> DatePlace.create(date, p.name(), p.duration(), p.sequence())).toList();
         datePlaceRepository.saveAll(datePlaces);
+    }
+
+    private List<Date> fetchDatesByUserIdAndTime(Long userId, String time, LocalDate currentDate) {
+        if (time.equalsIgnoreCase("PAST")) {
+            return dateRepository.findPastDatesByUserId(userId, currentDate);
+        }
+        else if (time.equalsIgnoreCase("FUTURE")) {
+            return dateRepository.findFutureDatesByUserId(userId, currentDate);
+        }
+        else {
+            throw new UnauthorizedException(FailureCode.INVALID_DATE_GET_TYPE);
+        }
+    }
+
+    private DateGetRes createDateGetRes(Date date, LocalDate currentDate) {
+        int dDay = calculateDday(date.getDate(), currentDate);
+        List<DateTag> dateTags = getDateTag(date);
+        return DateGetRes.of(date, dateTags, dDay);
+    }
+
+    private int calculateDday(LocalDate date, LocalDate currentDate) {
+        return (int) ChronoUnit.DAYS.between(currentDate, date);
     }
 
     private Date getDate(Long dateId) {
