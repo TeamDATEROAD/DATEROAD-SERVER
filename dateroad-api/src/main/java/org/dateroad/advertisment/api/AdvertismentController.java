@@ -20,17 +20,13 @@ public class AdvertismentController {
 
     @GetMapping
     public ResponseEntity<AdvGetAllRes> getAllAdvertisments(){
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(advertismentService.getAllAdvertisments());
+        return ResponseEntity.ok(advertismentService.getAllAdvertisments());
     }
 
     @GetMapping("{advId}")
     public ResponseEntity<AdvGetDetailRes> getAllAdvertisments(
             final @PathVariable Long advId
     ){
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(advertismentService.getAdvertismentsDetail(advId));
+        return ResponseEntity.ok(advertismentService.getAdvertismentsDetail(advId));
     }
 }

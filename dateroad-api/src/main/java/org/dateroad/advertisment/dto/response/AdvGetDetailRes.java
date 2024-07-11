@@ -12,7 +12,6 @@ public record AdvGetDetailRes(
         List<AdvImagesRes> images,
         String title,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
-
         LocalDate createAt,
         String description
 ) {
@@ -25,7 +24,7 @@ public record AdvGetDetailRes(
                 .build();
     }
 
-    @Builder
+    @Builder(access = AccessLevel.PROTECTED)
     public record AdvImagesRes(
             String imagesUrl,
             int sequence

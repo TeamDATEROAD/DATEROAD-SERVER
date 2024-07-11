@@ -26,6 +26,12 @@ public class AdvertismentService {
     private final AdvertismentRepository advertismentRepository;
     private final AdImageRepository adImageRepository;
 
+    private static List<AdvImagesRes> getImages(final List<AdImage> adImages) {
+        return adImages.stream().map(
+                adImage -> AdvImagesRes.of(adImage.getImageUrl(), adImage.getSequence())
+        ).toList();
+    }
+
     public AdvGetAllRes getAllAdvertisments() {
         Pageable topFive = PageRequest.of(0, 5);
         return AdvGetAllRes.of(advertismentRepository.findTop5ByOrderByCreatedDateDesc(topFive).
@@ -38,17 +44,12 @@ public class AdvertismentService {
         Advertisment advertisment = getAdvertisment(advId);
         List<AdImage> adImages = adImageRepository.findAllById(advId);
         return AdvGetDetailRes.of(
-                getImages(adImages), advertisment.getTitle(), advertisment.getCreatedAt().toLocalDate(), advertisment.getTitle()
+                getImages(adImages), advertisment.getTitle(), advertisment.getCreatedAt().toLocalDate(),
+                advertisment.getTitle()
         );
     }
 
-    private static List<AdvImagesRes> getImages(List<AdImage> adImages) {
-        return adImages.stream().map(
-                adImage -> AdvImagesRes.of(adImage.getImageUrl(), adImage.getSequence())
-        ).toList();
-    }
-
-    private Advertisment getAdvertisment(Long advId) {
+    private Advertisment getAdvertisment(final Long advId) {
         return advertismentRepository.findById(advId).orElseThrow(
                 () -> new EntityNotFoundException(FailureCode.ADVERTISMENT_NOT_FOUND)
         );
