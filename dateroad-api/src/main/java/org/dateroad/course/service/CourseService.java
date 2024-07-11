@@ -53,6 +53,14 @@ public class CourseService {
         saveCourseLike(findUser, findCourse);
     }
 
+    @Transactional
+    public void deleteCourseLike(Long userId, Long courseId) {
+        User findUser = getUser(userId);
+        Course findCourse = getCourse(courseId);
+        Like findLike = getLike(findUser, findCourse);
+        likeRepository.delete(findLike);
+    }
+
     private <T> List<CourseDtoGetRes> convertToDtoList(List<T> entities, Function<T, Course> converter) {
         return entities.stream()
                 .map(converter)
@@ -102,6 +110,11 @@ public class CourseService {
     private void saveCourseLike(User user, Course course) {
         Like like = Like.create(course, user);
         likeRepository.save(like);
+    }
+
+    private Like getLike(User findUser, Course findCourse) {
+        return likeRepository.findByUserAndCourse(findUser, findCourse)
+                .orElseThrow(() -> new EntityNotFoundException(FailureCode.LIKE_NOT_FOUND));
     }
 
     @Transactional
