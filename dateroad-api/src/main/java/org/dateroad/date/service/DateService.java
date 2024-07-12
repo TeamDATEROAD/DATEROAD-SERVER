@@ -54,12 +54,14 @@ public class DateService {
     }
 
     public DateDetailRes getDateDetail(final Long userId, final Long dateId) {
+        LocalDate currentDate = LocalDate.now();
         User findUser = getUser(userId);
         Date findDate = getDate(dateId);
         validateDate(findUser, findDate);
         List<DateTag> findDateTags = getDateTag(findDate);
         List<DatePlace> findDatePlaces = getDatePlace(findDate);
-        return DateDetailRes.of(findDate, findDateTags, findDatePlaces);
+        int dDay = calculateDDay(findDate.getDate(), currentDate);
+        return DateDetailRes.of(findDate, findDateTags, findDatePlaces, dDay);
     }
 
     @Transactional
@@ -76,7 +78,7 @@ public class DateService {
         LocalDate currentDate = LocalDate.now();
         LocalTime currentTime = LocalTime.now();
         User findUser = getUser(userId);
-        Date nearest = findNearestDate(findUser.getId(), currentDate, currentTime); ;
+        Date nearest = findNearestDate(findUser.getId(), currentDate, currentTime);
         int dDay = calculateDDay(nearest.getDate(), currentDate);
         return DateGetNearestRes
                 .of(
