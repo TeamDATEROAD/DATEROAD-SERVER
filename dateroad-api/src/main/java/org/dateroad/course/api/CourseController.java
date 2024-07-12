@@ -30,7 +30,7 @@ public class CourseController {
     private final AsyncService asyncService;
 
     @GetMapping
-    public ResponseEntity<CourseGetAllRes> getAllCourse(
+    public ResponseEntity<CourseGetAllRes> getAllCourses(
             final @ModelAttribute CourseGetAllReq courseGetAllReq
     ) {
         CourseGetAllRes courseAll = courseService.getAllCourses(courseGetAllReq);
@@ -38,7 +38,7 @@ public class CourseController {
     }
 
     @GetMapping("/date-access")
-    public ResponseEntity<DateAccessGetAllRes> getAllDataAccesCourse(
+    public ResponseEntity<DateAccessGetAllRes> getAllDataAccessCourse(
             final @UserId Long userId
     ) {
         DateAccessGetAllRes dateAccessGetAllRes = courseService.getAllDataAccessCourse(userId);
