@@ -20,7 +20,6 @@ import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.dateAccess.domain.DateAccess;
 import org.dateroad.dateAccess.repository.DateAccessRepository;
-import org.dateroad.exception.DateRoadException;
 import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.image.domain.Image;
 import org.dateroad.image.repository.ImageRepository;
