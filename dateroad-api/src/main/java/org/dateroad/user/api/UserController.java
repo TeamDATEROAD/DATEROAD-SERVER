@@ -5,6 +5,7 @@ import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.user.dto.request.AppleWithdrawAuthCodeReq;
 import org.dateroad.user.dto.request.UserSignInReq;
 import org.dateroad.user.dto.request.UserSignUpReq;
+import org.dateroad.user.dto.response.UserInfoGetMyPageRes;
 import org.dateroad.user.dto.response.UserJwtInfoRes;
 import org.dateroad.user.dto.response.UserInfoMainRes;
 import org.dateroad.user.service.AuthService;
@@ -76,5 +77,11 @@ public class UserController {
         UserInfoMainRes userInfoMainRes = userService.getUserInfoMain(userId);
         return ResponseEntity
                 .ok(userInfoMainRes);
+    }
+
+    @GetMapping
+    public ResponseEntity<UserInfoGetMyPageRes> getUserInfoMyPage(@UserId final Long userId) {
+        UserInfoGetMyPageRes userInfoGetMyPageRes = userService.getUserInfoMyPage(userId);
+        return ResponseEntity.ok(userInfoGetMyPageRes);
     }
 }
