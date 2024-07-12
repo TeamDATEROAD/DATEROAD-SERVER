@@ -21,10 +21,11 @@ public record DateDetailRes(
     List<TagGetRes> tags,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
     LocalDate date,
-    List<PlaceGetRes> places
+    List<PlaceGetRes> places,
+    int dDay
 ) {
 
-    public static DateDetailRes of(Date date, List<DateTag> tags, List<DatePlace> places) {
+    public static DateDetailRes of(Date date, List<DateTag> tags, List<DatePlace> places, int dDay) {
 
         List<TagGetRes> tagGetRes = tags.stream()
                 .map(TagGetRes::of)
@@ -41,6 +42,7 @@ public record DateDetailRes(
                 .tags(tagGetRes)
                 .date(date.getDate())
                 .places(placeGetRes)
+                .dDay(dDay)
                 .build();
     }
 }
