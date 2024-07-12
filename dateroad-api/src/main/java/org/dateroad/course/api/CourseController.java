@@ -61,6 +61,12 @@ public class CourseController {
         ).body(CourseCreateRes.of(course.getId()));
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<DateAccessGetAllRes> getMyCourses(final @UserId Long userId) {
+        DateAccessGetAllRes dateAccessGetAllRes = courseService.getMyCourses(userId);
+        return ResponseEntity.ok(dateAccessGetAllRes);
+    }
+
     @PostMapping("/{courseId}/date-access")
     public ResponseEntity<Void> openCourse(
             @UserId final Long userId,
