@@ -16,6 +16,7 @@ import org.dateroad.course.facade.AsyncService;
 import org.dateroad.course.service.CourseService;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
+import org.dateroad.point.domain.TransactionType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +54,7 @@ public class CourseController {
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<CourseCreateRes> createCourse(
-            @UserId final Long userId,
+            @RequestHeader final Long userId,
             @RequestPart("course") final CourseCreateReq courseCreateReq,
             @RequestPart("tags") final List<TagCreateReq> tags,
             @RequestPart("places") final List<CoursePlaceGetReq> places,
@@ -62,6 +63,7 @@ public class CourseController {
         Course course = courseService.createCourse(userId, courseCreateReq, places, images);
         asyncService.createCoursePlace(places, course);
         asyncService.createCourseTags(tags, course);
+        asyncService.publishEvenUserPoint(userId, PointUseReq.of(100, TransactionType.POINT_GAINED,"코스 생성"));
         return ResponseEntity.status(
                 HttpStatus.CREATED
         ).body(CourseCreateRes.of(course.getId()));
