@@ -21,7 +21,6 @@ import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.dateAccess.domain.DateAccess;
 import org.dateroad.dateAccess.repository.DateAccessRepository;
-import org.dateroad.exception.DateRoadException;
 import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.exception.ForbiddenException;
 import org.dateroad.image.domain.Image;
@@ -37,6 +36,8 @@ import org.dateroad.tag.domain.CourseTag;
 import org.dateroad.tag.repository.CourseTagRepository;
 import org.dateroad.user.domain.User;
 import org.dateroad.user.repository.UserRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,6 +64,19 @@ public class CourseService {
         return CourseGetAllRes.of(courseDtoGetResList);
     }
 
+    public CourseGetAllRes getSortedCourses(String sortBy) {
+        List<Course> courses;
+        if (sortBy.equalsIgnoreCase("POPULAR")) {
+            courses = getCoursesSortedByLikes();
+        } else if (sortBy.equalsIgnoreCase("LATEST")) {
+            courses = getCoursesSortedByLatest();
+        } else {
+            throw new EntityNotFoundException(FailureCode.SORT_TYPE_NOT_FOUND);
+        }
+        List<CourseDtoGetRes> courseDtoGetResList = convertToDtoList(courses, Function.identity());
+        return CourseGetAllRes.of(courseDtoGetResList);
+    }
+
     @Transactional
     public void createCourseLike(final Long userId, final Long courseId) {
         User findUser = getUser(userId);
@@ -77,6 +91,16 @@ public class CourseService {
         Course findCourse = getCourse(courseId);
         Like findLike = getLike(findUser, findCourse);
         likeRepository.delete(findLike);
+    }
+
+    public List<Course> getCoursesSortedByLikes() {
+        Pageable pageable = PageRequest.of(0, 5);
+        return courseRepository.findTopCoursesByLikes(pageable);
+    }
+
+    public List<Course> getCoursesSortedByLatest() {
+        Pageable pageable = PageRequest.of(0, 3);
+        return courseRepository.findTopCoursesByCreatedAt(pageable);
     }
 
     private <T> List<CourseDtoGetRes> convertToDtoList(final List<T> entities, final Function<T, Course> converter) {
@@ -100,6 +124,13 @@ public class CourseService {
                 course.getCost(),
                 duration
         );
+    }
+
+    public DateAccessGetAllRes getMyCourses(Long userId) {
+        User findUser = getUser(userId);
+        List<Course> courses = courseRepository.findByUser(findUser);
+        List<CourseDtoGetRes> courseDtoGetResList = convertToDtoList(courses, Function.identity());
+        return DateAccessGetAllRes.of(courseDtoGetResList);
     }
 
     public DateAccessGetAllRes getAllDataAccessCourse(final Long userId) {
@@ -173,7 +204,7 @@ public class CourseService {
         if (user.getFree() > 0) {
             return CoursePaymentType.FREE; // User가 free를 갖고 있으면 true를 반환
         } else if (user.getTotalPoint() < requiredPoints) {
-            throw new DateRoadException(FailureCode.INSUFFICIENT_USER_POINTS);
+            throw new EntityNotFoundException(FailureCode.INSUFFICIENT_USER_POINTS);
         }
         return CoursePaymentType.POINT;
     }

@@ -2,9 +2,11 @@ package org.dateroad.user.api;
 
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.argumentresolve.UserId;
+import org.dateroad.tag.domain.DateTagType;
 import org.dateroad.user.dto.request.AppleWithdrawAuthCodeReq;
 import org.dateroad.user.dto.request.UserSignInReq;
 import org.dateroad.user.dto.request.UserSignUpReq;
+import org.dateroad.user.dto.response.UserInfoGetMyPageRes;
 import org.dateroad.user.dto.response.UserJwtInfoRes;
 import org.dateroad.user.dto.response.UserInfoMainRes;
 import org.dateroad.user.service.AuthService;
@@ -12,6 +14,10 @@ import org.dateroad.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 import static org.dateroad.common.Constants.AUTHORIZATION;
 
@@ -24,8 +30,11 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<UserJwtInfoRes> signUp(@RequestHeader(AUTHORIZATION) final String token,
-                                                 @RequestBody final UserSignUpReq userSignUPReq) {
-        UserJwtInfoRes userSignUpRes = authService.signUp(token, userSignUPReq);
+                                                 @RequestPart("userSignUpReq") final UserSignUpReq userSignUPReq,
+                                                 @RequestPart("image") MultipartFile image,
+                                                 @RequestPart("tag") List<DateTagType> tag //todo: 열람 데이트 코스 전체 조회 API 머지 후, TagEnum으로 변경해야됨
+    ) throws IOException {
+        UserJwtInfoRes userSignUpRes = authService.signUp(token, userSignUPReq, image, tag);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(userSignUpRes);
@@ -76,5 +85,11 @@ public class UserController {
         UserInfoMainRes userInfoMainRes = userService.getUserInfoMain(userId);
         return ResponseEntity
                 .ok(userInfoMainRes);
+    }
+
+    @GetMapping
+    public ResponseEntity<UserInfoGetMyPageRes> getUserInfoMyPage(@UserId final Long userId) {
+        UserInfoGetMyPageRes userInfoGetMyPageRes = userService.getUserInfoMyPage(userId);
+        return ResponseEntity.ok(userInfoGetMyPageRes);
     }
 }
