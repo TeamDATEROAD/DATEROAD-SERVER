@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.dateroad.common.BaseTimeEntity;
 import org.dateroad.tag.domain.UserTag;
 
@@ -45,11 +46,13 @@ public class User extends BaseTimeEntity {
     @Builder.Default
     @Column(name = "free")
     @NotNull
+    @Setter
     private int free = 3;
 
     @Builder.Default
     @Column(name = "total_point")
     @NotNull
+    @Setter
     private int totalPoint = 0;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

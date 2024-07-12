@@ -38,6 +38,7 @@ public enum FailureCode {
     INVALID_KAKAO_ACCESS(HttpStatus.UNAUTHORIZED, "e4026", "잘못된 카카오 통신 접근입니다."),
     UN_LINK_WITH_KAKAO_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "e4027", "카카오 연결 끊기 통신에 실패했습니다"),
     INVALID_APPLE_TOKEN_ACCESS(HttpStatus.UNAUTHORIZED, "e4028", "잘못된 애플 토큰 통신 접근입니다."),
+    INVALID_DATE_GET_TYPE(HttpStatus.UNAUTHORIZED, "e4029", "잘못된 데이트 타입 검색입니다."),
 
     /**
      * 403 Forbidden
@@ -55,7 +56,15 @@ public enum FailureCode {
     DATE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4044", "데이트를 찾을 수 없습니다."),
     DATE_TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "e4045", "데이트 태그를 찾을 수 없습니다."),
     DATE_PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4046", "데이트 장소를 찾을 수 없습니다."),
+    COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4047", "데이트 코스를 찾을 수 없습니다."),
+    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4048", "이미지를 찾을 수 없습니다."),
+    COURSE_PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "e4049", "코스 장소를 찾을 수 없습니다."),
+    COURSE_TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "e40410", "데이트 태그를 찾을 수 없습니다."),
+    NEAREST_DATE_NOT_FOUND(HttpStatus.NOT_FOUND, "e40411", "다가오는 데이트를 찾을 수 없습니다."),
+    LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "e40412", "해당 데이트 코스에 좋아요를 찾을 수 없습니다."),
+    ADVERTISMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "e40413", "해당 광고를 찾을 수 없습니다."),
 
+    INSUFFICIENT_USER_POINTS(HttpStatus.NOT_FOUND, "e4048", "유저의 포인트가 부족합니다."),
     /**
      * 405 Method Not Allowed
      */
@@ -67,12 +76,14 @@ public enum FailureCode {
     CONFLICT(HttpStatus.CONFLICT, "e4090", "이미 존재하는 리소스입니다."),
     DUPLICATE_USER(HttpStatus.CONFLICT, "e4091", "이미 존재하는 유저입니다."),
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "e4092", "이미 존재하는 닉네임입니다."),
+    DUPLICATE_COURSE_LIKE(HttpStatus.CONFLICT, "e4093", "해당 데이트 코스에 좋아요가 이미 존재합니다."),
 
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "e5000", "서버 내부 오류입니다.");
 
     /**
      * 500 Internal Server Error
      */
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "e5000", "서버 내부 오류입니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;

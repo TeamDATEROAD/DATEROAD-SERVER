@@ -8,7 +8,7 @@ import org.dateroad.tag.domain.UserTag;
 import org.dateroad.tag.repository.UserTagRepository;
 import org.dateroad.user.domain.User;
 import org.dateroad.user.dto.response.UserInfoGetMyPageRes;
-import org.dateroad.user.dto.response.UserSignInRes;
+import org.dateroad.user.dto.response.UserInfoMainRes;
 import org.dateroad.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +35,12 @@ public class UserService {
         return UserInfoGetMyPageRes.of(foundUser.getName(), dateTagTypes, foundUser.getTotalPoint(), foundUser.getImageUrl());
     }
 
-    private User findUserById(Long userId) {
+    public UserInfoMainRes getUserInfoMain(final Long userId) {
+        User foundUser = findUserById(userId);
+        return UserInfoMainRes.of(foundUser.getName(), foundUser.getTotalPoint(), foundUser.getImageUrl());
+    }
+
+    private User findUserById(final Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }

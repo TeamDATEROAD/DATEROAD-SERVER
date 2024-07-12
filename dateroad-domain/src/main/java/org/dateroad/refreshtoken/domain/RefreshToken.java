@@ -18,8 +18,8 @@ public class RefreshToken {
 
     @Id
     @NotNull
-    @Column(name = "refresh_token_id")
-    private byte[] token;
+    @Column(name = "refresh_token_id", nullable = false)
+    private String token;
 
     @Column(name = "user_id")
     private Long userId;
@@ -27,7 +27,7 @@ public class RefreshToken {
     @Column(name = "expired_at")
     private LocalDateTime expiredAt;
 
-    public static RefreshToken create(final byte[] token, final Long userId, LocalDateTime expiredAt) {
+    public static RefreshToken create(final String token, final Long userId, LocalDateTime expiredAt) {
         return RefreshToken.builder()
                 .token(token)
                 .userId(userId)

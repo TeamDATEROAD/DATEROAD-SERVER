@@ -1,13 +1,19 @@
 package org.dateroad.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.Token;
+import org.dateroad.auth.jwt.refreshtoken.RefreshTokenGenerator;
 import org.dateroad.code.FailureCode;
 import org.dateroad.exception.*;
 import org.dateroad.feign.apple.AppleFeignProvider;
 import org.dateroad.feign.kakao.KakaoFeignApi;
 import org.dateroad.feign.kakao.KakaoFeignProvider;
+import org.dateroad.exception.ConflictException;
+import org.dateroad.exception.EntityNotFoundException;
+import org.dateroad.exception.UnauthorizedException;
+import org.dateroad.refreshtoken.domain.RefreshToken;
 import org.dateroad.refreshtoken.repository.RefreshTokenRepository;
 import org.dateroad.tag.domain.DateTagType;
 import org.dateroad.tag.domain.UserTag;
@@ -18,16 +24,20 @@ import org.dateroad.user.dto.request.AppleWithdrawAuthCodeReq;
 import org.dateroad.user.dto.request.UserSignInReq;
 import org.dateroad.user.repository.UserRepository;
 import org.dateroad.user.dto.request.UserSignUpReq;
-import org.dateroad.user.dto.response.UserSignInRes;
-import org.dateroad.user.dto.response.UsersignUpRes;
+import org.dateroad.user.dto.response.UserJwtInfoRes;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
+@Slf4j
 public class AuthService {
     private final UserRepository userRepository;
     private final KakaoFeignProvider kakaoFeignProvider;
@@ -38,7 +48,7 @@ public class AuthService {
     private final KakaoFeignApi kakaoFeignApi;
 
     @Transactional
-    public UsersignUpRes signUp(final String token, final UserSignUpReq userSignUpReq) {
+    public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq) {
         String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
         validateUserTagSize(userSignUpReq.tag());
         checkNickname(userSignUpReq.name());
@@ -47,18 +57,26 @@ public class AuthService {
         saveUserTag(newUser, userSignUpReq.tag());
         Token issuedToken = jwtProvider.issueToken(newUser.getId());
 
-        return UsersignUpRes.of(newUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
+        return UserJwtInfoRes.of(newUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
 
     @Transactional
-    public UserSignInRes signIn(final String token, final UserSignInReq userSignInReq) {
+    public UserJwtInfoRes signIn(final String token, final UserSignInReq userSignInReq) {
         String platformUserId = getUserPlatformId(userSignInReq.platform(), token);
         User foundUser = getUserByPlatformAndPlatformUserId(userSignInReq.platform(), platformUserId);
+        deleteRefreshToken(foundUser.getId());
         Token issuedToken = jwtProvider.issueToken(foundUser.getId());
-        return UserSignInRes.of(foundUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
+        return UserJwtInfoRes.of(foundUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
 
     @Transactional
+    public UserJwtInfoRes reissue(final String refreshToken) {
+        RefreshToken foundRefreshToken = getRefreshTokenByToken(refreshToken);
+        jwtProvider.validateRefreshToken(foundRefreshToken.getExpiredAt());
+        Long userId = foundRefreshToken.getUserId();
+        Token newToken = jwtProvider.issueToken(userId);
+        return UserJwtInfoRes.of(userId, newToken.accessToken(), newToken.refreshToken());
+    }
     public void withdraw(final Long userId, final AppleWithdrawAuthCodeReq AppleWithdrawAuthCodeReq) {
 
         //todo: #45브랜치 머지후, 메서드 이용
@@ -79,9 +97,7 @@ public class AuthService {
 
     //닉네임 중복체크
     public void checkNickname(final String nickname) {
-        if (!userRepository.existsByName(nickname)) {
-            return;
-        } else {
+        if (userRepository.existsByName(nickname)) {
             throw new ConflictException(FailureCode.DUPLICATE_NICKNAME);
         }
 	}
@@ -142,6 +158,19 @@ public class AuthService {
     private void validateUserTagSize(final List<DateTagType> userTags) {
         if (userTags.isEmpty() || userTags.size() > 3) {
             throw new BadRequestException((FailureCode.WRONG_USER_TAG_SIZE));
+        }
+    }
+
+    public RefreshToken getRefreshTokenByToken(final String refreshToken) {
+        try {
+            return refreshTokenRepository.findByToken(refreshToken)
+                    .orElseThrow(() -> new UnauthorizedException(FailureCode.UNAUTHORIZED));
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            throw new UnauthorizedException(FailureCode.INVALID_REFRESH_TOKEN_VALUE);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new UnauthorizedException((FailureCode.UNAUTHORIZED));
         }
     }
 
