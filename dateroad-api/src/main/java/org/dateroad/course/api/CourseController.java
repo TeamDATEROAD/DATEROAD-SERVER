@@ -37,6 +37,12 @@ public class CourseController {
         return ResponseEntity.ok(courseAll);
     }
 
+    @GetMapping("/sort")
+    public ResponseEntity<CourseGetAllRes> getSortedCourses(final @RequestParam String sortBy) {
+        CourseGetAllRes courseSortedRes = courseService.getSortedCourses(sortBy);
+        return ResponseEntity.ok(courseSortedRes);
+    }
+
     @GetMapping("/date-access")
     public ResponseEntity<DateAccessGetAllRes> getAllDataAccessCourse(
             final @UserId Long userId
