@@ -75,7 +75,6 @@ public class CourseController {
     public ResponseEntity<CourseGetDetailRes> getCourseDetail(@UserId Long userId,
                                                               @PathVariable("courseId") Long courseId) {
         CourseGetDetailRes courseGetDetailRes = courseService.getCourseDetail(userId, courseId);
-
         return ResponseEntity.ok(courseGetDetailRes);
     }
 
@@ -90,6 +89,13 @@ public class CourseController {
     public ResponseEntity<Void> deleteCourseLike(@RequestHeader final Long userId,
                                                   @PathVariable final Long courseId) {
         courseService.deleteCourseLike(userId, courseId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{courseId}")
+    public ResponseEntity<Void> deleteCourse(@UserId Long userId,
+                                                 @PathVariable final Long courseId) {
+        courseService.deleteCourse(userId, courseId);
         return ResponseEntity.ok().build();
     }
 }
