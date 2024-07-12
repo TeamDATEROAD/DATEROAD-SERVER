@@ -54,7 +54,7 @@ public class CourseController {
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<CourseCreateRes> createCourse(
-            @RequestHeader final Long userId,
+            @UserId final Long userId,
             @RequestPart("course") final CourseCreateReq courseCreateReq,
             @RequestPart("tags") final List<TagCreateReq> tags,
             @RequestPart("places") final List<CoursePlaceGetReq> places,
@@ -100,7 +100,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/{courseId}/likes")
-    public ResponseEntity<Void> deleteCourseLike(@RequestHeader final Long userId,
+    public ResponseEntity<Void> deleteCourseLike(@UserId final Long userId,
                                                   @PathVariable final Long courseId) {
         courseService.deleteCourseLike(userId, courseId);
         return ResponseEntity.ok().build();
