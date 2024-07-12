@@ -30,7 +30,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<UserJwtInfoRes> signUp(@RequestHeader(AUTHORIZATION) final String token,
-                                                 @RequestPart("usertest") final UserSignUpReq userSignUPReq,
+                                                 @RequestPart("userSignUpReq") final UserSignUpReq userSignUPReq,
                                                  @RequestPart("image") MultipartFile image,
                                                  @RequestPart("tag") List<DateTagType> tag //todo: 열람 데이트 코스 전체 조회 API 머지 후, TagEnum으로 변경해야됨
     ) throws IOException {
