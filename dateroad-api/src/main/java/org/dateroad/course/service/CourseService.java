@@ -16,11 +16,13 @@ import org.dateroad.course.dto.response.CourseGetAllRes;
 import org.dateroad.course.dto.response.DateAccessGetAllRes;
 import org.dateroad.course.facade.AsyncService;
 import org.dateroad.date.domain.Course;
+import org.dateroad.date.domain.Date;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.dateAccess.domain.DateAccess;
 import org.dateroad.dateAccess.repository.DateAccessRepository;
 import org.dateroad.exception.EntityNotFoundException;
+import org.dateroad.exception.ForbiddenException;
 import org.dateroad.image.domain.Image;
 import org.dateroad.image.repository.ImageRepository;
 import org.dateroad.exception.ConflictException;
@@ -54,7 +56,6 @@ public class CourseService {
     private final ImageRepository imageRepository;
     private final CoursePlaceRepository coursePlaceRepository;
     private final CourseTagRepository courseTagRepository;
-
 
     public CourseGetAllRes getAllCourses(final CourseGetAllReq courseGetAllReq) {
         Specification<Course> spec = CourseSpecifications.filterByCriteria(courseGetAllReq);
@@ -257,7 +258,8 @@ public class CourseService {
                         tagList.getDateTagType())
                 ).toList();
 
-        boolean isAccess = dateAccessRepository.existsDateAccessByUserIdAndCourseId(foundUser.getId(), foundCourse.getId());
+        boolean isAccess = dateAccessRepository.existsDateAccessByUserIdAndCourseId(foundUser.getId(),
+                foundCourse.getId());
 
         int likesCount = likeRepository.countByCourse(foundCourse);
 
@@ -317,6 +319,25 @@ public class CourseService {
     private void validateCourseTag(final List<CourseTag> courseTags) {
         if (courseTags.isEmpty()) {
             throw new EntityNotFoundException(FailureCode.COURSE_TAG_NOT_FOUND);
+        }
+    }
+
+    @Transactional
+    public void deleteCourse(final Long userId, final Long courseId) {
+        User findUser = getUser(userId);
+        Course findCourse = getCourse(courseId);
+        validateCourse(findUser, findCourse);
+        likeRepository.deleteByCourse(courseId);
+        coursePlaceRepository.deleteByCourse(courseId);
+        courseTagRepository.deleteByCourse(courseId);
+        dateAccessRepository.deleteByCourse(courseId);
+        imageRepository.deleteByCourse(courseId);
+        courseRepository.deleteByCourse(courseId);
+    }
+
+    private void validateCourse(final User findUser, final Course findCourse) {
+        if (!findUser.equals(findCourse.getUser())) {
+            throw new ForbiddenException(FailureCode.COURSE_DELETE_ACCESS_DENIED);
         }
     }
 }
