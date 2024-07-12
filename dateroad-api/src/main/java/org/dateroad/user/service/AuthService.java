@@ -4,17 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.Token;
-import org.dateroad.auth.jwt.refreshtoken.RefreshTokenGenerator;
 import org.dateroad.code.FailureCode;
 import org.dateroad.exception.*;
 import org.dateroad.feign.apple.AppleFeignProvider;
-import org.dateroad.feign.kakao.KakaoFeignApi;
 import org.dateroad.feign.kakao.KakaoFeignProvider;
 import org.dateroad.exception.ConflictException;
 import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.exception.UnauthorizedException;
 import org.dateroad.refreshtoken.domain.RefreshToken;
 import org.dateroad.refreshtoken.repository.RefreshTokenRepository;
+import org.dateroad.s3.S3Service;
 import org.dateroad.tag.domain.DateTagType;
 import org.dateroad.tag.domain.UserTag;
 import org.dateroad.tag.repository.UserTagRepository;
@@ -25,14 +24,15 @@ import org.dateroad.user.dto.request.UserSignInReq;
 import org.dateroad.user.repository.UserRepository;
 import org.dateroad.user.dto.request.UserSignUpReq;
 import org.dateroad.user.dto.response.UserJwtInfoRes;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
-import java.util.Base64;
+import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
+
+import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -45,18 +45,21 @@ public class AuthService {
     private final UserTagRepository userTagRepository;
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final KakaoFeignApi kakaoFeignApi;
+    private final S3Service s3Service;
+
+    @Value("${cloudfront.domain}")
+    private String cachePath;
 
     @Transactional
-    public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq) {
+    public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, MultipartFile image, List<DateTagType> tag) throws IOException {
         String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
-        validateUserTagSize(userSignUpReq.tag());
+        validateUserTagSize(tag);
         checkNickname(userSignUpReq.name());
         validateDuplicatedUser(userSignUpReq.platform(), platformUserId);
-        User newUser = saveUser(userSignUpReq.name(), userSignUpReq.image(), userSignUpReq.platform(), platformUserId);
-        saveUserTag(newUser, userSignUpReq.tag());
-        Token issuedToken = jwtProvider.issueToken(newUser.getId());
 
+        User newUser = saveUser(userSignUpReq.name(), cachePath + s3Service.uploadImage(path, image), userSignUpReq.platform(), platformUserId);
+        saveUserTag(newUser, tag);
+        Token issuedToken = jwtProvider.issueToken(newUser.getId());
         return UserJwtInfoRes.of(newUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
 
@@ -77,6 +80,8 @@ public class AuthService {
         Token newToken = jwtProvider.issueToken(userId);
         return UserJwtInfoRes.of(userId, newToken.accessToken(), newToken.refreshToken());
     }
+
+    @Transactional
     public void withdraw(final Long userId, final AppleWithdrawAuthCodeReq AppleWithdrawAuthCodeReq) {
 
         //todo: #45브랜치 머지후, 메서드 이용
