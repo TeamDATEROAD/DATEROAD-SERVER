@@ -62,7 +62,6 @@ public class CourseService {
         return CourseGetAllRes.of(courseDtoGetResList);
     }
 
-
     @Transactional
     public void createCourseLike(final Long userId, final Long courseId) {
         User findUser = getUser(userId);
@@ -100,6 +99,13 @@ public class CourseService {
                 course.getCost(),
                 duration
         );
+    }
+
+    public DateAccessGetAllRes getMyCourses(Long userId) {
+        User findUser = getUser(userId);
+        List<Course> courses = courseRepository.findByUser(findUser);
+        List<CourseDtoGetRes> courseDtoGetResList = convertToDtoList(courses, Function.identity());
+        return DateAccessGetAllRes.of(courseDtoGetResList);
     }
 
     public DateAccessGetAllRes getAllDataAccessCourse(final Long userId) {
