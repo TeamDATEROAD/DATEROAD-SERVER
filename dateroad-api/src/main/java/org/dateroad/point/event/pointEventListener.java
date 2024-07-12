@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
 import org.dateroad.exception.DateRoadException;
+import org.dateroad.point.domain.TransactionType;
 import org.dateroad.user.domain.User;
 import org.dateroad.user.repository.UserRepository;
 import org.springframework.data.redis.connection.stream.MapRecord;
@@ -22,11 +23,22 @@ public class pointEventListener implements StreamListener<String, MapRecord<Stri
     public void onMessage(final MapRecord<String, String, String> message) {
         Map<String, String> map = message.getValue();
         Long userId = Long.valueOf(map.get("userId"));
+        TransactionType type = TransactionType.valueOf(map.get("type"));
         User user = getUser(userId);
-        int point = Integer.parseInt(map.get("point")); // 감소시킬 포인트
-        user.setTotalPoint(user.getTotalPoint() - point);
+        int point = Integer.parseInt(map.get("point"));
+        switch (type) {
+            case POINT_GAINED:
+                user.setTotalPoint(user.getTotalPoint() + point);
+                break;
+            case POINT_USED:
+                user.setTotalPoint(user.getTotalPoint() - point);
+                break;
+            default:
+                throw new IllegalArgumentException("잘못된 TransactionType: " + type);
+        }
         userRepository.save(user);
     }
+
 
     private User getUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(

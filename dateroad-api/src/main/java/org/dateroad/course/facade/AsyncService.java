@@ -53,17 +53,17 @@ public class AsyncService {
         coursePlaceService.createCoursePlace(places, course);
     }
 
-    public void publishEvenUserPoint(User user, PointUseReq pointUseReq) {
+    public void publishEvenUserPoint(final Long userId, PointUseReq pointUseReq) {
         Map<String, Object> fieldMap = new HashMap<>();
-        fieldMap.put("userId", user.getId().toString());
-        fieldMap.put("point", Integer.toString(pointUseReq.point()));
-        fieldMap.put("type", pointUseReq.type().toString());
+        fieldMap.put("userId", userId.toString());
+        fieldMap.put("point", Integer.toString(pointUseReq.getPoint()));
+        fieldMap.put("type", pointUseReq.getType().toString());
         redisTemplate.opsForStream().add("coursePoint", fieldMap);
     }
 
-    public void publishEventUserFree(User user) {
+    public void publishEventUserFree(final Long userId) {
         Map<String, Object> fieldMap = new HashMap<>();
-        fieldMap.put("userId", user.getId().toString());
+        fieldMap.put("userId", userId.toString());
         redisTemplate.opsForStream().add("courseFree", fieldMap);
     }
 }
