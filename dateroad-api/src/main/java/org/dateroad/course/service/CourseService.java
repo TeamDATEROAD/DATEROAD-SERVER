@@ -16,7 +16,6 @@ import org.dateroad.course.dto.response.CourseGetAllRes;
 import org.dateroad.course.dto.response.DateAccessGetAllRes;
 import org.dateroad.course.facade.AsyncService;
 import org.dateroad.date.domain.Course;
-import org.dateroad.date.domain.Date;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.dateAccess.domain.DateAccess;
@@ -194,9 +193,9 @@ public class CourseService {
     public void openCourse(final Long userId, final Long courseId, final PointUseReq pointUseReq) {
         User user = getUser(userId);
         Course course = getCourse(courseId);
-        Point point = Point.create(user, pointUseReq.point(), pointUseReq.type(), pointUseReq.description());
-        CoursePaymentType coursePaymentType = validateUserFreeOrPoint(user, pointUseReq.point());
-        processCoursePayment(coursePaymentType, user, point, pointUseReq);
+        Point point = Point.create(user, pointUseReq.getPoint(), pointUseReq.getType(), pointUseReq.getDescription());
+        CoursePaymentType coursePaymentType = validateUserFreeOrPoint(user, pointUseReq.getPoint());
+        processCoursePayment(coursePaymentType, userId, point, pointUseReq);
         dateAccessRepository.save(DateAccess.create(course, user));
     }
 
@@ -209,15 +208,15 @@ public class CourseService {
         return CoursePaymentType.POINT;
     }
 
-    public void processCoursePayment(final CoursePaymentType coursePaymentType, final User user, final Point point,
+    public void processCoursePayment(final CoursePaymentType coursePaymentType, final Long userId, final Point point,
                                      final PointUseReq pointUseReq) {
         switch (coursePaymentType) {
             case FREE -> {
-                asyncService.publishEventUserFree(user);
+                asyncService.publishEventUserFree(userId);
             }
             case POINT -> {
                 pointRepository.save(point);
-                asyncService.publishEvenUserPoint(user, pointUseReq);
+                asyncService.publishEvenUserPoint(userId, pointUseReq);
             }
         }
     }
