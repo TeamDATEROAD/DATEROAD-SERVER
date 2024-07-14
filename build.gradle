@@ -1,7 +1,8 @@
 plugins {
-	id 'java'
+	id 'java-library'
 	id 'org.springframework.boot' version '3.3.1'
 	id 'io.spring.dependency-management' version '1.1.5'
+
 }
 
 bootJar.enabled = false // 빌드시 현재 모듈(multi-module)의 .jar를 생성하지 않습니다.
@@ -10,8 +11,13 @@ repositories {
 	mavenCentral()
 }
 
+
+
+
+
+
 subprojects {
-	apply plugin: 'java'
+	apply plugin: 'java-library'
 	apply plugin: 'idea'
 	apply plugin: 'org.springframework.boot'
 	apply plugin: 'io.spring.dependency-management'
@@ -36,6 +42,8 @@ subprojects {
 	}
 
 	dependencies {
+
+
 		// lombok
 		compileOnly 'org.projectlombok:lombok'
 		annotationProcessor 'org.projectlombok:lombok'
@@ -51,5 +59,25 @@ subprojects {
 
 	tasks.named('test') {
 		useJUnitPlatform()
+	}
+}
+
+project(':dateroad-external') {
+	dependencies {
+		implementation project(':dateroad-common')
+	}
+}
+
+project(':dateroad-domain') {
+	dependencies {
+		implementation project(':dateroad-common')
+	}
+}
+
+project(':dateroad-api') {
+	dependencies {
+		implementation project(':dateroad-external')
+		implementation project(':dateroad-common')
+		implementation project(':dateroad-domain')
 	}
 }
