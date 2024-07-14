@@ -6,12 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.jwt.refreshtoken.RefreshTokenGenerator;
 import org.dateroad.code.FailureCode;
 import org.dateroad.exception.UnauthorizedException;
-import org.dateroad.refreshtoken.domain.RefreshToken;
-import org.dateroad.refreshtoken.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Base64;
 
 @RequiredArgsConstructor
