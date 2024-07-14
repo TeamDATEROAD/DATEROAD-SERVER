@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class pointEventListener implements StreamListener<String, MapRecord<String, String, String>> {
+public class PointEventListener implements StreamListener<String, MapRecord<String, String, String>> {
     private final UserRepository userRepository;
 
     @Override
