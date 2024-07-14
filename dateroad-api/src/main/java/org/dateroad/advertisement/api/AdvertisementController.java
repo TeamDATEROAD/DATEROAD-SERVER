@@ -17,14 +17,14 @@ public class AdvertisementController {
     private final AdvertisementService advertisementService;
 
     @GetMapping
-    public ResponseEntity<AdvGetAllRes> getAlladvertisements(){
-        return ResponseEntity.ok(advertisementService.getAlladvertisements());
+    public ResponseEntity<AdvGetAllRes> getAllAdvertisements(){
+        return ResponseEntity.ok(advertisementService.getAllAdvertisements());
     }
 
     @GetMapping("{advId}")
-    public ResponseEntity<AdvGetDetailRes> getAlladvertisements(
+    public ResponseEntity<AdvGetDetailRes> getAllAdvertisements(
             final @PathVariable Long advId
     ){
-        return ResponseEntity.ok(advertisementService.getadvertisementsDetail(advId));
+        return ResponseEntity.ok(advertisementService.getAdvertisementsDetail(advId));
     }
 }
