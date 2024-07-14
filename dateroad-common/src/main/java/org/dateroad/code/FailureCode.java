@@ -69,7 +69,7 @@ public enum FailureCode {
 
     INSUFFICIENT_USER_POINTS(HttpStatus.NOT_FOUND, "e40413", "유저의 포인트가 부족합니다."),
     SORT_TYPE_NOT_FOUND(HttpStatus.UNAUTHORIZED, "e40414", "해당 순서 타입을 찾을 수 없습니다."),
-    ADVERTISMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "e40415", "해당 광고를 찾을 수 없습니다."),
+    ADVERTISEMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "e40415", "해당 광고를 찾을 수 없습니다."),
 
     /**
      * 405 Method Not Allowed
