@@ -14,6 +14,7 @@ public enum FailureCode {
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "e4000", "잘못된 요청입니다."),
     INVALID_PLATFORM_TYPE(HttpStatus.BAD_REQUEST, "e4001", "잘못된 플랫폼 타입입니다."),
     WRONG_USER_TAG_SIZE(HttpStatus.BAD_REQUEST, "e4002", "유저 태그 개수가 0이거나 3보다 많습니다.."),
+    WRONG_IMAGE_URL(HttpStatus.BAD_REQUEST, "e4003", "잘못된 이미지 URL 입니다."),
 
     /**
      * 401 Unauthorized

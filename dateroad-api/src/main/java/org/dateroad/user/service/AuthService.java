@@ -138,7 +138,7 @@ public class AuthService {
     }
 
     //유저 태그 생성
-    private void saveUserTag(final User savedUser, final List<DateTagType> userTags) {
+    public void saveUserTag(final User savedUser, final List<DateTagType> userTags) {
         List<UserTag> userTageList = userTags.stream()
                 .map(dateTagType -> UserTag.create(savedUser, dateTagType))
                 .map(userTagRepository::save)
