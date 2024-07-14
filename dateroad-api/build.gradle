@@ -4,17 +4,10 @@ dependencies {
     implementation project(path: ':dateroad-domain')
     implementation project(path: ':dateroad-external')
 
-
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     runtimeOnly 'org.postgresql:postgresql'
-
     //swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
-
-    //jwt
-//    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
-//    implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
-//    implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 }
 
 jar.enabled = false
