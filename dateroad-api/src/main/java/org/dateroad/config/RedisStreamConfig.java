@@ -50,9 +50,6 @@ public class RedisStreamConfig {
     }
 
     public void createStreamConsumerGroup(final String streamKey, final String consumerGroupName) {
-        // Stream이 존재 하지 않으면, MKSTREAM 옵션을 통해 만들고, ConsumerGroup또한 생성한다
-        System.out.println(streamKey + consumerGroupName);
-        // Stream이 존재하지 않으면, MKSTREAM 옵션을 통해 스트림과 소비자 그룹을 생성
         if (Boolean.FALSE.equals(redisTemplate().hasKey(streamKey))) {
             RedisAsyncCommands<String, String> commands = (RedisAsyncCommands<String, String>) Objects.requireNonNull(
                             redisTemplate()
