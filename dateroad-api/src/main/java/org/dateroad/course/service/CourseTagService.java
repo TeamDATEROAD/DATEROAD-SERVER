@@ -1,7 +1,6 @@
 package org.dateroad.course.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.course.dto.request.TagCreateReq;
@@ -21,11 +20,8 @@ public class CourseTagService {
     @Transactional
     public void createCourseTags(final List<TagCreateReq> tags, final Course course) {
         List<CourseTag> coursePlaces = tags.stream()
-                .map(tag -> CourseTag.create(
-                        course,
-                        tag.getTag()
-                ))
-                .collect(Collectors.toList());
+                .map(tag -> CourseTag.create(course, tag.getTag()))
+                .toList();
         courseTagRepository.saveAllAndFlush(coursePlaces);
     }
 }
