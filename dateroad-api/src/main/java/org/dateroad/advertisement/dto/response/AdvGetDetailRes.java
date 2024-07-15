@@ -1,8 +1,7 @@
-package org.dateroad.advertisment.dto.response;
+package org.dateroad.advertisement.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
