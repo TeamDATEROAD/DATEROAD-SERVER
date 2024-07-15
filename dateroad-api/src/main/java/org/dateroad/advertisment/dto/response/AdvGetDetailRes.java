@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
+import org.dateroad.advertisement.domain.AdTagType;
 
 @Builder(access = AccessLevel.PROTECTED)
 public record AdvGetDetailRes(
@@ -13,14 +14,16 @@ public record AdvGetDetailRes(
         String title,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
         LocalDate createAt,
-        String description
+        String description,
+        AdTagType adTagType
 ) {
-    public static AdvGetDetailRes of(List<AdvImagesRes> images, String title, LocalDate createAt, String description) {
+    public static AdvGetDetailRes of(List<AdvImagesRes> images, String title, LocalDate createAt, String description, AdTagType type) {
         return AdvGetDetailRes.builder()
                 .images(images)
                 .title(title)
                 .createAt(createAt)
                 .description(description)
+                .adTagType(type)
                 .build();
     }
 

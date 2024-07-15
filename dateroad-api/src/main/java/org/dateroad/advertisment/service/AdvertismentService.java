@@ -45,7 +45,7 @@ public class AdvertismentService {
         List<AdImage> adImages = adImageRepository.findAllById(advId);
         return AdvGetDetailRes.of(
                 getImages(adImages), advertisment.getTitle(), advertisment.getCreatedAt().toLocalDate(),
-                advertisment.getTitle()
+                advertisment.getTitle(), advertisment.getTag()
         );
     }
 
