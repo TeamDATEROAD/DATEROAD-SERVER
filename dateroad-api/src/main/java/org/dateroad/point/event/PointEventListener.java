@@ -4,7 +4,8 @@ import java.util.Map;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
-import org.dateroad.exception.DateRoadException;
+import org.dateroad.exception.EntityNotFoundException;
+import org.dateroad.exception.UnauthorizedException;
 import org.dateroad.point.domain.TransactionType;
 import org.dateroad.user.domain.User;
 import org.dateroad.user.repository.UserRepository;
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class pointEventListener implements StreamListener<String, MapRecord<String, String, String>> {
+public class PointEventListener implements StreamListener<String, MapRecord<String, String, String>> {
     private final UserRepository userRepository;
 
     @Override
@@ -34,7 +35,7 @@ public class pointEventListener implements StreamListener<String, MapRecord<Stri
                 user.setTotalPoint(user.getTotalPoint() - point);
                 break;
             default:
-                throw new IllegalArgumentException("잘못된 TransactionType: " + type);
+                throw new UnauthorizedException(FailureCode.INVALID_TRANSACTION_TYPE);
         }
         userRepository.save(user);
     }
@@ -42,7 +43,7 @@ public class pointEventListener implements StreamListener<String, MapRecord<Stri
 
     private User getUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(
-                () -> new DateRoadException(FailureCode.USER_NOT_FOUND)
+                () -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND)
         );
     }
 }

@@ -7,8 +7,7 @@ import lombok.Getter;
 @Getter
 public enum KakaoHeaderType {
     BEARER("Bearer "),
-    KAKAOAK("KakaoAK "),
-    ;
+    KAKAOAK("KakaoAK ");
 
     private final String tokenType;
 }

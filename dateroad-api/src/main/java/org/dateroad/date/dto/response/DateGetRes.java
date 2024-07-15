@@ -19,15 +19,13 @@ public record DateGetRes(
         List<TagGetRes> tags,
         int dDay
 ) {
-    public static DateGetRes of(Date date, List<DateTag> tags, int dDay) {
+    public static DateGetRes of(final Date date, final List<DateTag> tags, final int dDay) {
         return DateGetRes.builder()
                 .dateId(date.getId())
                 .title(date.getTitle())
                 .date(date.getDate())
                 .city(date.getCity())
-                .tags(tags.stream()
-                        .map(TagGetRes::of)
-                        .toList())
+                .tags(tags.stream().map(TagGetRes::of).toList())
                 .dDay(dDay)
                 .build();
     }

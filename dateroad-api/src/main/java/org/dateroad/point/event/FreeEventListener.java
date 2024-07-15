@@ -4,7 +4,7 @@ import java.util.Map;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
-import org.dateroad.exception.DateRoadException;
+import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.user.domain.User;
 import org.dateroad.user.repository.UserRepository;
 import org.springframework.data.redis.connection.stream.MapRecord;
@@ -30,7 +30,7 @@ public class FreeEventListener implements StreamListener<String, MapRecord<Strin
 
     private User getUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(
-                () -> new DateRoadException(FailureCode.USER_NOT_FOUND)
+                () -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND)
         );
     }
 }

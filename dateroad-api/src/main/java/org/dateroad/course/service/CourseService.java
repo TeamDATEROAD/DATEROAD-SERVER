@@ -2,7 +2,6 @@ package org.dateroad.course.service;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.response.CourseDtoGetRes;
 import org.dateroad.course.dto.response.CourseGetAllRes;
 import org.dateroad.course.dto.response.DateAccessGetAllRes;
-import org.dateroad.course.facade.AsyncService;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.dateroad.date.repository.CourseRepository;
@@ -106,7 +104,7 @@ public class CourseService {
         return entities.stream()
                 .map(converter)
                 .map(this::convertToDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private CourseDtoGetRes convertToDto(final Course course) {
@@ -115,12 +113,9 @@ public class CourseService {
         String thumbnailUrl = thumbnailImage != null ? thumbnailImage.getImageUrl() : null;
         float duration = asyncService.findTotalDurationByCourseId(course.getId());
         return CourseDtoGetRes.of(
-                course.getId(),
+                course,
                 thumbnailUrl,
-                course.getCity(),
-                course.getTitle(),
                 likeCount,
-                course.getCost(),
                 duration
         );
     }
@@ -210,26 +205,18 @@ public class CourseService {
 
     public void processCoursePayment(final CoursePaymentType coursePaymentType, final Long userId, final Point point,
                                      final PointUseReq pointUseReq) {
-        switch (coursePaymentType) {
-            case FREE -> {
-                asyncService.publishEventUserFree(userId);
-            }
-            case POINT -> {
-                pointRepository.save(point);
-                asyncService.publishEvenUserPoint(userId, pointUseReq);
-            }
+        if (coursePaymentType == CoursePaymentType.FREE) {
+            asyncService.publishEventUserFree(userId);
+        }
+        else if (coursePaymentType == CoursePaymentType.POINT) {
+            pointRepository.save(point);
+            asyncService.publishEvenUserPoint(userId, pointUseReq);
         }
     }
 
     public CourseGetDetailRes getCourseDetail(final Long userId, final Long courseId) {
-
-        //course - courseId, title, date, start_at, description, totalCost, city, totalTime
         Course foundCourse = findCourseById(courseId);
-
-        //user - userId, free, totalPoint,
         User foundUser = findUserById(userId);
-
-        //나머지 - images, places, tags, isAccess, likes
         List<Image> foundImages = imageRepository.findAllByCourseId(foundCourse.getId());
         validateImage(foundImages);
 
@@ -270,22 +257,13 @@ public class CourseService {
             isUserLiked = false;
         }
 
-        return CourseGetDetailRes.of(
-                foundCourse.getId(),
+        return CourseGetDetailRes.of(foundCourse,
                 images,
                 likesCount,
-                foundCourse.getTime(),
-                foundCourse.getDate(),
-                foundCourse.getCity(),
-                foundCourse.getTitle(),
-                foundCourse.getDescription(),
-                foundCourse.getStartAt(),
                 places,
-                foundCourse.getCost(),
                 tags,
                 isAccess,
-                foundUser.getFree(),
-                foundUser.getTotalPoint(),
+                foundUser,
                 isCourseMine,
                 isUserLiked
         );

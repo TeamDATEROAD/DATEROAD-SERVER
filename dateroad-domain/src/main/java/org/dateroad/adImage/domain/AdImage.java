@@ -15,7 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.dateroad.advertisement.domain.Advertisment;
+import org.dateroad.advertisement.domain.Advertisement;
 import org.dateroad.common.BaseTimeEntity;
 
 @Entity
@@ -31,9 +31,9 @@ public class AdImage extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "advertisment_id")
+    @JoinColumn(name = "advertisement_id")
     @NotNull
-    private Advertisment advertisment;
+    private Advertisement advertisement;
 
     @Column(name = "image_url")
     @NotNull
@@ -44,12 +44,12 @@ public class AdImage extends BaseTimeEntity {
     private int sequence;
 
     public static AdImage create(
-            final Advertisment advertisment,
+            final Advertisement advertisement,
             final String imageUrl,
             final int sequence
     ) {
         return AdImage.builder()
-                .advertisment(advertisment)
+                .advertisement(advertisement)
                 .imageUrl(imageUrl)
                 .sequence(sequence)
                 .build();

@@ -8,9 +8,8 @@ import io.lettuce.core.protocol.CommandArgs;
 import io.lettuce.core.protocol.CommandKeyword;
 import io.lettuce.core.protocol.CommandType;
 import lombok.RequiredArgsConstructor;
-import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.point.event.FreeEventListener;
-import org.dateroad.point.event.pointEventListener;
+import org.dateroad.point.event.PointEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +28,7 @@ import java.util.Objects;
 @Configuration
 @RequiredArgsConstructor
 public class RedisStreamConfig {
-    private final pointEventListener pointEventListener;
+    private final PointEventListener pointEventListener;
     private final FreeEventListener freeEventListener;
     @Value("${spring.data.redis.host}")
     private String host;
@@ -51,9 +50,6 @@ public class RedisStreamConfig {
     }
 
     public void createStreamConsumerGroup(final String streamKey, final String consumerGroupName) {
-        // Stream이 존재 하지 않으면, MKSTREAM 옵션을 통해 만들고, ConsumerGroup또한 생성한다
-        System.out.println(streamKey + consumerGroupName);
-        // Stream이 존재하지 않으면, MKSTREAM 옵션을 통해 스트림과 소비자 그룹을 생성
         if (Boolean.FALSE.equals(redisTemplate().hasKey(streamKey))) {
             RedisAsyncCommands<String, String> commands = (RedisAsyncCommands<String, String>) Objects.requireNonNull(
                             redisTemplate()
@@ -94,7 +90,7 @@ public class RedisStreamConfig {
     }
 
     @Bean
-    public Subscription PointSubscription() {
+    public Subscription pointSubscription() {
         createStreamConsumerGroup("coursePoint", "courseGroup");
         StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> containerOptions = StreamMessageListenerContainer.StreamMessageListenerContainerOptions
                 .builder().pollTimeout(Duration.ofMillis(100)).build();
@@ -110,7 +106,7 @@ public class RedisStreamConfig {
     }
 
     @Bean
-    public Subscription FreeSubscription() {
+    public Subscription freeSubscription() {
         createStreamConsumerGroup("courseFree", "courseGroup");
         StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> containerOptions = StreamMessageListenerContainer.StreamMessageListenerContainerOptions
                 .builder().pollTimeout(Duration.ofMillis(100)).build();

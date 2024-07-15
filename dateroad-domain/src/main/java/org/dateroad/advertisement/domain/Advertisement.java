@@ -18,14 +18,14 @@ import org.dateroad.common.BaseTimeEntity;
 
 @Entity
 @Getter
-@Table(name = "advertisments")
+@Table(name = "advertisements")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
-public class Advertisment extends BaseTimeEntity {
+public class Advertisement extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "advertisment_id")
+    @Column(name = "advertisement_id")
     private Long id;
 
     @Column(name = "title")
@@ -40,15 +40,21 @@ public class Advertisment extends BaseTimeEntity {
     @NotNull
     private String thumbnail;
 
-    public static Advertisment create(
+    @Column(name = "tag")
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private AdTagType tag;
+
+    public static Advertisement create(
             final String title,
             final String description,
-            final String thumbnail)
-    {
-        return Advertisment.builder()
+            final String thumbnail,
+            final AdTagType tag) {
+        return Advertisement.builder()
                 .title(title)
                 .description(description)
                 .thumbnail(thumbnail)
+                .tag(tag)
                 .build();
     }
 }

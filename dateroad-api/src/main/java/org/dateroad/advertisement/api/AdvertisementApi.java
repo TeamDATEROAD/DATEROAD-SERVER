@@ -1,4 +1,4 @@
-package org.dateroad.advertisment.api;
+package org.dateroad.advertisement.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -8,15 +8,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.dateroad.advertisment.dto.response.AdvGetAllRes;
-import org.dateroad.advertisment.dto.response.AdvGetDetailRes;
-import org.dateroad.auth.argumentresolve.UserId;
+import org.dateroad.advertisement.dto.response.AdvGetAllRes;
+import org.dateroad.advertisement.dto.response.AdvGetDetailRes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @Tag(name = "광고 관련 API")
 @SecurityRequirement(name = "Authorization")
-public interface AdvertismentApi {
+public interface AdvertisementApi {
     @Operation(
             summary = "광고 전체 조회 API",
             responses = {
@@ -77,7 +76,7 @@ public interface AdvertismentApi {
                             responseCode = "500",
                             description = "서버 내부 오류입니다.",
                             content = @Content)})
-    ResponseEntity<AdvGetAllRes> getAllAdvertisments();
+    ResponseEntity<AdvGetAllRes> getAllAdvertisements();
 
     @Operation(
             summary = "광고 상세 조회 API",
@@ -139,7 +138,7 @@ public interface AdvertismentApi {
                             responseCode = "500",
                             description = "서버 내부 오류입니다.",
                             content = @Content)})
-    ResponseEntity<AdvGetDetailRes> getAdvertismentsDetail(
+    ResponseEntity<AdvGetDetailRes> getAdvertisementsDetail(
             @Parameter(required = true) final @PathVariable Long advId
     );
 }

@@ -3,9 +3,8 @@ package org.dateroad.date.dto.response;
 import lombok.AccessLevel;
 import lombok.Builder;
 import org.dateroad.date.domain.Course;
-import org.dateroad.tag.domain.CourseTag;
-import org.dateroad.tag.domain.DateTag;
 import org.dateroad.tag.domain.DateTagType;
+import org.dateroad.user.domain.User;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -32,39 +31,31 @@ public record CourseGetDetailRes(
         boolean isUserLiked
 ) {
 
-    public static CourseGetDetailRes of(Long courseId,
+    public static CourseGetDetailRes of(Course course,
                                         List<ImagesList> images,
                                         int like,
-                                        float totalTime,
-                                        LocalDate date,
-                                        String city,
-                                        String title,
-                                        String description,
-                                        LocalTime startAt,
                                         List<Places> places,
-                                        int totalCost,
                                         List<CourseTag> tags,
                                         boolean isAccess,
-                                        int free,
-                                        int totalPoint,
+                                        User user,
                                         boolean isCourseMine,
                                         boolean isUserLiked) {
         return CourseGetDetailRes.builder()
-                .courseId(courseId)
+                .courseId(course.getId())
                 .images(images)
                 .like(like)
-                .totalTime(totalTime)
-                .date(date)
-                .city(city)
-                .title(title)
-                .description(description)
-                .startAt(startAt)
+                .totalTime(course.getTime())
+                .date(course.getDate())
+                .city(course.getCity())
+                .title(course.getTitle())
+                .description(course.getDescription())
+                .startAt(course.getStartAt())
                 .places(places)
-                .totalCost(totalCost)
+                .totalCost(course.getCost())
                 .tags(tags)
                 .isAccess(isAccess)
-                .free(free)
-                .totalPoint(totalPoint)
+                .free(user.getFree())
+                .totalPoint(user.getTotalPoint())
                 .isCourseMine(isCourseMine)
                 .isUserLiked(isUserLiked)
                 .build();
