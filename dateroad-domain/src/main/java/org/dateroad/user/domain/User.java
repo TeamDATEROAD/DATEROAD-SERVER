@@ -11,7 +11,6 @@ import lombok.Setter;
 import org.dateroad.common.BaseTimeEntity;
 import org.dateroad.tag.domain.UserTag;
 
-import java.util.HashSet;
 import java.util.Set;
 
 

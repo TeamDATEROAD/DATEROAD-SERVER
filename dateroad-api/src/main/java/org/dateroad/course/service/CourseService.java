@@ -13,7 +13,6 @@ import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.response.CourseDtoGetRes;
 import org.dateroad.course.dto.response.CourseGetAllRes;
 import org.dateroad.course.dto.response.DateAccessGetAllRes;
-import org.dateroad.course.facade.AsyncService;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.dateroad.date.repository.CourseRepository;
@@ -114,12 +113,9 @@ public class CourseService {
         String thumbnailUrl = thumbnailImage != null ? thumbnailImage.getImageUrl() : null;
         float duration = asyncService.findTotalDurationByCourseId(course.getId());
         return CourseDtoGetRes.of(
-                course.getId(),
+                course,
                 thumbnailUrl,
-                course.getCity(),
-                course.getTitle(),
                 likeCount,
-                course.getCost(),
                 duration
         );
     }
