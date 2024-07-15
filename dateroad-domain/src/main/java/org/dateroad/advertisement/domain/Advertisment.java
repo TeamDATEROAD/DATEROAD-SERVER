@@ -15,7 +15,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dateroad.common.BaseTimeEntity;
-import org.dateroad.advertisement.domain.AdTagType;
 
 @Entity
 @Getter
