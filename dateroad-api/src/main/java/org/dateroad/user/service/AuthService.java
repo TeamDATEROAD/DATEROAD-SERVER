@@ -179,7 +179,7 @@ public class AuthService {
 
     //refreshToken 삭제
     private void deleteRefreshToken(final long userId) {
-        refreshTokenRepository.deleteByUserId(userId);
+        refreshTokenRepository.deleteRefreshTokenByUserId(userId);
     }
 
     //토큰 발급

@@ -1,8 +1,6 @@
 package org.dateroad.auth.jwt.refreshtoken;
 
 import lombok.RequiredArgsConstructor;
-import org.dateroad.code.FailureCode;
-import org.dateroad.exception.UnauthorizedException;
 import org.dateroad.refreshtoken.domain.RefreshToken;
 import org.dateroad.refreshtoken.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Component;
@@ -10,9 +8,7 @@ import org.springframework.stereotype.Component;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -36,10 +32,6 @@ public class RefreshTokenGenerator {
         refreshTokenRepository.save(newRefreshToken);
 
         return token;
-    }
-
-    public void deleteRefreshToken(final Long userId) {
-        refreshTokenRepository.deleteByUserId(userId);
     }
 
     private SecureRandom createSecureRandom() {
