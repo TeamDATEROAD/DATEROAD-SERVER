@@ -1,4 +1,4 @@
-package org.dateroad.Image.service;
+package org.dateroad.image.service;
 
 import java.io.IOException;
 import java.util.List;
@@ -7,7 +7,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
 import org.dateroad.date.domain.Course;
-import org.dateroad.exception.DateRoadException;
+import org.dateroad.exception.BadRequestException;
+import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.image.domain.Image;
 import org.dateroad.image.repository.ImageRepository;
 import org.dateroad.s3.S3Service;
@@ -29,7 +30,7 @@ public class ImageService {
 
     public List<Image> saveImages(final List<MultipartFile> images, final Course course) {
         AtomicInteger sequence = new AtomicInteger();
-        List<Image> courseimages = images.stream()
+        List<Image> courseImages = images.stream()
                 .map(img -> {
                     try {
                         return Image.create(
@@ -38,17 +39,16 @@ public class ImageService {
                                 sequence.getAndIncrement()
                         );
                     } catch (IOException | ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
+                        throw new BadRequestException(FailureCode.BAD_REQUEST);
                     }
-                })
-                .toList();
-        return imageRepository.saveAll(courseimages);
+                }).toList();
+        return imageRepository.saveAll(courseImages);
     }
 
     public Image findFirstByCourseOrderBySequenceAsc(Course course) {
         return imageRepository.findFirstByCourseOrderBySequenceAsc(course)
                 .orElseThrow(
-                        () -> new DateRoadException(FailureCode.COURSE_THUMBNAIL_NOT_FOUND)
+                        () -> new EntityNotFoundException(FailureCode.COURSE_THUMBNAIL_NOT_FOUND)
                 );
     }
 }
