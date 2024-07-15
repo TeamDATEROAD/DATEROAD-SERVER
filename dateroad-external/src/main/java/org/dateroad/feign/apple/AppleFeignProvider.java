@@ -37,7 +37,6 @@ public class AppleFeignProvider {
             String appleAccessToken = getAppleAccess(secretKey, authCode);
             appleFeignApi.revokeUser(secretKey, appleAccessToken, appleProperties.getClientId(), "access_token");
         } catch (IOException e) {
-            System.out.println(e);
             throw new UnauthorizedException(FailureCode.INVALID_APPLE_TOKEN_ACCESS);
         }
     }

@@ -34,10 +34,6 @@ public class RefreshTokenGenerator {
         return token;
     }
 
-    public void deleteRefreshToken(final Long userId) {
-        refreshTokenRepository.deleteByUserId(userId);
-    }
-
     private SecureRandom createSecureRandom() {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
 

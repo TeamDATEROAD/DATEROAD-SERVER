@@ -33,7 +33,7 @@ public class UserController {
     public ResponseEntity<UserJwtInfoRes> signUp(@RequestHeader(AUTHORIZATION) final String token,
                                                  @RequestPart("userSignUpReq") final UserSignUpReq userSignUPReq,
                                                  @RequestPart("image") MultipartFile image,
-                                                 @RequestPart("tag") List<DateTagType> tag //todo: 열람 데이트 코스 전체 조회 API 머지 후, TagEnum으로 변경해야됨
+                                                 @RequestPart("tag") List<DateTagType> tag
     ) throws IOException {
         UserJwtInfoRes userSignUpRes = authService.signUp(token, userSignUPReq, image, tag);
         return ResponseEntity.status(HttpStatus.CREATED).body(userSignUpRes);

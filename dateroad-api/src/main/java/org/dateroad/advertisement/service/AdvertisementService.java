@@ -1,6 +1,7 @@
 package org.dateroad.advertisement.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.adImage.domain.AdImage;
 import org.dateroad.adImage.repository.AdImageRepository;

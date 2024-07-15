@@ -1,7 +1,5 @@
 package org.dateroad.advertisement.dto.response;
-
 import org.dateroad.advertisement.domain.AdTagType;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import java.util.List;

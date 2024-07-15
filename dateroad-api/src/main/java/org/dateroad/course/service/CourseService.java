@@ -251,10 +251,10 @@ public class CourseService {
 
         boolean isCourseMine = courseRepository.existsByUserId(foundUser.getId());
 
-        boolean isUserLiked = likeRepository.existsByUserIdAndCourseId(foundUser.getId(), foundCourse.getId());
+        boolean isUserLiked = false;
 
-        if (isCourseMine) {
-            isUserLiked = false;
+        if (!isCourseMine) {
+            isUserLiked = likeRepository.existsByUserIdAndCourseId(foundUser.getId(), foundCourse.getId());
         }
 
         return CourseGetDetailRes.of(foundCourse,
