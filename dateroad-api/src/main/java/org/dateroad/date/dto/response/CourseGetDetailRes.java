@@ -3,6 +3,7 @@ package org.dateroad.date.dto.response;
 import lombok.AccessLevel;
 import lombok.Builder;
 import org.dateroad.date.domain.Course;
+import org.dateroad.date.domain.Region;
 import org.dateroad.tag.domain.CourseTag;
 import org.dateroad.tag.domain.DateTag;
 import org.dateroad.tag.domain.DateTagType;
@@ -18,7 +19,7 @@ public record CourseGetDetailRes(
         int like,
         float totalTime,
         LocalDate date,
-        String city,
+        Region.SubRegion city,
         String title,
         String description,
         LocalTime startAt,
@@ -37,7 +38,7 @@ public record CourseGetDetailRes(
                                         int like,
                                         float totalTime,
                                         LocalDate date,
-                                        String city,
+                                        Region.SubRegion city,
                                         String title,
                                         String description,
                                         LocalTime startAt,
