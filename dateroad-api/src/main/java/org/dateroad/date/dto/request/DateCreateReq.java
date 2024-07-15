@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import org.dateroad.date.domain.Region;
 
 public record DateCreateReq(
         String title,
@@ -13,8 +14,8 @@ public record DateCreateReq(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
         LocalTime startAt,
         List<TagCreateReq> tags,
-        String country,
-        String city,
+        Region.MainRegion country,
+        Region.SubRegion city,
         List<PlaceCreateReq> places
 ) {
 }

@@ -5,7 +5,6 @@ import lombok.Builder;
 import org.dateroad.date.domain.Course;
 import org.dateroad.tag.domain.DateTagType;
 import org.dateroad.user.domain.User;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -46,7 +45,7 @@ public record CourseGetDetailRes(
                 .like(like)
                 .totalTime(course.getTime())
                 .date(course.getDate())
-                .city(course.getCity())
+                .city(course.getCity().getDisplayName())
                 .title(course.getTitle())
                 .description(course.getDescription())
                 .startAt(course.getStartAt())

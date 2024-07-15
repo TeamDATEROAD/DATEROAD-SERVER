@@ -29,7 +29,7 @@ public class Date extends DateBase {
 
     public static Date create(final User user, final String title,
                               final LocalDate date, final LocalTime startAt,
-                              final String country, final String city) {
+                              final Region.MainRegion country, final Region.SubRegion city) {
         return Date.builder()
                 .user(user)
                 .title(title)

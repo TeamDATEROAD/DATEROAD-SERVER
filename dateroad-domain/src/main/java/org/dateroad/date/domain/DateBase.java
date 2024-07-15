@@ -1,6 +1,8 @@
 package org.dateroad.date.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -41,9 +43,11 @@ public abstract class DateBase extends BaseTimeEntity {
 
     @Column(name = "country")
     @NotNull
-    private String country;
+    @Enumerated(EnumType.STRING)
+    private Region.MainRegion country;
 
     @Column(name = "city")
     @NotNull
-    private String city;
+    @Enumerated(EnumType.STRING)
+    private Region.SubRegion city;
 }

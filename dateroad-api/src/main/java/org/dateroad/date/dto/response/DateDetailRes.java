@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Builder;
 import org.dateroad.date.domain.Date;
+import org.dateroad.date.domain.Region;
 import org.dateroad.place.domain.DatePlace;
 import org.dateroad.tag.domain.DateTag;
 
@@ -17,7 +18,7 @@ public record DateDetailRes(
     String title,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
     LocalTime startAt,
-    String city,
+    Region.SubRegion city,
     List<TagGetRes> tags,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
     LocalDate date,
