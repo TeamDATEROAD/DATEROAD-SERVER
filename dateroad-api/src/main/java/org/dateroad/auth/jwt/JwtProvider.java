@@ -34,11 +34,6 @@ public class JwtProvider {
         }
     }
 
-    //Base64 인코딩된 리프레시 토큰 문자열을 바이트 배열
-    private byte[] toBinary(String refreshToken) {
-        return Base64.getDecoder().decode(refreshToken);
-    }
-
     public long getUserIdFromSubject(String token) {
         Jws<Claims> jws = jwtGenerator.parseToken(token);
         String subject = jws.getBody().getSubject();

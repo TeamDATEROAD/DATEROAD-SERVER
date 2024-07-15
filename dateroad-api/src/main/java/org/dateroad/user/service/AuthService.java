@@ -59,7 +59,7 @@ public class AuthService {
 
         User newUser = saveUser(userSignUpReq.name(), cachePath + s3Service.uploadImage(path, image), userSignUpReq.platform(), platformUserId);
         saveUserTag(newUser, tag);
-        Token issuedToken = jwtProvider.issueToken(newUser.getId());
+        Token issuedToken = issueToken(newUser.getId());
         return UserJwtInfoRes.of(newUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
 
@@ -68,7 +68,7 @@ public class AuthService {
         String platformUserId = getUserPlatformId(userSignInReq.platform(), token);
         User foundUser = getUserByPlatformAndPlatformUserId(userSignInReq.platform(), platformUserId);
         deleteRefreshToken(foundUser.getId());
-        Token issuedToken = jwtProvider.issueToken(foundUser.getId());
+        Token issuedToken = issueToken(foundUser.getId());
         return UserJwtInfoRes.of(foundUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
 
@@ -77,16 +77,15 @@ public class AuthService {
         RefreshToken foundRefreshToken = getRefreshTokenByToken(refreshToken);
         jwtProvider.validateRefreshToken(foundRefreshToken.getExpiredAt());
         Long userId = foundRefreshToken.getUserId();
-        Token newToken = jwtProvider.issueToken(userId);
+        deleteRefreshToken(userId);
+        Token newToken = issueToken(userId);
         return UserJwtInfoRes.of(userId, newToken.accessToken(), newToken.refreshToken());
     }
 
     @Transactional
     public void withdraw(final Long userId, final AppleWithdrawAuthCodeReq AppleWithdrawAuthCodeReq) {
 
-        //todo: #45브랜치 머지후, 메서드 이용
         User foundUser = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
-
         if (foundUser.getPlatForm() == Platform.KAKAO) {    //카카오 유저면 카카오와 연결 끊기
             kakaoFeignProvider.unLinkWithKakao(foundUser.getPlatformUserId());
         } else if (foundUser.getPlatForm() == Platform.APPLE) {    //애플 유저면 애플이랑 연결 끊기
@@ -95,8 +94,7 @@ public class AuthService {
             throw new BadRequestException(FailureCode.INVALID_PLATFORM_TYPE);
         }
 
-        //todo: #45브랜치 머지후, 메서드 이용
-        refreshTokenRepository.deleteByUserId(foundUser.getId());
+        deleteRefreshToken(foundUser.getId());
         userRepository.deleteById(foundUser.getId());
     }
 
@@ -166,7 +164,7 @@ public class AuthService {
         }
     }
 
-    public RefreshToken getRefreshTokenByToken(final String refreshToken) {
+    private RefreshToken getRefreshTokenByToken(final String refreshToken) {
         try {
             return refreshTokenRepository.findByToken(refreshToken)
                     .orElseThrow(() -> new UnauthorizedException(FailureCode.UNAUTHORIZED));
@@ -182,5 +180,10 @@ public class AuthService {
     //refreshToken 삭제
     private void deleteRefreshToken(final long userId) {
         refreshTokenRepository.deleteByUserId(userId);
+    }
+
+    //토큰 발급
+    Token issueToken(final Long userId) {
+        return jwtProvider.issueToken(userId);
     }
 }
