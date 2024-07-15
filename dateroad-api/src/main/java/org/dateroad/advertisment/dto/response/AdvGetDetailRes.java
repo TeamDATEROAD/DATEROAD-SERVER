@@ -1,12 +1,12 @@
 package org.dateroad.advertisment.dto.response;
 
+import org.dateroad.advertisement.domain.AdTagType;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
-import org.dateroad.advertisement.domain.AdTagType;
 
 @Builder(access = AccessLevel.PROTECTED)
 public record AdvGetDetailRes(

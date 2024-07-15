@@ -3,7 +3,6 @@ package org.dateroad.advertisment.dto.response;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
-import org.dateroad.advertisement.domain.AdTagType;
 import org.dateroad.advertisement.domain.Advertisment;
 
 @Builder(access = AccessLevel.PRIVATE)
@@ -20,15 +19,13 @@ public record AdvGetAllRes(
     public record AdvertismentDtoRes(
             Long advertismentId,
             String thumbnail,
-            String title,
-            AdTagType tag
+            String title
     ) {
         public static AdvertismentDtoRes of(Advertisment advertisment) {
             return AdvertismentDtoRes.builder()
                     .advertismentId(advertisment.getId())
                     .thumbnail(advertisment.getThumbnail())
                     .title(advertisment.getTitle())
-                    .tag(advertisment.getTag())
                     .build();
         }
     }
