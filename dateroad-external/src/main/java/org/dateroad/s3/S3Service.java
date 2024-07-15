@@ -2,10 +2,12 @@ package org.dateroad.s3;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+
+import org.dateroad.code.FailureCode;
+import org.dateroad.exception.InvalidValueException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -22,7 +24,7 @@ public class S3Service {
     private final String bucketName;
     private final AWSConfig awsConfig;
     private static final List<String> IMAGE_EXTENSIONS = Arrays.asList("image/jpeg", "image/png", "image/jpg", "image/webp");
-
+    private static final Long MAX_FILE_SIZE = 5 * 1024 * 1024L;
 
     public S3Service(@Value("${aws-property.s3-bucket-name}") final String bucketName, AWSConfig awsConfig) {
         this.bucketName = bucketName;
@@ -67,15 +69,13 @@ public class S3Service {
     private void validateExtension(MultipartFile image) {
         String contentType = image.getContentType();
         if (!IMAGE_EXTENSIONS.contains(contentType)) {
-            throw new RuntimeException("이미지 확장자는 jpg, png, webp만 가능합니다.");
+            throw new InvalidValueException(FailureCode.INVALID_IMAGE_TYPE);
         }
     }
 
-    private static final Long MAX_FILE_SIZE = 5 * 1024 * 1024L;
-
     private void validateFileSize(MultipartFile image) {
         if (image.getSize() > MAX_FILE_SIZE) {
-            throw new RuntimeException("이미지 사이즈는 5MB를 넘을 수 없습니다.");
+            throw new InvalidValueException(FailureCode.INVALID_IMAGE_SIZE);
         }
     }
 }
