@@ -19,16 +19,12 @@ public record AdvGetAllRes(
     @Builder(access = AccessLevel.PRIVATE)
     public record AdvertisementDtoRes(
             Long advertisementId,
-            String thumbnail,
-            String title,
-            AdTagType tag
+            String thumbnail
     ) {
         public static AdvertisementDtoRes of(Advertisement advertisement) {
             return AdvertisementDtoRes.builder()
                     .advertisementId(advertisement.getId())
                     .thumbnail(advertisement.getThumbnail())
-                    .title(advertisement.getTitle())
-                    .tag(advertisement.getTag())
                     .build();
         }
     }

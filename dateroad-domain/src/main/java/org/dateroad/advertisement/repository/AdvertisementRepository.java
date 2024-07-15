@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AdvertisementRepository extends JpaRepository<Advertisement, Long> {
-    @Query("SELECT a FROM advertisements a ORDER BY a.createdAt DESC")
+    @Query("SELECT a FROM Advertisement a ORDER BY a.createdAt DESC")
     List<Advertisement> findTop5ByOrderByCreatedDateDesc(Pageable pageable);
 }
