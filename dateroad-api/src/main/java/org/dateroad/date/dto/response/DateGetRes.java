@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Builder;
 import org.dateroad.date.domain.Date;
+import org.dateroad.date.domain.Region;
 import org.dateroad.tag.domain.DateTag;
 
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ public record DateGetRes(
         String title,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
         LocalDate date,
-        String city,
+        Region.SubRegion city,
         List<TagGetRes> tags,
         int dDay
 ) {
