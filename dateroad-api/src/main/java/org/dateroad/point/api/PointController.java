@@ -16,7 +16,7 @@ public class PointController {
     private final PointService pointService;
 
     @GetMapping
-    public ResponseEntity<PointGetAllRes> getAllPoints(@UserId Long userId){
+    public ResponseEntity<PointGetAllRes> getAllPoints(@UserId final Long userId){
         PointGetAllRes pointGetAllRes = pointService.getAllPoints(userId);
         return ResponseEntity.ok(pointGetAllRes);
     }

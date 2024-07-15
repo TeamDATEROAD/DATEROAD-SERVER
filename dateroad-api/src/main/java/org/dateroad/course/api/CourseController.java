@@ -45,8 +45,7 @@ public class CourseController {
     }
 
     @GetMapping("/date-access")
-    public ResponseEntity<DateAccessGetAllRes> getAllDataAccessCourse(
-            final @UserId Long userId
+    public ResponseEntity<DateAccessGetAllRes> getAllDataAccessCourse(final @UserId Long userId
     ) {
         DateAccessGetAllRes dateAccessGetAllRes = courseService.getAllDataAccessCourse(userId);
         return ResponseEntity.ok(dateAccessGetAllRes);
