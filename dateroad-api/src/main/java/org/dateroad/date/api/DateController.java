@@ -48,7 +48,6 @@ public class DateController {
     @GetMapping("/nearest")
     public ResponseEntity<DateGetNearestRes> getNearestDate(@UserId final Long userId) {
         DateGetNearestRes dateGetNearestRes = dateService.getNearestDate(userId);
-        return ResponseEntity
-                .ok(dateGetNearestRes);
+        return ResponseEntity.ok(dateGetNearestRes);
     }
 }
