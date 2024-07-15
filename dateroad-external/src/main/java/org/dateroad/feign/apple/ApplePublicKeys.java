@@ -1,12 +1,10 @@
 package org.dateroad.feign.apple;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dateroad.code.FailureCode;
 import org.dateroad.exception.UnauthorizedException;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
