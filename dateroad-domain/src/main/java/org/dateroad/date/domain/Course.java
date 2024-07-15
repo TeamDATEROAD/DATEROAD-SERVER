@@ -32,7 +32,7 @@ public class Course extends DateBase {
     @Column(name = "course_id")
     private Long id;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 50000)
     @NotNull
     private String description;
 
