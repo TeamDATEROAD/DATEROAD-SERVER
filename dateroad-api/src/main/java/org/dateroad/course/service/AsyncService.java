@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.dateroad.Image.service.ImageService;
+import org.dateroad.image.service.ImageService;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
 import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.request.TagCreateReq;
