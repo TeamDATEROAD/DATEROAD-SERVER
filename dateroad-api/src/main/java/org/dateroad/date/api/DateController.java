@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/dates")
 @RestController
-public class DateController {
+public class DateController implements DateApi{
     private final DateService dateService;
 
     @PostMapping

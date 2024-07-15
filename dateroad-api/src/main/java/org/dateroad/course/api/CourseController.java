@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v1/courses")
 @RequiredArgsConstructor
-public class CourseController {
+public class CourseController implements CourseApi {
     private final CourseService courseService;
     private final AsyncService asyncService;
 
