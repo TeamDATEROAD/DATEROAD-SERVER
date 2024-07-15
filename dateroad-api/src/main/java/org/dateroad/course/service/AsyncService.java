@@ -1,19 +1,16 @@
-package org.dateroad.course.facade;
+package org.dateroad.course.service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.dateroad.Image.service.ImageService;
+import org.dateroad.image.service.ImageService;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
 import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.request.TagCreateReq;
-import org.dateroad.course.service.CoursePlaceService;
-import org.dateroad.course.service.CourseTagService;
 import org.dateroad.date.domain.Course;
 import org.dateroad.image.domain.Image;
-import org.dateroad.user.domain.User;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

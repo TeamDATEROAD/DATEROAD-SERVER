@@ -7,7 +7,7 @@ import lombok.Builder;
 public record CourseCreateRes(
         Long courseId
 ) {
-    public static CourseCreateRes of(Long courseId) {
+    public static CourseCreateRes of(final Long courseId) {
         return CourseCreateRes.builder()
                 .courseId(courseId)
                 .build();

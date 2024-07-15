@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/advertisments")
+@RequestMapping("/api/v1/advertisements")
 public class AdvertisementController {
     private final AdvertisementService advertisementService;
 
     @GetMapping
     public ResponseEntity<AdvGetAllRes> getAllAdvertisements(){
-        return ResponseEntity.ok(advertisementService.getAllAdvertisments());
+        return ResponseEntity.ok(advertisementService.getAllAdvertisements());
     }
 
     @GetMapping("{advId}")

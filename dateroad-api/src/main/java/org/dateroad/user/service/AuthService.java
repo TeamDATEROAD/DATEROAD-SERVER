@@ -91,7 +91,7 @@ public class AuthService {
         } else if (foundUser.getPlatForm() == Platform.APPLE) {    //애플 유저면 애플이랑 연결 끊기
             appleFeignProvider.revokeUser(AppleWithdrawAuthCodeReq.authCode());
         } else {
-            throw new BadRequestException(FailureCode.INVALID_PLATFORM_TYPE);
+            throw new InvalidValueException(FailureCode.INVALID_PLATFORM_TYPE);
         }
 
         deleteRefreshToken(foundUser.getId());
@@ -136,7 +136,7 @@ public class AuthService {
     }
 
     //유저 태그 생성
-    public void saveUserTag(final User savedUser, final List<DateTagType> userTags) {
+    private void saveUserTag(final User savedUser, final List<DateTagType> userTags) {
         List<UserTag> userTageList = userTags.stream()
                 .map(dateTagType -> UserTag.create(savedUser, dateTagType))
                 .map(userTagRepository::save)
@@ -160,7 +160,7 @@ public class AuthService {
     //태그 리스트 사이즈 검증
     private void validateUserTagSize(final List<DateTagType> userTags) {
         if (userTags.isEmpty() || userTags.size() > 3) {
-            throw new BadRequestException((FailureCode.WRONG_USER_TAG_SIZE));
+            throw new InvalidValueException((FailureCode.WRONG_USER_TAG_SIZE));
         }
     }
 

@@ -17,7 +17,7 @@ import org.dateroad.tag.domain.DateTagType;
 public class TagCreateReq{
     private DateTagType tag;
 
-    public static TagCreateReq of(DateTagType tag) {
+    public static TagCreateReq of(final DateTagType tag) {
         return TagCreateReq.builder()
                 .tag(tag).build();
     }

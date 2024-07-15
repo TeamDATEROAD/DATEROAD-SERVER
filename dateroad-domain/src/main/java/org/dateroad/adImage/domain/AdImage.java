@@ -31,7 +31,7 @@ public class AdImage extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "advertisment_id")
+    @JoinColumn(name = "advertisement_id")
     @NotNull
     private Advertisement advertisement;
 

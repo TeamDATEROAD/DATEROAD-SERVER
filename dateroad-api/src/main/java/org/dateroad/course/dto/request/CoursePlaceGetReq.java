@@ -17,7 +17,7 @@ public class CoursePlaceGetReq {
     private float duration;
     private int sequence;
 
-    public static CoursePlaceGetReq of(String title, float duration, int sequence) {
+    public static CoursePlaceGetReq of(final String title, final float duration, final int sequence) {
         return CoursePlaceGetReq.builder()
                 .title(title)
                 .duration(duration)

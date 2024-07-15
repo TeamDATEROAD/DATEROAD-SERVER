@@ -12,7 +12,7 @@ import org.dateroad.course.dto.request.TagCreateReq;
 import org.dateroad.course.dto.response.CourseCreateRes;
 import org.dateroad.course.dto.response.CourseGetAllRes;
 import org.dateroad.course.dto.response.DateAccessGetAllRes;
-import org.dateroad.course.facade.AsyncService;
+import org.dateroad.course.service.AsyncService;
 import org.dateroad.course.service.CourseService;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v1/courses")
 @RequiredArgsConstructor
-public class CourseController {
+public class CourseController implements CourseApi {
     private final CourseService courseService;
     private final AsyncService asyncService;
 
@@ -45,8 +45,7 @@ public class CourseController {
     }
 
     @GetMapping("/date-access")
-    public ResponseEntity<DateAccessGetAllRes> getAllDataAccessCourse(
-            final @UserId Long userId
+    public ResponseEntity<DateAccessGetAllRes> getAllDataAccessCourse(final @UserId Long userId
     ) {
         DateAccessGetAllRes dateAccessGetAllRes = courseService.getAllDataAccessCourse(userId);
         return ResponseEntity.ok(dateAccessGetAllRes);

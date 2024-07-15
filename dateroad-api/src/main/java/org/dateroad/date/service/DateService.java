@@ -48,8 +48,7 @@ public class DateService {
         LocalDate currentDate = LocalDate.now();
         List<Date> dates = fetchDatesByUserIdAndTime(userId, time, currentDate);
         List<DateGetRes> dateGetResList = dates.stream()
-                .map(date -> createDateGetRes(date, currentDate))
-                .toList();
+                .map(date -> createDateGetRes(date, currentDate)).toList();
         return DatesGetRes.of(dateGetResList);
     }
 
@@ -78,17 +77,9 @@ public class DateService {
         LocalDate currentDate = LocalDate.now();
         LocalTime currentTime = LocalTime.now();
         User findUser = getUser(userId);
-        Date nearest = findNearestDate(findUser.getId(), currentDate, currentTime);
-        int dDay = calculateDDay(nearest.getDate(), currentDate);
-        return DateGetNearestRes
-                .of(
-                        nearest.getId(),
-                        dDay,
-                        nearest.getTitle(),
-                        nearest.getDate().getMonthValue(),
-                        nearest.getDate().getDayOfMonth(),
-                        nearest.getStartAt()
-                );
+        Date nearestDate = findNearestDate(findUser.getId(), currentDate, currentTime);
+        int dDay = calculateDDay(nearestDate.getDate(), currentDate);
+        return DateGetNearestRes.of(nearestDate, dDay);
     }
 
     private User getUser(Long userId) {
@@ -171,7 +162,6 @@ public class DateService {
         }
     }
 
-    //가장 가까운 데이트 가져오기
     private Date findNearestDate(Long userId, LocalDate currentDate, LocalTime currentTime) {
         return dateRepository.findFirstByUserIdAndDateAfterOrDateAndStartAtAfterOrderByDateAscStartAtAsc(userId, currentDate, currentDate, currentTime)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.DATE_NOT_FOUND));

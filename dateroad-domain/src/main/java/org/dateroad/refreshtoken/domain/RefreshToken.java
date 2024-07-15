@@ -3,8 +3,6 @@ package org.dateroad.refreshtoken.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 

@@ -2,7 +2,6 @@ package org.dateroad.user.dto.response;
 
 import lombok.Builder;
 import org.dateroad.tag.domain.DateTagType;
-import org.dateroad.tag.domain.UserTag;
 
 import java.util.List;
 

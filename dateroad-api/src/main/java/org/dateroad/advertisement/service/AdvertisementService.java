@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.dateroad.adImage.domain.AdImage;
 import org.dateroad.adImage.repository.AdImageRepository;
 import org.dateroad.advertisement.domain.Advertisement;
-import org.dateroad.advertisement.repository.AdvertisementRepository;
 import org.dateroad.advertisement.dto.response.AdvGetAllRes;
-import org.dateroad.advertisement.dto.response.AdvGetAllRes.AdvertismentDtoRes;
+import org.dateroad.advertisement.repository.AdvertisementRepository;
+import org.dateroad.advertisement.dto.response.AdvGetAllRes.AdvertisementDtoRes;
 import org.dateroad.advertisement.dto.response.AdvGetDetailRes;
 import org.dateroad.advertisement.dto.response.AdvGetDetailRes.AdvImagesRes;
 import org.dateroad.code.FailureCode;
@@ -25,18 +25,12 @@ public class AdvertisementService {
     private final AdvertisementRepository advertisementRepository;
     private final AdImageRepository adImageRepository;
 
-    private static List<AdvImagesRes> getImages(final List<AdImage> adImages) {
-        return adImages.stream().map(
-                adImage -> AdvImagesRes.of(adImage.getImageUrl(), adImage.getSequence())
-        ).toList();
-    }
-
-    public AdvGetAllRes getAllAdvertisments() {
+    public AdvGetAllRes getAllAdvertisements() {
         Pageable topFive = PageRequest.of(0, 5);
-        return AdvGetAllRes.of(advertisementRepository.findTop5ByOrderByCreatedDateDesc(topFive).
-                stream()
-                .map(AdvertismentDtoRes::of)
-                .collect(Collectors.toList()));
+        List<Advertisement> advertisements = advertisementRepository.findTop5ByOrderByCreatedDateDesc(topFive);
+        List<AdvertisementDtoRes> advertisementDtoResList = advertisements.stream()
+                .map(AdvertisementDtoRes::of).toList();
+        return AdvGetAllRes.of(advertisementDtoResList);
     }
 
     public AdvGetDetailRes getAdvertisementsDetail(final Long advId) {
@@ -44,7 +38,7 @@ public class AdvertisementService {
         List<AdImage> adImages = adImageRepository.findAllById(advId);
         return AdvGetDetailRes.of(
                 getImages(adImages), advertisement.getTitle(), advertisement.getCreatedAt().toLocalDate(),
-                advertisement.getTitle()
+                advertisement.getTitle(), advertisement.getTag()
         );
     }
 
@@ -52,5 +46,11 @@ public class AdvertisementService {
         return advertisementRepository.findById(advId).orElseThrow(
                 () -> new EntityNotFoundException(FailureCode.ADVERTISEMENT_NOT_FOUND)
         );
+    }
+
+    private List<AdvImagesRes> getImages(final List<AdImage> adImages) {
+        return adImages.stream().map(
+                adImage -> AdvImagesRes.of(adImage.getImageUrl(), adImage.getSequence())
+        ).toList();
     }
 }

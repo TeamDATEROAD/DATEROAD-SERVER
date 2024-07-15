@@ -1,5 +1,5 @@
 package org.dateroad.advertisement.dto.response;
-
+import org.dateroad.advertisement.domain.AdTagType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import java.util.List;
@@ -12,14 +12,16 @@ public record AdvGetDetailRes(
         String title,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
         LocalDate createAt,
-        String description
+        String description,
+        AdTagType adTagType
 ) {
-    public static AdvGetDetailRes of(List<AdvImagesRes> images, String title, LocalDate createAt, String description) {
+    public static AdvGetDetailRes of(List<AdvImagesRes> images, String title, LocalDate createAt, String description, AdTagType type) {
         return AdvGetDetailRes.builder()
                 .images(images)
                 .title(title)
                 .createAt(createAt)
                 .description(description)
+                .adTagType(type)
                 .build();
     }
 

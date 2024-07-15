@@ -8,24 +8,24 @@ import org.dateroad.advertisement.domain.Advertisement;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record AdvGetAllRes(
-        List<AdvertismentDtoRes> advertismentDtoResList
+        List<AdvertisementDtoRes> advertisementDtoResList
 ) {
-    public static AdvGetAllRes of(List<AdvertismentDtoRes> advertismentDtoResList) {
+    public static AdvGetAllRes of(List<AdvertisementDtoRes> advertisementDtoResList) {
         return AdvGetAllRes.builder()
-                .advertismentDtoResList(advertismentDtoResList)
+                .advertisementDtoResList(advertisementDtoResList)
                 .build();
     }
 
     @Builder(access = AccessLevel.PRIVATE)
-    public record AdvertismentDtoRes(
-            Long advertismentId,
+    public record AdvertisementDtoRes(
+            Long advertisementId,
             String thumbnail,
             String title,
             AdTagType tag
     ) {
-        public static AdvertismentDtoRes of(Advertisement advertisement) {
-            return AdvertismentDtoRes.builder()
-                    .advertismentId(advertisement.getId())
+        public static AdvertisementDtoRes of(Advertisement advertisement) {
+            return AdvertisementDtoRes.builder()
+                    .advertisementId(advertisement.getId())
                     .thumbnail(advertisement.getThumbnail())
                     .title(advertisement.getTitle())
                     .tag(advertisement.getTag())
