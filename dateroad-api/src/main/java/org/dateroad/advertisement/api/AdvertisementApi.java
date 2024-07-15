@@ -24,31 +24,27 @@ public interface AdvertisementApi {
                             content = @Content(
                                     schema = @Schema(implementation = AdvGetAllRes.class),
                                     examples = @ExampleObject(value = """
-                                        {
-                                            "advertismentDtoResList": [
-                                                {
-                                                    "advertismentId": 1,
-                                                    "thumbnail": "http://example.com/thumbnail1.jpg",
-                                                    "title": "광고 제목 1",
-                                                },
-                                                {
-                                                    "advertismentId": 2,
-                                                    "thumbnail": "http://example.com/thumbnail2.jpg",
-                                                    "title": "광고 제목 2",
-                                                },
-                                                {
-                                                    "advertismentId": 3,
-                                                    "thumbnail": "http://example.com/thumbnail2.jpg",
-                                                    "title": "광고 제목 3",
-                                                },
-                                                {
-                                                    "advertismentId": 4,
-                                                    "thumbnail": "http://example.com/thumbnail2.jpg",
-                                                    "title": "광고 제목 4",
-                                                }
-                                            ]
-                                        }
-                                        """)
+                                            {
+                                                "advertismentDtoResList": [
+                                                    {
+                                                        "advertismentId": 1,
+                                                        "thumbnail": "http://example.com/thumbnail1.jpg"
+                                                    },
+                                                    {
+                                                        "advertismentId": 2,
+                                                        "thumbnail": "http://example.com/thumbnail2.jpg"
+                                                    },
+                                                    {
+                                                        "advertismentId": 3,
+                                                        "thumbnail": "http://example.com/thumbnail2.jpg"
+                                                    },
+                                                    {
+                                                        "advertismentId": 4,
+                                                        "thumbnail": "http://example.com/thumbnail2.jpg"
+                                                    }
+                                                ]
+                                            }
+                                            """)
                             ),
                             description = "요청이 성공했습니다."
                     ),
@@ -86,22 +82,23 @@ public interface AdvertisementApi {
                             content = @Content(
                                     schema = @Schema(implementation = AdvGetDetailRes.class),
                                     examples = @ExampleObject(value = """
-                                        {
-                                            "images": [
-                                                {
-                                                    "imagesUrl": "http://example.com/image1.jpg",
-                                                    "sequence": 1
-                                                },
-                                                {
-                                                    "imagesUrl": "http://example.com/image2.jpg",
-                                                    "sequence": 2
-                                                }
-                                            ],
-                                            "title": "광고 제목",
-                                            "createAt": "2023.07.14",
-                                            "description": "광고 설명"
-                                        }
-                                        """)
+                                            {
+                                                "images": [
+                                                    {
+                                                        "imagesUrl": "http://example.com/image1.jpg",
+                                                        "sequence": 1
+                                                    },
+                                                    {
+                                                        "imagesUrl": "http://example.com/image2.jpg",
+                                                        "sequence": 2
+                                                    }
+                                                ],
+                                                "title": "광고 제목",
+                                                "createAt": "2023.07.14",
+                                                "description": "광고 설명",
+                                                "adTagType": "HOT"
+                                            }
+                                            """)
                             ),
                             description = "요청이 성공했습니다."
                     ),
