@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static org.dateroad.common.Constants.AUTHORIZATION;
 
@@ -79,5 +80,16 @@ public class UserController {
     public ResponseEntity<UserInfoGetMyPageRes> getUserInfoMyPage(@UserId final Long userId) {
         UserInfoGetMyPageRes userInfoGetMyPageRes = userService.getUserInfoMyPage(userId);
         return ResponseEntity.ok(userInfoGetMyPageRes);
+    }
+
+    @PatchMapping
+    public ResponseEntity<Void> patchUserProfile(@UserId final Long userId,
+                                                 @RequestPart("name") final String name,
+                                                 @RequestPart("tags") final List<DateTagType> tags,
+                                                 @RequestPart("image") final MultipartFile image ) throws IOException, ExecutionException, InterruptedException {
+        userService.editUserProfile(userId, name, tags, image);
+        return ResponseEntity
+                .ok()
+                .build();
     }
 }

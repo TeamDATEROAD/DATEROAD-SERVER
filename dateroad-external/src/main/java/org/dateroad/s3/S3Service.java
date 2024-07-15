@@ -2,9 +2,9 @@ package org.dateroad.s3;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
-
 import org.dateroad.code.FailureCode;
 import org.dateroad.exception.InvalidValueException;
+import org.dateroad.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -51,12 +51,13 @@ public class S3Service {
         return CompletableFuture.completedFuture(key);
     }
 
-    public void deleteImage(String key) throws IOException {
+    public void deleteImage(String imageUrl) throws IOException {
+        String imageKey = extractImageKeyFromImageUrl(imageUrl);
         final S3Client s3Client = awsConfig.getS3Client();
 
         s3Client.deleteObject((DeleteObjectRequest.Builder builder) ->
                 builder.bucket(bucketName)
-                        .key(key)
+                        .key(imageKey)
                         .build()
         );
     }
@@ -64,7 +65,6 @@ public class S3Service {
     private String generateImageFileName() {
         return UUID.randomUUID() + ".jpg";
     }
-
 
     private void validateExtension(MultipartFile image) {
         String contentType = image.getContentType();
@@ -76,6 +76,15 @@ public class S3Service {
     private void validateFileSize(MultipartFile image) {
         if (image.getSize() > MAX_FILE_SIZE) {
             throw new InvalidValueException(FailureCode.INVALID_IMAGE_SIZE);
+        }
+    }
+
+    private static String extractImageKeyFromImageUrl(String url) {
+        String basePath = "https://d2rjs92glrj91n.cloudfront.net";
+        if (url.startsWith(basePath)) {
+            return url.substring(basePath.length());
+        } else {
+            throw new BadRequestException(FailureCode.WRONG_IMAGE_URL);
         }
     }
 }
