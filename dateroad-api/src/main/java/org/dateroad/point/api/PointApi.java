@@ -82,7 +82,7 @@ public interface PointApi {
                             description = "서버 내부 오류입니다.",
                             content = @Content)})
     public ResponseEntity<PointGetAllRes> getAllPoints(
-            @Parameter(required = true)
+            @Parameter(hidden = true)
             @UserId Long userId
     );
 }
