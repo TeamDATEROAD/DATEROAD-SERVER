@@ -35,56 +35,44 @@ public class UserController {
                                                  @RequestPart("tag") List<DateTagType> tag //todo: 열람 데이트 코스 전체 조회 API 머지 후, TagEnum으로 변경해야됨
     ) throws IOException {
         UserJwtInfoRes userSignUpRes = authService.signUp(token, userSignUPReq, image, tag);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(userSignUpRes);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userSignUpRes);
     }
 
     @PostMapping("/signin")
     public ResponseEntity<UserJwtInfoRes> signIn(@RequestHeader(AUTHORIZATION) final String token,
                                                 @RequestBody final UserSignInReq userSignInReq) {
         UserJwtInfoRes userSignInRes = authService.signIn(token, userSignInReq);
-        return ResponseEntity
-                .ok(userSignInRes);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userSignInRes);
     }
 
     @DeleteMapping("/signout")
     public ResponseEntity<Void> signout(@UserId final Long userId) {
         authService.signout(userId);
-		return ResponseEntity
-			    .ok()
-				.build();
+		return ResponseEntity.ok().build();
 	}
 
     @GetMapping("/check")
     public ResponseEntity<Void> checkNickname(@RequestParam("name") final String nickname) {
         authService.checkNickname(nickname);
-        return ResponseEntity
-                .ok()
-                .build();
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/withdraw")
     public ResponseEntity<Void> withdraw(@UserId final Long userId,
                                          @RequestBody final AppleWithdrawAuthCodeReq appleWithdrawAuthCodeReq) {
         authService.withdraw(userId, appleWithdrawAuthCodeReq);
-        return ResponseEntity
-                .ok()
-                .build();
+        return ResponseEntity.ok().build();
 	}
     @PatchMapping("/reissue")
     public ResponseEntity<UserJwtInfoRes> reissue(@RequestHeader(AUTHORIZATION) final String refreshToken) {
         UserJwtInfoRes userJwtInfoRes = authService.reissue(refreshToken);
-        return ResponseEntity
-                .ok(userJwtInfoRes);
-
+        return ResponseEntity.ok(userJwtInfoRes);
     }
 
     @GetMapping("/main")
     public ResponseEntity<UserInfoMainRes> getUserInfo(@UserId final Long userId) {
         UserInfoMainRes userInfoMainRes = userService.getUserInfoMain(userId);
-        return ResponseEntity
-                .ok(userInfoMainRes);
+        return ResponseEntity.ok(userInfoMainRes);
     }
 
     @GetMapping
