@@ -26,15 +26,6 @@ public class AsyncService {
     private final ImageService imageService;
     private final StringRedisTemplate redisTemplate;
 
-
-    public Image findFirstByCourseOrderBySequenceAsc(final Course course) {
-        return imageService.findFirstByCourseOrderBySequenceAsc(course);
-    }
-
-    public float findTotalDurationByCourseId(final Long id) {
-        return coursePlaceService.findTotalDurationByCourseId(id);
-    }
-
     @Transactional
     public List<Image> createImage(final List<MultipartFile> images, final Course course) {
         return imageService.saveImages(images, course);
