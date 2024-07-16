@@ -51,7 +51,8 @@ public class CourseController implements CourseApi {
         return ResponseEntity.ok(dateAccessGetAllRes);
     }
 
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,
+            MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CourseCreateRes> createCourse(
             @UserId final Long userId,
             @RequestPart("course") final CourseCreateReq courseCreateReq,
@@ -59,10 +60,11 @@ public class CourseController implements CourseApi {
             @RequestPart("places") final List<CoursePlaceGetReq> places,
             @RequestPart("images") final List<MultipartFile> images
     ) {
+        System.out.println(images);
         Course course = courseService.createCourse(userId, courseCreateReq, places, images);
         asyncService.createCoursePlace(places, course);
         asyncService.createCourseTags(tags, course);
-        asyncService.publishEvenUserPoint(userId, PointUseReq.of(100, TransactionType.POINT_GAINED,"코스 생성"));
+        asyncService.publishEvenUserPoint(userId, PointUseReq.of(100, TransactionType.POINT_GAINED, "코스 생성"));
         return ResponseEntity.status(
                 HttpStatus.CREATED
         ).body(CourseCreateRes.of(course.getId()));
@@ -80,10 +82,10 @@ public class CourseController implements CourseApi {
             @PathVariable final Long courseId,
             @RequestBody final PointUseReq pointUseReq
     ) {
-        courseService.openCourse(userId,courseId,pointUseReq);
+        courseService.openCourse(userId, courseId, pointUseReq);
         return ResponseEntity.ok().build();
     }
-  
+
     @GetMapping("/{courseId}")
     public ResponseEntity<CourseGetDetailRes> getCourseDetail(@UserId Long userId,
                                                               @PathVariable("courseId") Long courseId) {
@@ -93,21 +95,21 @@ public class CourseController implements CourseApi {
 
     @PostMapping("/{courseId}/likes")
     public ResponseEntity<Void> createCourseLike(@UserId final Long userId,
-                                                  @PathVariable final Long courseId) {
+                                                 @PathVariable final Long courseId) {
         courseService.createCourseLike(userId, courseId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{courseId}/likes")
     public ResponseEntity<Void> deleteCourseLike(@UserId final Long userId,
-                                                  @PathVariable final Long courseId) {
+                                                 @PathVariable final Long courseId) {
         courseService.deleteCourseLike(userId, courseId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{courseId}")
     public ResponseEntity<Void> deleteCourse(@UserId Long userId,
-                                                 @PathVariable final Long courseId) {
+                                             @PathVariable final Long courseId) {
         courseService.deleteCourse(userId, courseId);
         return ResponseEntity.ok().build();
     }
