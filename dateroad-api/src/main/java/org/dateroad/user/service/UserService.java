@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final AuthService authService;
     @Value("${aws-property.s3-bucket-name}")
     private String path;
 
@@ -59,6 +60,7 @@ public class UserService {
 
         //tag 변경
         userTagRepository.deleteAllByUserId(foundUser.getId());
+        authService.validateUserTagSize(tags);
         saveUserTag(foundUser, tags);
 
         //이미지 변경
