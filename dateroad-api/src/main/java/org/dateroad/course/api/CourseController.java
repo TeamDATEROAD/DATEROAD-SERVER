@@ -60,7 +60,6 @@ public class CourseController implements CourseApi {
             @RequestPart("places") final List<CoursePlaceGetReq> places,
             @RequestPart("images") final List<MultipartFile> images
     ) {
-        System.out.println(images);
         Course course = courseService.createCourse(userId, courseCreateReq, places, images);
         asyncService.createCoursePlace(places, course);
         asyncService.createCourseTags(tags, course);
