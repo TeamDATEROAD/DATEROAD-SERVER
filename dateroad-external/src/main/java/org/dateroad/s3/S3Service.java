@@ -25,7 +25,7 @@ public class S3Service {
     private final String bucketName;
     private final AWSConfig awsConfig;
     private static final List<String> IMAGE_EXTENSIONS = Arrays.asList("image/jpeg", "image/png", "image/jpg", "image/webp", "image/heic", "image/heif");
-    private static final Long MAX_FILE_SIZE = 5 * 1024 * 1024L;
+    private static final Long MAX_FILE_SIZE = 7 * 1024 * 1024L;
 
     public S3Service(@Value("${aws-property.s3-bucket-name}") final String bucketName, AWSConfig awsConfig) {
         this.bucketName = bucketName;
