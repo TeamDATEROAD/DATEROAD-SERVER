@@ -202,12 +202,12 @@ public interface DateApi {
                                                 "date": "2024.07.15",
                                                 "places": [
                                                     {
-                                                        "name": "경복궁",
+                                                        "title": "경복궁",
                                                         "duration": 2.5,
                                                         "sequence": 1
                                                     },
                                                     {
-                                                        "name": "남산타워",
+                                                        "title": "남산타워",
                                                         "duration": 1.5,
                                                         "sequence": 2
                                                     }
