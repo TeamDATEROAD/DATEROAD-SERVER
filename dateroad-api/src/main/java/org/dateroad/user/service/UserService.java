@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static org.dateroad.common.Validator.validateUserTagSize;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -60,7 +62,7 @@ public class UserService {
 
         //tag 변경
         userTagRepository.deleteAllByUserId(foundUser.getId());
-        authService.validateUserTagSize(tags);
+        validateUserTagSize(tags);
         saveUserTag(foundUser, tags);
 
         //이미지 변경
