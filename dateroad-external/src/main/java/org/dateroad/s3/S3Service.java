@@ -1,5 +1,6 @@
 package org.dateroad.s3;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import org.dateroad.code.FailureCode;
@@ -23,7 +24,7 @@ import java.util.UUID;
 public class S3Service {
     private final String bucketName;
     private final AWSConfig awsConfig;
-    private static final List<String> IMAGE_EXTENSIONS = Arrays.asList("image/jpeg", "image/png", "image/jpg", "image/webp","image/heic","image/heif");
+    private static final List<String> IMAGE_EXTENSIONS = Arrays.asList("image/jpeg", "image/png", "image/jpg", "image/webp", "image/heic", "image/heif");
     private static final Long MAX_FILE_SIZE = 5 * 1024 * 1024L;
 
     public S3Service(@Value("${aws-property.s3-bucket-name}") final String bucketName, AWSConfig awsConfig) {
@@ -33,7 +34,7 @@ public class S3Service {
 
     @Async
     public Future<String> uploadImage(String directoryPath, MultipartFile image) throws IOException {
-        final String key = directoryPath + generateImageFileName();
+        final String key = directoryPath + generateImageFileName(image);
         final S3Client s3Client = awsConfig.getS3Client();
 
         validateExtension(image);
@@ -62,8 +63,22 @@ public class S3Service {
         );
     }
 
-    private String generateImageFileName() {
-        return UUID.randomUUID() + ".jpg";
+    private String generateImageFileName(MultipartFile image) {
+        String extension = getExtension(Objects.requireNonNull(image.getContentType()));
+        if (extension == null) {
+            throw new InvalidValueException(FailureCode.INVALID_IMAGE_TYPE);
+        }
+        return UUID.randomUUID() + extension;
+    }
+
+    private String getExtension(String contentType) {
+        return switch (contentType) {
+            case "image/png" -> ".png";
+            case "image/webp" -> ".webp";
+            case "image/heic" -> ".heic";
+            case "image/heif" -> ".heif";
+            default -> ".jpg";
+        };
     }
 
     private void validateExtension(MultipartFile image) {
