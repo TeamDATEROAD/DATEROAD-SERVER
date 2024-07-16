@@ -158,7 +158,7 @@ public class AuthService {
     }
 
     //태그 리스트 사이즈 검증
-    private void validateUserTagSize(final List<DateTagType> userTags) {
+    public void validateUserTagSize(final List<DateTagType> userTags) {
         if (userTags.isEmpty() || userTags.size() > 3) {
             throw new InvalidValueException((FailureCode.WRONG_USER_TAG_SIZE));
         }
@@ -166,7 +166,7 @@ public class AuthService {
 
     private RefreshToken getRefreshTokenByToken(final String refreshToken) {
         try {
-            return refreshTokenRepository.findByToken(refreshToken)
+            return refreshTokenRepository.findRefreshTokenByToken(refreshToken)
                     .orElseThrow(() -> new UnauthorizedException(FailureCode.UNAUTHORIZED));
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage());
