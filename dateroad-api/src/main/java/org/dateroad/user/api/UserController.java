@@ -25,7 +25,7 @@ import static org.dateroad.common.Constants.AUTHORIZATION;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/users")
-public class UserController {
+public class UserController implements UserApi {
     private final AuthService authService;
     private final UserService userService;
 
