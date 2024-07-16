@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.Token;
 import org.dateroad.code.FailureCode;
+import org.dateroad.common.ValidatorUtil;
 import org.dateroad.exception.*;
 import org.dateroad.feign.apple.AppleFeignProvider;
 import org.dateroad.feign.kakao.KakaoFeignProvider;
@@ -33,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+import static org.dateroad.common.ValidatorUtil.validateRefreshToken;
 import static org.dateroad.common.ValidatorUtil.validateUserTagSize;
 
 @RequiredArgsConstructor
@@ -76,7 +78,7 @@ public class AuthService {
     @Transactional
     public UserJwtInfoRes reissue(final String refreshToken) {
         RefreshToken foundRefreshToken = getRefreshTokenByToken(refreshToken);
-        jwtProvider.validateRefreshToken(foundRefreshToken.getExpiredAt());
+        validateRefreshToken(foundRefreshToken.getExpiredAt());
         Long userId = foundRefreshToken.getUserId();
         deleteRefreshToken(userId);
         Token newToken = issueToken(userId);

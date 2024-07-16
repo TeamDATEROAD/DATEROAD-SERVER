@@ -23,13 +23,6 @@ public class JwtProvider {
         );
     }
 
-    //refreshToken 재발급할 때 검증
-    public void validateRefreshToken(LocalDateTime expireDate) {
-        if (expireDate.isBefore(LocalDateTime.now())) {
-            throw new UnauthorizedException(FailureCode.EXPIRED_REFRESH_TOKEN);
-        }
-    }
-
     public long getUserIdFromSubject(String token) {
         Jws<Claims> jws = jwtGenerator.parseToken(token);
         String subject = jws.getBody().getSubject();
