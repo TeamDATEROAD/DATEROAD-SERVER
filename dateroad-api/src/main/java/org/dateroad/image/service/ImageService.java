@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageService {
     private final ImageRepository imageRepository;
     private final S3Service s3Service;
-    @Value("${aws-property.s3-bucket-name}")
+    @Value("${s3.bucket.path}")
     private String path;
     @Value("${cloudfront.domain}")
     private String cachePath;
