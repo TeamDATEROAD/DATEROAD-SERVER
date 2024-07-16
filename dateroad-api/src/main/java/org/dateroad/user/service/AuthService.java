@@ -1,5 +1,6 @@
 package org.dateroad.user.service;
 
+import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.auth.jwt.JwtProvider;
@@ -32,8 +33,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
-
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -51,13 +50,13 @@ public class AuthService {
     private String cachePath;
 
     @Transactional
-    public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, MultipartFile image, List<DateTagType> tag) throws IOException {
+    public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, MultipartFile image, List<DateTagType> tag)
+            throws IOException, ExecutionException, InterruptedException {
         String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
         validateUserTagSize(tag);
         checkNickname(userSignUpReq.name());
         validateDuplicatedUser(userSignUpReq.platform(), platformUserId);
-
-        User newUser = saveUser(userSignUpReq.name(), cachePath + s3Service.uploadImage(path, image), userSignUpReq.platform(), platformUserId);
+        User newUser = saveUser(userSignUpReq.name(), cachePath + s3Service.uploadImage("/user", image).get(), userSignUpReq.platform(), platformUserId);
         saveUserTag(newUser, tag);
         Token issuedToken = issueToken(newUser.getId());
         return UserJwtInfoRes.of(newUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());

@@ -46,7 +46,7 @@ public interface UserApi {
             @RequestPart(name = "userSignUpReq", required = true) @Parameter(description = "회원가입 요청 데이터") final UserSignUpReq userSignUpReq,
             @RequestPart(name = "image", required = true) @Parameter(description = "프로필 이미지") MultipartFile image,
             @RequestPart(name = "tag", required = true) @Parameter(description = "사용자 태그") List<DateTagType> tag
-    ) throws IOException;
+    ) throws IOException, ExecutionException, InterruptedException;
 
     @Operation(summary = "로그인", description = "사용자가 로그인을 합니다.")
     @ApiResponses(value = {
