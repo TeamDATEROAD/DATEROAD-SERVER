@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import static org.dateroad.common.Validator.validateUserTagSize;
+import static org.dateroad.common.ValidatorUtil.validateUserTagSize;
 
 @Service
 @Transactional(readOnly = true)

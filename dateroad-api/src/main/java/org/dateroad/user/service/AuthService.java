@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.Token;
 import org.dateroad.code.FailureCode;
-import org.dateroad.common.Validator;
 import org.dateroad.exception.*;
 import org.dateroad.feign.apple.AppleFeignProvider;
 import org.dateroad.feign.kakao.KakaoFeignProvider;
@@ -34,7 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-import static org.dateroad.common.Validator.validateUserTagSize;
+import static org.dateroad.common.ValidatorUtil.validateUserTagSize;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
