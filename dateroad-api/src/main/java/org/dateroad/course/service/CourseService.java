@@ -109,14 +109,11 @@ public class CourseService {
 
     private CourseDtoGetRes convertToDto(final Course course) {
         int likeCount = likeRepository.countByCourse(course);
-        Image thumbnailImage = asyncService.findFirstByCourseOrderBySequenceAsc(course);
-        String thumbnailUrl = thumbnailImage != null ? thumbnailImage.getImageUrl() : null;
-        float duration = asyncService.findTotalDurationByCourseId(course.getId());
         return CourseDtoGetRes.of(
                 course,
-                thumbnailUrl,
+                course.getThumbnail(),
                 likeCount,
-                duration
+                course.getTime()
         );
     }
 
