@@ -17,7 +17,8 @@ public class CourseSpecifications {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             addPredicate(predicates, criteriaBuilder, root, "city", courseGetAllReq.city(), criteriaBuilder::equal);
-            addPredicate(predicates, criteriaBuilder, root, "country", courseGetAllReq.country(), criteriaBuilder::equal);
+            addPredicate(predicates, criteriaBuilder, root, "country", courseGetAllReq.country(),
+                    criteriaBuilder::equal);
             addCostPredicate(predicates, criteriaBuilder, root, courseGetAllReq.cost());
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -32,14 +33,27 @@ public class CourseSpecifications {
                 );
     }
 
-    private static void addCostPredicate(List<Predicate> predicates, CriteriaBuilder criteriaBuilder, Root<?> root, Integer cost) {
+    private static void addCostPredicate(List<Predicate> predicates, CriteriaBuilder criteriaBuilder, Root<?> root,
+                                         Integer cost) {
         if (cost != null) {
-            if (cost == 11) {
-                predicates.add(criteriaBuilder.greaterThan(root.get("cost"), 10));
-            } else {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("cost"), cost));
+            switch (cost) {
+                case 3:
+                    predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("cost"), 30000));
+                    break;
+                case 5:
+                    predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("cost"), 50000));
+                    break;
+                case 10:
+                    predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("cost"), 100000));
+                    break;
+                case 11:
+                    predicates.add(criteriaBuilder.greaterThan(root.get("cost"), 100000));
+                    break;
+                default:
+                    break;
             }
         }
     }
+
 }
 
