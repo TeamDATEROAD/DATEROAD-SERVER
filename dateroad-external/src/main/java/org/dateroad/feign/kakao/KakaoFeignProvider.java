@@ -20,7 +20,7 @@ public class KakaoFeignProvider {
     private final KakaoFeignApi kakaoFeignApi;
     private final ObjectMapper objectMapper;
 
-    private final String TARGETIDTYPE = "user_id";
+    private static final  String TARGETIDTYPE = "user_id";
 
     //AuthService에서 호출 : 카카오에서 주는 userId 받아오기
     public String getKakaoPlatformUserId(final String kakaoAccessToken) {
@@ -31,7 +31,7 @@ public class KakaoFeignProvider {
 
     //AuthService에서 호출 : 회원탈퇴 할 때, 카카오톡과 연결 끊기
     public void unLinkWithKakao(final String kakaoPlatformUserId) {
-        String kakaoRequestHeader = getKakaoRequestHeader(KakaoRequestType.UN_LINK, kakaoPlatformUserId);
+        String kakaoRequestHeader = getKakaoRequestHeader(KakaoRequestType.UN_LINK, null);
         try {
             kakaoFeignApi.unlink(kakaoRequestHeader, TARGETIDTYPE, Long.valueOf(kakaoPlatformUserId));
         } catch (FeignException e) {

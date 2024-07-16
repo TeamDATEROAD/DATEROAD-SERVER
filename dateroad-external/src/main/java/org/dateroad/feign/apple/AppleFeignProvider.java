@@ -22,6 +22,7 @@ public class AppleFeignProvider {
     private final AppleClientSecretGenerator appleClientSecretGenerator;
     private final AppleProperties appleProperties;
 
+    //AuthService에서 호출
     public String getApplePlatformUserId(final String identityToken) {
         Map<String, String> tokenHeaders = appleIdentityJWTParser.parseHeader(identityToken);
         ApplePublicKeys applePublicKey = appleFeignApi.getApplePublicKeys();

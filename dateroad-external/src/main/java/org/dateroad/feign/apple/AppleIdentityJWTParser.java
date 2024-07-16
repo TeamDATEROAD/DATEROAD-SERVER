@@ -19,12 +19,13 @@ import java.util.Map;
 public class AppleIdentityJWTParser {
     private final ObjectMapper objectMapper;
     private static final int HEADER_INDEX = 0;
+    private static final String SPLIYBY = "\\.";
 
     public Map<String, String> parseHeader(final String identityToken) {
         try {
 
             //헤더, 페이로드, 서명에서 첫 인덱스인 헤더를 가져옴
-            String encodedHeader = identityToken.split("\\.")[HEADER_INDEX];
+            String encodedHeader = identityToken.split(SPLIYBY)[HEADER_INDEX];
             String decodedHeader = new String(Base64.getUrlDecoder().decode(encodedHeader), StandardCharsets.UTF_8);
             return objectMapper.readValue(decodedHeader, Map.class);
         } catch (JsonProcessingException | ArrayIndexOutOfBoundsException e) {
