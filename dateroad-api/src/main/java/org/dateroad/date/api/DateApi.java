@@ -173,8 +173,6 @@ public interface DateApi {
                     @Parameter(
                             name = "dateId",
                             description = "데이트 고유 ID",
-                            required = true,
-                            schema = @Schema(type = "long"),
                             example = "100"
                     )
             },
