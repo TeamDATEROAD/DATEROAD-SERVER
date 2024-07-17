@@ -34,7 +34,7 @@ public interface DateApi {
                                     {
                                         "title": "서울 여행",
                                         "date": "2024.07.15",
-                                        "startAt": "09:00",
+                                        "startAt": "09:00 AM",
                                         "tags": [
                                             {
                                                 "tag": "TRAVEL"
@@ -47,12 +47,12 @@ public interface DateApi {
                                         "city": "서울",
                                         "places": [
                                             {
-                                                "name": "경복궁",
+                                                "title": "경복궁",
                                                 "duration": 2.5,
                                                 "sequence": 1
                                             },
                                             {
-                                                "name": "남산타워",
+                                                "title": "남산타워",
                                                 "duration": 1.5,
                                                 "sequence": 2
                                             }
@@ -187,7 +187,7 @@ public interface DateApi {
                                             {
                                                 "dateId": 100,
                                                 "title": "서울 여행",
-                                                "startAt": "09:00",
+                                                "startAt": "09:00 AM",
                                                 "city": "Seoul",
                                                 "tags": [
                                                     {

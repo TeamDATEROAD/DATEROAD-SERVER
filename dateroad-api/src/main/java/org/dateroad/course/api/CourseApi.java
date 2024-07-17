@@ -284,7 +284,7 @@ public interface CourseApi {
                                         "city": "Seoul",
                                         "country": "South Korea",
                                         "date": "2024.07.14",
-                                        "startAt": "09:00",
+                                        "startAt": "09:00 AM",
                                         "cost": 20000,
                                         "places": [
                                             {
@@ -501,7 +501,7 @@ public interface CourseApi {
                                                 "city": "Seoul",
                                                 "title": "Seoul Day Tour",
                                                 "description": "A day tour visiting main attractions in Seoul",
-                                                "startAt": "09:00",
+                                                "startAt": "09:00 AM",
                                                 "places": [
                                                     {
                                                         "sequence": 1,
