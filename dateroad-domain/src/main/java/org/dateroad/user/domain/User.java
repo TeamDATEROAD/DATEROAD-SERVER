@@ -1,5 +1,6 @@
 package org.dateroad.user.domain;
 
+import io.micrometer.common.lang.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;

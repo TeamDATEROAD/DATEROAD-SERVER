@@ -1,5 +1,6 @@
 package org.dateroad.user.api;
 
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.tag.domain.DateTagType;
@@ -32,7 +33,7 @@ public class UserController implements UserApi {
     @PostMapping("/signup")
     public ResponseEntity<UserJwtInfoRes> signUp(@RequestHeader(AUTHORIZATION) final String token,
                                                  @RequestPart("userSignUpReq") final UserSignUpReq userSignUPReq,
-                                                 @RequestPart("image") MultipartFile image,
+                                                 @Nullable @RequestPart("image") MultipartFile image,
                                                  @RequestPart("tag") List<DateTagType> tag
     ) {
         UserJwtInfoRes userSignUpRes = authService.signUp(token, userSignUPReq, image, tag);
@@ -86,7 +87,7 @@ public class UserController implements UserApi {
     public ResponseEntity<Void> patchUserProfile(@UserId final Long userId,
                                                  @RequestPart("name") final String name,
                                                  @RequestPart("tags") final List<DateTagType> tags,
-                                                 @RequestPart("image") final MultipartFile image ) throws IOException, ExecutionException, InterruptedException {
+                                                 @Nullable @RequestPart("image") final MultipartFile image ) throws IOException, ExecutionException, InterruptedException {
         userService.editUserProfile(userId, name, tags, image);
         return ResponseEntity
                 .ok()
