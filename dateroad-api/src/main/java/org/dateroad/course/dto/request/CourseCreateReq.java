@@ -27,8 +27,8 @@ public class CourseCreateReq {
     private LocalDate date;
 
     @DateTimeFormat(pattern = "HH:mm")
-    @Schema(description = "데이트 시작 시간", example = "12:30", pattern = "HH:mm", type = "string")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
+    @Schema(description = "데이트 시작 시간", example = "12:30 PM", pattern = "HH:mm a", type = "string")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm a", timezone = "Asia/Seoul")
     private LocalTime startAt;
 
     private Region.MainRegion country;

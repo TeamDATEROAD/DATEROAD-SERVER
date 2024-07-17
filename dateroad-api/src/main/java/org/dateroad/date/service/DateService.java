@@ -101,7 +101,7 @@ public class DateService {
 
     private void saveDatePlace(final Date date, final List<PlaceCreateReq> places) {
         List<DatePlace> datePlaces = places.stream()
-                        .map(p -> DatePlace.create(date, p.name(), p.duration(), p.sequence())).toList();
+                        .map(p -> DatePlace.create(date, p.title(), p.duration(), p.sequence())).toList();
         datePlaceRepository.saveAll(datePlaces);
     }
 
