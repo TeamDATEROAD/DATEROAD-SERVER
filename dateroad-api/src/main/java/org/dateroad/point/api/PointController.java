@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/points")
 @RequiredArgsConstructor
-public class PointController {
+public class PointController implements PointApi {
     private final PointService pointService;
 
     @GetMapping

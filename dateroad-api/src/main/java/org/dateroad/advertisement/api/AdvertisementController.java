@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/advertisements")
-public class AdvertisementController {
+public class AdvertisementController implements AdvertisementApi{
     private final AdvertisementService advertisementService;
 
     @GetMapping
@@ -22,7 +22,7 @@ public class AdvertisementController {
     }
 
     @GetMapping("{advId}")
-    public ResponseEntity<AdvGetDetailRes> getAllAdvertisements(
+    public ResponseEntity<AdvGetDetailRes> getAdvertisementsDetail(
             final @PathVariable Long advId
     ){
         return ResponseEntity.ok(advertisementService.getAdvertisementsDetail(advId));
