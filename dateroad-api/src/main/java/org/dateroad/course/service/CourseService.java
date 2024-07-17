@@ -81,6 +81,7 @@ public class CourseService {
         User findUser = getUser(userId);
         Course findCourse = getCourse(courseId);
         validateCourseLike(findUser, findCourse);
+        duplicateCourseLike(findUser, findCourse);
         saveCourseLike(findUser, findCourse);
     }
 
@@ -142,7 +143,7 @@ public class CourseService {
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.COURSE_NOT_FOUND));
     }
 
-    private void validateCourseLike(User findUser, Course findCourse) {
+    private void duplicateCourseLike(User findUser, Course findCourse) {
         if (likeRepository.findByUserAndCourse(findUser, findCourse).isPresent()) {
             throw new ConflictException(FailureCode.DUPLICATE_COURSE_LIKE);
         }
