@@ -1,5 +1,7 @@
 package org.dateroad.course.service;
 
+import static org.dateroad.common.ValidatorUtil.validateUserAndCourse;
+
 import java.util.List;
 import java.util.function.Function;
 
@@ -183,8 +185,9 @@ public class CourseService {
 
     @Transactional
     public void openCourse(final Long userId, final Long courseId, final PointUseReq pointUseReq) {
-        User user = getUser(userId);
         Course course = getCourse(courseId);
+        User user = getUser(userId);
+        validateUserAndCourse(user, course);
         Point point = Point.create(user, pointUseReq.getPoint(), pointUseReq.getType(), pointUseReq.getDescription());
         CoursePaymentType coursePaymentType = validateUserFreeOrPoint(user, pointUseReq.getPoint());
         processCoursePayment(coursePaymentType, userId, point, pointUseReq);
@@ -246,7 +249,7 @@ public class CourseService {
 
         int likesCount = likeRepository.countByCourse(foundCourse);
 
-        boolean isCourseMine = courseRepository.existsCourseByUserId(foundUser.getId());
+        boolean isCourseMine = courseRepository.existsCourseByUserAndId(foundUser,courseId);
 
         boolean isUserLiked = false;
 

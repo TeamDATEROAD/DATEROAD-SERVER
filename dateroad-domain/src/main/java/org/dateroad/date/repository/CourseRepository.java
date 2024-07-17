@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> , JpaSpecificationExecutor<Course> {
-    boolean existsCourseByUserId(Long userId);
+    boolean existsCourseByUserAndId(User user,Long courseId);
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM courses WHERE course_id = :courseId", nativeQuery = true)
