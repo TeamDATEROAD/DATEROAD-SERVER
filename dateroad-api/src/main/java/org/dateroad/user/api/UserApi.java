@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "유저 관련 API")
-@SecurityRequirement(name = "Authorization")
 public interface UserApi {
 
 
@@ -61,6 +60,7 @@ public interface UserApi {
     );
 
     @Operation(summary = "로그아웃", description = "사용자가 로그아웃을 합니다.")
+    @SecurityRequirement(name = "Authorization")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -82,6 +82,7 @@ public interface UserApi {
     );
 
     @Operation(summary = "회원 탈퇴", description = "사용자가 회원 탈퇴를 합니다.")
+    @SecurityRequirement(name = "Authorization")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -105,6 +106,7 @@ public interface UserApi {
     );
 
     @Operation(summary = "유저 프로필 조회 (MAIN)", description = "사용자의 정보를 조회합니다.")
+    @SecurityRequirement(name = "Authorization")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = UserInfoMainRes.class))),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -116,6 +118,7 @@ public interface UserApi {
     );
 
     @Operation(summary = "내 프로필 조회 API", description = "마이페이지의 사용자의 정보를 조회.")
+    @SecurityRequirement(name = "Authorization")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = UserInfoGetMyPageRes.class))),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -126,6 +129,7 @@ public interface UserApi {
     ResponseEntity<UserInfoGetMyPageRes> getUserInfoMyPage(@UserId final Long userId);
 
     @Operation(summary = "내 프로필 정보 수정", description = "마이페이지의 사용자의 정보를 수정합니다.")
+    @SecurityRequirement(name = "Authorization")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공", content = @Content),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
