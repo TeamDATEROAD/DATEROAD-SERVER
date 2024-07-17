@@ -3,12 +3,15 @@ package org.dateroad.common;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.dateroad.code.FailureCode;
+import org.dateroad.date.domain.Course;
+import org.dateroad.exception.DateRoadException;
 import org.dateroad.exception.InvalidValueException;
 import org.dateroad.exception.UnauthorizedException;
 import org.dateroad.tag.domain.DateTagType;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.dateroad.user.domain.User;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ValidatorUtil {
@@ -24,6 +27,12 @@ public final class ValidatorUtil {
     public static void validateRefreshToken(LocalDateTime expireDate) {
         if (expireDate.isBefore(LocalDateTime.now())) {
             throw new UnauthorizedException(FailureCode.EXPIRED_REFRESH_TOKEN);
+        }
+    }
+
+    public static void validateUserAndCourse(User user, Course course) {
+        if (course.getUser().equals(user)) {
+            throw new DateRoadException(FailureCode.FORBIDDEN);
         }
     }
 }

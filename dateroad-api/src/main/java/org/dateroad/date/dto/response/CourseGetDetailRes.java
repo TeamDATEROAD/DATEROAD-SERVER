@@ -1,5 +1,6 @@
 package org.dateroad.date.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Builder;
 import org.dateroad.date.domain.Course;
@@ -15,10 +16,13 @@ public record CourseGetDetailRes(
         List<ImagesList> images,
         int like,
         float totalTime,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
         LocalDate date,
         String city,
         String title,
         String description,
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm a", timezone = "Asia/Seoul",locale = "en")
         LocalTime startAt,
         List<Places> places,
         int totalCost,
