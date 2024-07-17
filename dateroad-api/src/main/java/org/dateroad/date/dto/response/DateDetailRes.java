@@ -15,7 +15,7 @@ import java.util.List;
 public record DateDetailRes(
     Long dateId,
     String title,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm a", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm a", timezone = "Asia/Seoul" ,locale = "en")
     LocalTime startAt,
     String city,
     List<TagGetRes> tags,
