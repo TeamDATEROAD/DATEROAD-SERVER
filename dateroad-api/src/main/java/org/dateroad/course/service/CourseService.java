@@ -176,7 +176,7 @@ public class CourseService {
         );
         Course saveCourse = courseRepository.save(course);
         List<Image> imageList = asyncService.createImage(images, saveCourse);
-        String thumbnailUrl = imageList.getLast().getImageUrl();
+        String thumbnailUrl = imageList.getFirst().getImageUrl();
         course.setThumbnail(thumbnailUrl);
         return saveCourse;
     }
