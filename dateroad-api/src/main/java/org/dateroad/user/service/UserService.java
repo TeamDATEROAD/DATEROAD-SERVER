@@ -1,6 +1,9 @@
 package org.dateroad.user.service;
 
+import io.micrometer.common.lang.Nullable;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;
 import org.dateroad.exception.BadRequestException;
 import org.dateroad.exception.EntityNotFoundException;
@@ -24,13 +27,10 @@ import java.util.concurrent.ExecutionException;
 import static org.dateroad.common.ValidatorUtil.validateUserTagSize;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
-
-    private final AuthService authService;
-    @Value("${aws-property.s3-bucket-name}")
-    private String path;
 
     @Value("${cloudfront.domain}")
     private String cachePath;
@@ -54,7 +54,7 @@ public class UserService {
     public void editUserProfile(final Long userId,
                                 final String name,
                                 final List<DateTagType> tags,
-                                final MultipartFile newImage) throws IOException, ExecutionException, InterruptedException {
+                                @Nullable final MultipartFile newImage) {
         User foundUser = findUserById(userId);
 
         //이름 변경
@@ -69,19 +69,19 @@ public class UserService {
         String userImage = foundUser.getImageUrl();
 
         // 1. 원래 이미지가 있다가 null로 변경
-        if (userImage != null && newImage == null) {
+        if (userImage != null && (newImage == null || newImage.isEmpty())) {
             deleteImage(userImage);
             foundUser.setImageUrl(null);
 
         // 2. 원래 이미지가 있다가 새로운 이미지로 변경
-        }  else if (userImage != null && newImage != null) {
+        }  else if ((userImage != null) && (newImage != null || !newImage.isEmpty())) {
             deleteImage(userImage);
-            String newImageUrl = uploadImage(newImage);
+            String newImageUrl = getImageUrl(newImage);
             foundUser.setImageUrl(newImageUrl);
 
         // 3. 원래 이미지가 없다가 새로운 이미지로 변경
-        } else if (userImage == null && newImage != null) {
-            String newImageUrl = uploadImage(newImage);
+        } else if (userImage == null && (newImage != null || !newImage.isEmpty())) {
+            String newImageUrl = getImageUrl(newImage);
             foundUser.setImageUrl(newImageUrl);
         }
         userRepository.save(foundUser);
@@ -113,10 +113,15 @@ public class UserService {
         }
     }
 
-    private String uploadImage(final MultipartFile newImage) {
+    //이미지URL 생성
+    public String getImageUrl(final MultipartFile image) {
+        if (image == null || image.isEmpty()) {
+            return null;
+        }
         try {
-            return cachePath + s3Service.uploadImage(path, newImage).get();
-        } catch (IOException | InterruptedException | ExecutionException e) {
+            return cachePath + s3Service.uploadImage("/user", image).get();
+        } catch (InterruptedException | ExecutionException | IOException e) {
+            log.error(e.getMessage());
             throw new BadRequestException(FailureCode.WRONG_IMAGE_URL);
         }
     }
