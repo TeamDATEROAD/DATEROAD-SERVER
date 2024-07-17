@@ -21,7 +21,6 @@ public record CourseGetDetailRes(
         String city,
         String title,
         String description,
-
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm a", timezone = "Asia/Seoul",locale = "en")
         LocalTime startAt,
         List<Places> places,

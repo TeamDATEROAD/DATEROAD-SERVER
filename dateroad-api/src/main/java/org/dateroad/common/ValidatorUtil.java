@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.dateroad.code.FailureCode;
 import org.dateroad.date.domain.Course;
 import org.dateroad.exception.DateRoadException;
+import org.dateroad.exception.ForbiddenException;
 import org.dateroad.exception.InvalidValueException;
 import org.dateroad.exception.UnauthorizedException;
 import org.dateroad.tag.domain.DateTagType;
@@ -32,7 +33,7 @@ public final class ValidatorUtil {
 
     public static void validateUserAndCourse(User user, Course course) {
         if (course.getUser().equals(user)) {
-            throw new DateRoadException(FailureCode.FORBIDDEN);
+            throw new ForbiddenException(FailureCode.FORBIDDEN);
         }
     }
 }
