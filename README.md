@@ -29,8 +29,15 @@
 </div>
 <hr></hr>
 
-### API 명세서
+## API 명세서
 [API 명세서](https://hooooooni.notion.site/API-872d0ad3c313452a8452997b0a193015)
+<br>
+
+<hr></hr>
+
+## Architecture
+![DateRoad_Server_Arch](https://github.com/user-attachments/assets/2e040d8f-bc44-4c24-ad17-8f4bccb9af4c)
+
 <br>
 
 <hr></hr>
