@@ -14,7 +14,7 @@ public record DateGetNearestRes(
         String dateName,
         int month,
         int day,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm a", timezone = "Asia/Seoul")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm a", timezone = "Asia/Seoul", locale = "en")
         LocalTime startAt
 ) {
     public static DateGetNearestRes of(Date date, int dDay) {

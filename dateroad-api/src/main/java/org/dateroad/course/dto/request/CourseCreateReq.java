@@ -21,14 +21,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class CourseCreateReq {
     private String title;
 
-    @DateTimeFormat(pattern = "yyyy.MM.dd")
     @Schema(description = "데이트 시작 날짜", example = "2024.07.04", pattern = "yyyy.MM.dd", type = "string")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
     private LocalDate date;
 
-    @DateTimeFormat(pattern = "HH:mm")
-    @Schema(description = "데이트 시작 시간", example = "12:30 PM", pattern = "HH:mm a", type = "string")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm a", timezone = "Asia/Seoul")
+    @Schema(description = "데이트 시작 시간", example = "12:30 PM", pattern = "hh:mm a", type = "string")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm a", timezone = "Asia/Seoul", locale = "en")
     private LocalTime startAt;
 
     private Region.MainRegion country;
