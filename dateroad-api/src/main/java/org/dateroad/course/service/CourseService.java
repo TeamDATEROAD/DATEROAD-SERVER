@@ -80,7 +80,7 @@ public class CourseService {
     public void createCourseLike(final Long userId, final Long courseId) {
         User findUser = getUser(userId);
         Course findCourse = getCourse(courseId);
-        validateCourseLike(findUser, findCourse);
+        validateUserAndCourse(findUser, findCourse);
         duplicateCourseLike(findUser, findCourse);
         saveCourseLike(findUser, findCourse);
     }
