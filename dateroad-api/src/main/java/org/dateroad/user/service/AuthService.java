@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.Token;
 import org.dateroad.code.FailureCode;
+import org.dateroad.common.ValidatorUtil;
 import org.dateroad.exception.*;
 import org.dateroad.feign.apple.AppleFeignProvider;
 import org.dateroad.feign.kakao.KakaoFeignProvider;
@@ -32,6 +33,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+
+import static org.dateroad.common.ValidatorUtil.validateRefreshToken;
+import static org.dateroad.common.ValidatorUtil.validateUserTagSize;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -74,7 +78,7 @@ public class AuthService {
     @Transactional
     public UserJwtInfoRes reissue(final String refreshToken) {
         RefreshToken foundRefreshToken = getRefreshTokenByToken(refreshToken);
-        jwtProvider.validateRefreshToken(foundRefreshToken.getExpiredAt());
+        validateRefreshToken(foundRefreshToken.getExpiredAt());
         Long userId = foundRefreshToken.getUserId();
         deleteRefreshToken(userId);
         Token newToken = issueToken(userId);
@@ -154,13 +158,6 @@ public class AuthService {
         return userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND)
         );
-    }
-
-    //태그 리스트 사이즈 검증
-    public void validateUserTagSize(final List<DateTagType> userTags) {
-        if (userTags.isEmpty() || userTags.size() > 3) {
-            throw new InvalidValueException((FailureCode.WRONG_USER_TAG_SIZE));
-        }
     }
 
     private RefreshToken getRefreshTokenByToken(final String refreshToken) {
