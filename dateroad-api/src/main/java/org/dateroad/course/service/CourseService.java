@@ -249,7 +249,7 @@ public class CourseService {
 
         int likesCount = likeRepository.countByCourse(foundCourse);
 
-        boolean isCourseMine = courseRepository.existsCourseByUserId(foundUser.getId());
+        boolean isCourseMine = courseRepository.existsCourseByUserAndId(foundUser,courseId);
 
         boolean isUserLiked = false;
 
