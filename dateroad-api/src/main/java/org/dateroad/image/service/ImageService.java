@@ -29,7 +29,7 @@ public class ImageService {
     private String cachePath;
 
     public List<Image> saveImages(final List<MultipartFile> images, final Course course) {
-        AtomicInteger sequence = new AtomicInteger();
+        AtomicInteger sequence = new AtomicInteger(1);
         List<Image> courseImages = images.stream()
                 .map(img -> {
                     try {

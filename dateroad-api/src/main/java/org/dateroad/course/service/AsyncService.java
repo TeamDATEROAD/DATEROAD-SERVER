@@ -46,6 +46,7 @@ public class AsyncService {
         fieldMap.put("userId", userId.toString());
         fieldMap.put("point", Integer.toString(pointUseReq.getPoint()));
         fieldMap.put("type", pointUseReq.getType().toString());
+        fieldMap.put("description", pointUseReq.getDescription());
         redisTemplate.opsForStream().add("coursePoint", fieldMap);
     }
 
