@@ -1,12 +1,11 @@
 package org.dateroad.user.service;
 
-import java.util.concurrent.ExecutionException;
+import io.micrometer.common.lang.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.Token;
 import org.dateroad.code.FailureCode;
-import org.dateroad.common.ValidatorUtil;
 import org.dateroad.exception.*;
 import org.dateroad.feign.apple.AppleFeignProvider;
 import org.dateroad.feign.kakao.KakaoFeignProvider;
@@ -31,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.dateroad.common.ValidatorUtil.validateRefreshToken;
@@ -48,18 +46,15 @@ public class AuthService {
     private final UserTagRepository userTagRepository;
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final S3Service s3Service;
-
-    @Value("${cloudfront.domain}")
-    private String cachePath;
+    private final UserService userService;
 
     @Transactional
-    public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, MultipartFile image, List<DateTagType> tag) {
+    public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, @Nullable final MultipartFile image, final List<DateTagType> tag) {
         String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
         validateUserTagSize(tag);
         checkNickname(userSignUpReq.name());
         validateDuplicatedUser(userSignUpReq.platform(), platformUserId);
-        User newUser = saveUser(userSignUpReq.name(), getImage(image), userSignUpReq.platform(), platformUserId);
+        User newUser = saveUser(userSignUpReq.name(), userService.getImageUrl(image), userSignUpReq.platform(), platformUserId);
         saveUserTag(newUser, tag);
         Token issuedToken = issueToken(newUser.getId());
         return UserJwtInfoRes.of(newUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
@@ -180,15 +175,5 @@ public class AuthService {
     //토큰 발급
     private Token issueToken(final Long userId) {
         return jwtProvider.issueToken(userId);
-    }
-
-    //이미지 생성
-    private String getImage(MultipartFile image) {
-        try {
-            return cachePath + s3Service.uploadImage("/user", image).get();
-        } catch (InterruptedException | ExecutionException | IOException e) {
-            log.error(e.getMessage());
-            throw new BadRequestException(FailureCode.WRONG_IMAGE_URL);
-        }
     }
 }
