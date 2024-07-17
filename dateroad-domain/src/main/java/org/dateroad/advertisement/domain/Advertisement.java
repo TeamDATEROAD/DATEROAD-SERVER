@@ -32,7 +32,7 @@ public class Advertisement extends BaseTimeEntity {
     @NotNull
     private String title;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 50000)
     @NotNull
     private String description;
 
