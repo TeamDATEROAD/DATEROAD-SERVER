@@ -34,7 +34,7 @@ public class UserController implements UserApi {
                                                  @RequestPart("userSignUpReq") final UserSignUpReq userSignUPReq,
                                                  @RequestPart("image") MultipartFile image,
                                                  @RequestPart("tag") List<DateTagType> tag
-    ) throws IOException, ExecutionException, InterruptedException {
+    ) {
         UserJwtInfoRes userSignUpRes = authService.signUp(token, userSignUPReq, image, tag);
         return ResponseEntity.status(HttpStatus.CREATED).body(userSignUpRes);
     }

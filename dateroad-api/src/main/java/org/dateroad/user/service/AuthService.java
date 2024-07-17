@@ -54,13 +54,12 @@ public class AuthService {
     private String cachePath;
 
     @Transactional
-    public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, MultipartFile image, List<DateTagType> tag)
-            throws IOException, ExecutionException, InterruptedException {
+    public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, MultipartFile image, List<DateTagType> tag) {
         String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
         validateUserTagSize(tag);
         checkNickname(userSignUpReq.name());
         validateDuplicatedUser(userSignUpReq.platform(), platformUserId);
-        User newUser = saveUser(userSignUpReq.name(), cachePath + s3Service.uploadImage("/user", image).get(), userSignUpReq.platform(), platformUserId);
+        User newUser = saveUser(userSignUpReq.name(), getImage(image), userSignUpReq.platform(), platformUserId);
         saveUserTag(newUser, tag);
         Token issuedToken = issueToken(newUser.getId());
         return UserJwtInfoRes.of(newUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
@@ -179,7 +178,17 @@ public class AuthService {
     }
 
     //토큰 발급
-    Token issueToken(final Long userId) {
+    private Token issueToken(final Long userId) {
         return jwtProvider.issueToken(userId);
+    }
+
+    //이미지 생성
+    private String getImage(MultipartFile image) {
+        try {
+            return cachePath + s3Service.uploadImage("/user", image).get();
+        } catch (InterruptedException | ExecutionException | IOException e) {
+            log.error(e.getMessage());
+            throw new BadRequestException(FailureCode.WRONG_IMAGE_URL);
+        }
     }
 }
