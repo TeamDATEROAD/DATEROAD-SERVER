@@ -33,6 +33,7 @@ public class User extends BaseTimeEntity {
 
     @Column(name = "platform_user_id")
     @NotNull
+    @Setter
     private String platformUserId;
 
     @Column(name = "platform")

@@ -52,11 +52,6 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserService userService;
-    private final PointRepository pointRepository;
-    private final DateRepository dateRepository;
-    private final DateAccessRepository dateAccessRepository;
-    private final CourseRepository courseRepository;
-    private final LikeRepository likeRepository;
 
     @Transactional
     public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, @Nullable final MultipartFile image, final List<DateTagType> tag) {
@@ -100,7 +95,8 @@ public class AuthService {
         } else {
             throw new InvalidValueException(FailureCode.INVALID_PLATFORM_TYPE);
         }
-        
+
+        foundUser.setPlatformUserId("USER DELETED");
         deleteRefreshToken(foundUser.getId());
     }
 
