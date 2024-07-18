@@ -55,7 +55,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     ResponseEntity<UserJwtInfoRes> signIn(
-            @RequestHeader(name = "Authorization", required = true) @Parameter(description = "플랫폼 토큰") final String token,
+            @RequestHeader(name = "Authorization", required = true) @Parameter(description = "플랫폼폼 토큰") final String token,
             @RequestBody(description = "로그인 요청 데이터", required = true) final UserSignInReq userSignInReq
     );
 
