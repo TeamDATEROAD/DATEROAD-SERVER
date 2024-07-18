@@ -17,7 +17,12 @@ public enum FailureCode {
     INVALID_IMAGE_TYPE(HttpStatus.BAD_REQUEST, "e4003", "지원하지 않는 이미지 확장자 입니다."),
     INVALID_IMAGE_SIZE(HttpStatus.BAD_REQUEST, "e4004", "지원하지 않는 이미지 크기 입니다."),
     WRONG_IMAGE_URL(HttpStatus.BAD_REQUEST, "e4005", "잘못된 이미지 URL 입니다."),
-
+    WRONG_COURSE_PLACE_SIZE(HttpStatus.BAD_REQUEST, "e4006", "코스 장소 개수가 2미만입니다."),
+    WRONG_DATE_PLACE_SIZE(HttpStatus.BAD_REQUEST, "e4007", "데이트 일정 장소 개수가 2미만입니다."),
+    WRONG_TAG_SIZE(HttpStatus.BAD_REQUEST, "e4008", "태그는 최소 1개 이상입니다."),
+    WRONG_IMAGE_LIST_SIZE(HttpStatus.BAD_REQUEST, "e4009", "데이트 코스 이미지는 최대 10장입니다.."),
+    WRONG_TITLE_SIZE(HttpStatus.BAD_REQUEST, "e4100", "제목은 최소 5글자 이상입니다."),
+    WRONG_DATE_TIME(HttpStatus.BAD_REQUEST, "e4101", "미래 날짜는 등록할수 없습니다. "),
     /**
      * 401 Unauthorized
      */
@@ -86,8 +91,7 @@ public enum FailureCode {
     /**
      * 500 Internal Server Error
      */
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "e5000", "서버 내부 오류입니다.");
-
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "e5000", "서버 내부 오류입니다.") ;
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
