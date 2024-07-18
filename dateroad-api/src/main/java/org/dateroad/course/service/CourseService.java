@@ -247,19 +247,21 @@ public class CourseService {
                         tagList.getDateTagType())
                 ).toList();
 
-        boolean isAccess = dateAccessRepository.existsDateAccessByUserIdAndCourseId(foundUser.getId(),
-                foundCourse.getId());
-
         int likesCount = likeRepository.countByCourse(foundCourse);
 
         boolean isCourseMine = courseRepository.existsCourseByUserAndId(foundUser,courseId);
 
         boolean isUserLiked = false;
 
+        boolean isAccess = dateAccessRepository.existsDateAccessByUserIdAndCourseId(foundUser.getId(),
+                foundCourse.getId());
+
         if (!isCourseMine) {
             isUserLiked = likeRepository.existsByUserIdAndCourseId(foundUser.getId(), foundCourse.getId());
+        } else {
+            isAccess = true;
         }
-
+        
         return CourseGetDetailRes.of(foundCourse,
                 images,
                 likesCount,
