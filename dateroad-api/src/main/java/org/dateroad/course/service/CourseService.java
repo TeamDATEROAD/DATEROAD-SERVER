@@ -3,8 +3,10 @@ package org.dateroad.course.service;
 import static org.dateroad.common.ValidatorUtil.validateUserAndCourse;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
@@ -104,14 +106,21 @@ public class CourseService {
     }
 
     private <T> List<CourseDtoGetRes> convertToDtoList(final List<T> entities, final Function<T, Course> converter) {
-        return entities.stream()
-                .map(converter)
-                .map(this::convertToDto)
+        List<Course> courses = entities.stream().map(converter).toList();
+        List<Object[]> results = likeRepository.countByCourses(courses);
+
+        Map<Course, Integer> likeCounts = results.stream()
+                .collect(Collectors.toMap(
+                        result -> (Course) result[0],
+                        result -> ((Long) result[1]).intValue()
+                ));
+
+        return courses.stream()
+                .map(course -> convertToDto(course, likeCounts.getOrDefault(course, 0)))
                 .toList();
     }
 
-    private CourseDtoGetRes convertToDto(final Course course) {
-        int likeCount = likeRepository.countByCourse(course);
+    private CourseDtoGetRes convertToDto(final Course course, final int likeCount) {
         return CourseDtoGetRes.of(
                 course,
                 course.getThumbnail(),

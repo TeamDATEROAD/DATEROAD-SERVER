@@ -1,5 +1,7 @@
 package org.dateroad.like.repository;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.dateroad.date.domain.Course;
 import org.dateroad.like.domain.Like;
@@ -21,4 +23,7 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     @Transactional
     @Query(value = "DELETE FROM likes WHERE course_id = :courseId", nativeQuery = true)
     void deleteByCourse(@Param("courseId") Long courseId);
+
+    @Query("SELECT l.course, COUNT(l) FROM Like l WHERE l.course IN :courses GROUP BY l.course")
+    List<Object[]> countByCourses(@Param("courses") List<Course> courses);
 }
