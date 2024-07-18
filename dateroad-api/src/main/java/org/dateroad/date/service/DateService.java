@@ -163,7 +163,7 @@ public class DateService {
     }
 
     private Date findNearestDate(Long userId, LocalDate currentDate, LocalTime currentTime) {
-        return dateRepository.findFirstByUserIdAndDateAfterOrDateAndStartAtAfterOrderByDateAscStartAtAsc(userId, currentDate, currentDate, currentTime)
+        return dateRepository.findClosestDateByUserIdAndCurrentDate(userId, currentDate, currentTime)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.DATE_NOT_FOUND));
     }
 
