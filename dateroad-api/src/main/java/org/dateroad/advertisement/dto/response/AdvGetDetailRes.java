@@ -27,12 +27,12 @@ public record AdvGetDetailRes(
 
     @Builder(access = AccessLevel.PROTECTED)
     public record AdvImagesRes(
-            String imagesUrl,
+            String imageUrl,
             int sequence
     ) {
-        public static AdvImagesRes of(String imagesUrl, int sequence) {
+        public static AdvImagesRes of(String imageUrl, int sequence) {
             return AdvImagesRes.builder()
-                    .imagesUrl(imagesUrl)
+                    .imageUrl(imageUrl)
                     .sequence(sequence)
                     .build();
         }
