@@ -3,6 +3,7 @@ package org.dateroad.dateAccess.repository;
 import java.util.List;
 import org.dateroad.date.domain.Course;
 import org.dateroad.dateAccess.domain.DateAccess;
+import org.dateroad.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +22,8 @@ public interface DateAccessRepository extends JpaRepository<DateAccess,Long> {
     @Transactional
     @Query(value = "DELETE FROM date_access WHERE course_id = :courseId", nativeQuery = true)
     void deleteByCourse(@Param("courseId") Long courseId);
+
+    @Modifying
+    @Query("DELETE FROM UserTag ut WHERE ut.user.id = :userId")
+    void deleteAllByUserId(@Param("userId") Long userId);
 }
