@@ -187,12 +187,9 @@ public class CourseService {
                 totalTime
         );
         Course saveCourse = courseRepository.save(course);
-        DateAccess dateAccess = DateAccess.create(saveCourse, user);
-        dateAccessRepository.save(dateAccess);
         List<Image> imageList = asyncService.createImage(images, saveCourse);
         String thumbnailUrl = imageList.getFirst().getImageUrl();
         course.setThumbnail(thumbnailUrl);
-
         return saveCourse;
     }
 
