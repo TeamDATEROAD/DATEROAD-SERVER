@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
@@ -106,10 +107,16 @@ public class CourseService {
 
     private <T> List<CourseDtoGetRes> convertToDtoList(final List<T> entities, final Function<T, Course> converter) {
         List<Course> courses = entities.stream().map(converter).toList();
-        Map<Course, Long> likeCounts = likeRepository.countByCourses(courses);
+        List<Object[]> results = likeRepository.countByCourses(courses);
+
+        Map<Course, Integer> likeCounts = results.stream()
+                .collect(Collectors.toMap(
+                        result -> (Course) result[0],
+                        result -> ((Long) result[1]).intValue()
+                ));
 
         return courses.stream()
-                .map(course -> convertToDto(course, likeCounts.getOrDefault(course, 0L).intValue()))
+                .map(course -> convertToDto(course, likeCounts.getOrDefault(course, 0)))
                 .toList();
     }
 

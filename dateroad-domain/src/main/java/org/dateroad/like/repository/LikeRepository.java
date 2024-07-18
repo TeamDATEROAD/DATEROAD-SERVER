@@ -25,5 +25,5 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     void deleteByCourse(@Param("courseId") Long courseId);
 
     @Query("SELECT l.course, COUNT(l) FROM Like l WHERE l.course IN :courses GROUP BY l.course")
-    Map<Course, Long> countByCourses(@Param("courses") List<Course> courses);
+    List<Object[]> countByCourses(@Param("courses") List<Course> courses);
 }
