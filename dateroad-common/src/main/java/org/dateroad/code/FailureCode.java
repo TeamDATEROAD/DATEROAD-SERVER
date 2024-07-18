@@ -23,6 +23,8 @@ public enum FailureCode {
     WRONG_IMAGE_LIST_SIZE(HttpStatus.BAD_REQUEST, "e4009", "데이트 코스 이미지는 최대 10장입니다.."),
     WRONG_TITLE_SIZE(HttpStatus.BAD_REQUEST, "e4100", "제목은 최소 5글자 이상입니다."),
     WRONG_DATE_TIME(HttpStatus.BAD_REQUEST, "e4101", "미래 날짜는 등록할수 없습니다. "),
+    INVALID_TYPE_VALUE(HttpStatus.BAD_REQUEST, "e4102", "필드가 잘못되었습니다."),
+    INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "e4103", "잘못된 필드를 넣었습니다."),
     /**
      * 401 Unauthorized
      */
@@ -91,7 +93,9 @@ public enum FailureCode {
     /**
      * 500 Internal Server Error
      */
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "e5000", "서버 내부 오류입니다.") ;
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "e5000", "서버 내부 오류입니다.");
+
+
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
