@@ -1,6 +1,7 @@
 package org.dateroad.date.dto.request;
 
 import static org.dateroad.common.ValidatorUtil.validStringMinSize;
+import static org.dateroad.common.ValidatorUtil.validateListSizeMax;
 import static org.dateroad.common.ValidatorUtil.validateListSizeMin;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -37,7 +38,8 @@ public record DateCreateReq(
                                    List<PlaceCreateReq> places) {
         validStringMinSize(title, 5, FailureCode.WRONG_TITLE_SIZE);
         validateListSizeMin(places, 2, FailureCode.WRONG_DATE_PLACE_SIZE);
-        validateListSizeMin(tags, 1, FailureCode.WRONG_TAG_SIZE);
+        validateListSizeMin(tags,1,FailureCode.WRONG_TAG_SIZE);
+        validateListSizeMax(tags,3,FailureCode.WRONG_TAG_SIZE);
         return DateCreateReq.builder()
                 .title(title)
                 .date(date)
