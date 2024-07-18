@@ -178,6 +178,8 @@ public class CourseService {
                 totalTime
         );
         Course saveCourse = courseRepository.save(course);
+        DateAccess dateAccess = DateAccess.create(saveCourse, user);
+        dateAccessRepository.save(dateAccess);
         List<Image> imageList = asyncService.createImage(images, saveCourse);
         String thumbnailUrl = imageList.getFirst().getImageUrl();
         course.setThumbnail(thumbnailUrl);
@@ -245,17 +247,19 @@ public class CourseService {
                         tagList.getDateTagType())
                 ).toList();
 
-        boolean isAccess = dateAccessRepository.existsDateAccessByUserIdAndCourseId(foundUser.getId(),
-                foundCourse.getId());
-
         int likesCount = likeRepository.countByCourse(foundCourse);
 
         boolean isCourseMine = courseRepository.existsCourseByUserAndId(foundUser,courseId);
 
         boolean isUserLiked = false;
 
+        boolean isAccess = dateAccessRepository.existsDateAccessByUserIdAndCourseId(foundUser.getId(),
+                foundCourse.getId());
+
         if (!isCourseMine) {
             isUserLiked = likeRepository.existsByUserIdAndCourseId(foundUser.getId(), foundCourse.getId());
+        } else {
+            isAccess = true;  //todo: 운영서버에서 지워야됨
         }
 
         return CourseGetDetailRes.of(foundCourse,
