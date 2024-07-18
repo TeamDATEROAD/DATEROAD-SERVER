@@ -259,9 +259,9 @@ public class CourseService {
         if (!isCourseMine) {
             isUserLiked = likeRepository.existsByUserIdAndCourseId(foundUser.getId(), foundCourse.getId());
         } else {
-            isAccess = true;
+            isAccess = true;  //todo: 운영서버에서 지워야됨
         }
-        
+
         return CourseGetDetailRes.of(foundCourse,
                 images,
                 likesCount,
