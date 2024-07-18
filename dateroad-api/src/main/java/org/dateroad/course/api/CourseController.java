@@ -1,9 +1,13 @@
 package org.dateroad.course.api;
 
 
+import static org.dateroad.common.ValidatorUtil.validateListSizeMin;
+import static org.dateroad.common.ValidatorUtil.validateTagSize;
+
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.argumentresolve.UserId;
+import org.dateroad.code.FailureCode;
 import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CourseCreateReq;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
@@ -60,6 +64,9 @@ public class CourseController implements CourseApi {
             @RequestPart("places") final List<CoursePlaceGetReq> places,
             @RequestPart("images") final List<MultipartFile> images
     ) {
+        validateListSizeMin(places, 2,FailureCode.WRONG_COURSE_PLACE_SIZE);
+        validateListSizeMin(tags,1,FailureCode.WRONG_TAG_SIZE);
+        validateListSizeMin(images, 10, FailureCode.WRONG_IMAGE_LIST_SIZE);
         Course course = courseService.createCourse(userId, courseCreateReq, places, images);
         asyncService.createCoursePlace(places, course);
         asyncService.createCourseTags(tags, course);
