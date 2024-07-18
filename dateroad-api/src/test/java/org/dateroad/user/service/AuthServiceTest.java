@@ -13,9 +13,11 @@ import org.dateroad.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.util.Assert;
 
@@ -23,22 +25,30 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
+    @InjectMocks
+    AuthService authService;
 
     @Mock
     UserRepository userRepository;
 
-    @InjectMocks
-    AuthService authService;
-
     @Test
     @DisplayName("유저가 회원가입을 한다.")
     void testDuplicatedNickName() {
+
+        //given
         User user = User.create("성준", "dfsjalsadf", Platform.KAKAO, "null");
-        Mockito.when(userRepository.save(user)).thenReturn(user);
+
+        //when
+        userRepository.save(user);
+
+        //then
         Assertions.assertThatThrownBy(
-                () -> authService.checkNickname(user.getName())
+                () -> authService.checkNickname("성준")
         ).isInstanceOf(ConflictException.class);
     }
 }
