@@ -1,5 +1,8 @@
 package org.dateroad.course.dto.request;
 
+import static org.dateroad.common.ValidatorUtil.validStringMinSize;
+import static org.dateroad.common.ValidatorUtil.validateDateNotInFuture;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
@@ -11,6 +14,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.dateroad.code.FailureCode;
 import org.dateroad.date.domain.Region;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -40,6 +44,8 @@ public class CourseCreateReq {
     public static CourseCreateReq of(final String title,final LocalDate date,final LocalTime startAt,
                                      final Region.MainRegion country,final Region.SubRegion city,final String description,
                                      int cost) {
+        validStringMinSize(title, 5, FailureCode.WRONG_TITLE_SIZE);
+        validateDateNotInFuture(date, FailureCode.WRONG_DATE_TIME);
         return CourseCreateReq.builder()
                 .title(title)
                 .date(date)

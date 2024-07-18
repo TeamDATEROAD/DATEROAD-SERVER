@@ -1,5 +1,7 @@
 package org.dateroad.user.service;
 
+import static org.dateroad.common.ValidatorUtil.validateTagSize;
+
 import io.micrometer.common.lang.Nullable;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import static org.dateroad.common.ValidatorUtil.validateUserTagSize;
 
 @Service
 @Slf4j
@@ -62,7 +62,7 @@ public class UserService {
 
         //tag 변경
         userTagRepository.deleteAllByUserId(foundUser.getId());
-        validateUserTagSize(tags);
+        validateTagSize(tags,FailureCode.WRONG_USER_TAG_SIZE);
         saveUserTag(foundUser, tags);
 
         //이미지 변경

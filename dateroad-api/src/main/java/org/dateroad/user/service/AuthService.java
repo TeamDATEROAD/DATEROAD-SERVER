@@ -33,7 +33,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static org.dateroad.common.ValidatorUtil.validateRefreshToken;
-import static org.dateroad.common.ValidatorUtil.validateUserTagSize;
+import static org.dateroad.common.ValidatorUtil.validateTagSize;
+
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -51,7 +52,7 @@ public class AuthService {
     @Transactional
     public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, @Nullable final MultipartFile image, final List<DateTagType> tag) {
         String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
-        validateUserTagSize(tag);
+        validateTagSize(tag,FailureCode.WRONG_USER_TAG_SIZE);
         checkNickname(userSignUpReq.name());
         validateDuplicatedUser(userSignUpReq.platform(), platformUserId);
         User newUser = saveUser(userSignUpReq.name(), userService.getImageUrl(image), userSignUpReq.platform(), platformUserId);
