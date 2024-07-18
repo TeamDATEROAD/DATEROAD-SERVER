@@ -16,7 +16,7 @@ public class PointService {
     private final PointRepository pointRepository;
 
     public PointGetAllRes getAllPoints(Long userId) {
-        List<PointDto> points = pointRepository.findAllByUserId(userId)
+        List<PointDto> points = pointRepository.findAllByUserIdOOrderByCreatedAtDesc(userId)
                 .stream().map(PointDto::of)
                 .toList();
         PointsDto gainedPoints = pointTypeCheckToList(points, TransactionType.POINT_GAINED);
