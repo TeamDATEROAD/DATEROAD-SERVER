@@ -29,6 +29,7 @@ public class CourseSpecifications {
                     criteriaBuilder::equal);
             addCostPredicate(predicates, criteriaBuilder, root, courseGetAllReq.cost());
             predicates.removeIf(Objects::isNull);
+            query.orderBy(criteriaBuilder.desc(root.get("createdAt")));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
