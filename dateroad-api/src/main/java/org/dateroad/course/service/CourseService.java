@@ -192,6 +192,7 @@ public class CourseService {
         List<Image> imageList = asyncService.createImage(images, saveCourse);
         String thumbnailUrl = imageList.getFirst().getImageUrl();
         course.setThumbnail(thumbnailUrl);
+
         return saveCourse;
     }
 
@@ -221,7 +222,6 @@ public class CourseService {
             asyncService.publishEventUserFree(userId);
         }
         else if (coursePaymentType == CoursePaymentType.POINT) {
-            pointRepository.save(point);
             asyncService.publishEvenUserPoint(userId, pointUseReq);
         }
     }
