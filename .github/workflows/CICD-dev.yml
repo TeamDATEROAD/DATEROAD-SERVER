@@ -26,11 +26,8 @@ jobs:
           touch ./application.yml
           echo "${{ secrets.CD_APPLICATION }}" > ./application.yml
           cat ./application.yml
-        working-directory: ${{ env.working-directory }}
-        
-      - name: AuthKey_39CUV6ST46.p8 생성
-        run: |
-          mkdir -p dateroad-external/src/main/resources/static && cd $_
+          
+          mkdir -p static && cd $_
           touch ./AuthKey_39CUV6ST46.p8
           echo "${{ secrets.CD_APPLICATION }}" > ./AuthKey_39CUV6ST46.p8
           cat ./AuthKey_39CUV6ST46.p8
