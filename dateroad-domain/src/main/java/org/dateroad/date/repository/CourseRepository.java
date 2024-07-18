@@ -25,4 +25,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> , JpaSpeci
     List<Course> findTopCoursesByLikes(Pageable pageable);
     @Query("SELECT c FROM Course c ORDER BY c.createdAt DESC")
     List<Course> findTopCoursesByCreatedAt(Pageable pageable);
+
+    @Modifying
+    @Query("DELETE FROM UserTag ut WHERE ut.user.id = :userId")
+    void deleteAllByUserId(@Param("userId") Long userId);
 }

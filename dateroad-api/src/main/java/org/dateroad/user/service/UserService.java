@@ -1,7 +1,6 @@
 package org.dateroad.user.service;
 
 import io.micrometer.common.lang.Nullable;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;

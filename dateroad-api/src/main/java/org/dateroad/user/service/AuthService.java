@@ -6,15 +6,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.Token;
 import org.dateroad.code.FailureCode;
+import org.dateroad.date.repository.CourseRepository;
+import org.dateroad.date.service.DateRepository;
+import org.dateroad.dateAccess.repository.DateAccessRepository;
 import org.dateroad.exception.*;
 import org.dateroad.feign.apple.AppleFeignProvider;
 import org.dateroad.feign.kakao.KakaoFeignProvider;
 import org.dateroad.exception.ConflictException;
 import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.exception.UnauthorizedException;
+import org.dateroad.like.repository.LikeRepository;
+import org.dateroad.point.repository.PointRepository;
 import org.dateroad.refreshtoken.domain.RefreshToken;
 import org.dateroad.refreshtoken.repository.RefreshTokenRepository;
-import org.dateroad.s3.S3Service;
 import org.dateroad.tag.domain.DateTagType;
 import org.dateroad.tag.domain.UserTag;
 import org.dateroad.tag.repository.UserTagRepository;
@@ -25,7 +29,6 @@ import org.dateroad.user.dto.request.UserSignInReq;
 import org.dateroad.user.repository.UserRepository;
 import org.dateroad.user.dto.request.UserSignUpReq;
 import org.dateroad.user.dto.response.UserJwtInfoRes;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,6 +50,11 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserService userService;
+    private final PointRepository pointRepository;
+    private final DateRepository dateRepository;
+    private final DateAccessRepository dateAccessRepository;
+    private final CourseRepository courseRepository;
+    private final LikeRepository likeRepository;
 
     @Transactional
     public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, @Nullable final MultipartFile image, final List<DateTagType> tag) {
@@ -91,8 +99,7 @@ public class AuthService {
             throw new InvalidValueException(FailureCode.INVALID_PLATFORM_TYPE);
         }
 
-        deleteRefreshToken(foundUser.getId());
-        userRepository.deleteById(foundUser.getId());
+        deleteAllDataByUser(foundUser.getId());
     }
 
     //닉네임 중복체크
@@ -167,13 +174,41 @@ public class AuthService {
         }
     }
 
-    //refreshToken 삭제
-    private void deleteRefreshToken(final long userId) {
-        refreshTokenRepository.deleteRefreshTokenByUserId(userId);
-    }
-
     //토큰 발급
     private Token issueToken(final Long userId) {
         return jwtProvider.issueToken(userId);
+    }
+
+    //리프레시 토큰 삭제
+    private void deleteRefreshToken(final Long userId) {
+        refreshTokenRepository.deleteRefreshTokenByUserId(userId);
+    }
+
+    //유저 탈퇴 시, 모든 유저 정보 삭제
+    private void deleteAllDataByUser(final Long userId) {
+
+        //유저태그 삭제
+        userTagRepository.deleteAllByUserId(userId);
+
+        //유저포인트 삭제
+        pointRepository.deleteAllByUserId(userId);
+
+        //유저데이트 삭제
+        dateRepository.deleteAllByUserId(userId);
+
+        //유저 date_access 삭제
+        dateAccessRepository.deleteAllByUserId(userId);
+
+        //유저 코스 삭제
+        courseRepository.deleteAllByUserId(userId);
+
+        //유저 좋아요 삭제
+        likeRepository.deleteAllByUserId(userId);
+
+        //리프레시토큰 삭제
+        deleteRefreshToken(userId);
+
+        //유저 삭제
+        userRepository.deleteById(userId);
     }
 }
