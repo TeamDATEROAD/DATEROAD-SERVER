@@ -52,6 +52,7 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserService userService;
+    private final PointRepository pointRepository;
 
     @Transactional
     public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, @Nullable final MultipartFile image, final List<DateTagType> tag) {
@@ -95,9 +96,7 @@ public class AuthService {
         } else {
             throw new InvalidValueException(FailureCode.INVALID_PLATFORM_TYPE);
         }
-
-        foundUser.setPlatformUserId("USER DELETED");
-        deleteRefreshToken(foundUser.getId());
+        deleteAllDataByUser(foundUser);
     }
 
     //닉네임 중복체크
@@ -182,38 +181,41 @@ public class AuthService {
         refreshTokenRepository.deleteRefreshTokenByUserId(userId);
     }
 
-    //todo: 추후에 유저 탈퇴 시, 삭제 정보 정해지면 구현
-//    //유저 탈퇴 시, 모든 유저 정보 삭제
-//    private void deleteAllDataByUser(final User user) {
-//
-//        //유저태그 삭제
-////        userTagRepository.deleteAllByUserId(userId);
+    //todo: 추후에 유저 탈퇴 시, 삭제 정보 정해지면 삭제 추가 구현
+    //유저 탈퇴 시, 유저 관련 데이터만 삭제
+    private void deleteAllDataByUser(final User user) {
+
+        //유저태그 삭제
+        userTagRepository.deleteAllByUserId(user.getId());
 //        user.setDeleted(true);
-//
-//        //유저포인트 삭제
-//        pointRepository.deleteAllByUserId(user.getId());
-//
-//        //유저데이트 삭제
+
+        //유저포인트 삭제
+        pointRepository.deleteAllByUserId(user.getId());
+
+        //유저데이트 삭제
 //        List<Date> foundDatesByUser = dateRepository.findAllByUser(user);
 //        foundDatesByUser.forEach(dates -> dates.setDeleted(true));
-////        dateRepository.deleteAllByUserId(userId);
-//
-//        //유저 date_access 삭제
+//        dateRepository.deleteAllByUserId(userId);
+
+        //유저 date_access 삭제
 //        dateAccessRepository.deleteAllByUserId(user.getId());
-//
-//        //유저 코스 삭제
-////        courseRepository.deleteAllByUserId(userId);
+
+        //유저 코스 삭제
+//        courseRepository.deleteAllByUserId(userId);
 //        List<Course> foundCoursesByUser = courseRepository.findAllByUser(user);
 //        foundCoursesByUser.forEach(course -> course.setDeleted(true));
-//
-//        //유저 좋아요 삭제
+
+        //유저 좋아요 삭제
 //        likeRepository.deleteAllByUserId(user.getId());
-//
-//        //리프레시토큰 삭제
-//        deleteRefreshToken(user.getId());
-//
-//        //유저 삭제
-////        userRepository.deleteById(userId);
+
+        //리프레시토큰 삭제
+        deleteRefreshToken(user.getId());
+
+        user.setPlatformUserId("USER DELETED");
+        user.setName("삭제된유저");
+
+        //유저 삭제
+//        userRepository.deleteById(userId);
 //        user.setDeleted(true);
-//    }
+    }
 }
