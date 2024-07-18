@@ -55,9 +55,6 @@ public class User extends BaseTimeEntity {
     @Setter
     private int totalPoint = 0;
 
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-//    private Set<UserTag> userTags;
-
     public static User create(final String name, final String platformUserId, final Platform platForm, final String imageUrl) {
         return User.builder()
                 .name(name)
