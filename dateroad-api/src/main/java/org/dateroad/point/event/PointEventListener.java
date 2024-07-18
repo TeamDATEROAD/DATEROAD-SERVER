@@ -42,6 +42,7 @@ public class PointEventListener implements StreamListener<String, MapRecord<Stri
             default:
                 throw new UnauthorizedException(FailureCode.INVALID_TRANSACTION_TYPE);
         }
+        pointRepository.save(Point.create(user,point,type,description));
         userRepository.save(user);
     }
 
