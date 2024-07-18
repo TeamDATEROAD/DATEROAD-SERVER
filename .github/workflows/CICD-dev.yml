@@ -29,7 +29,7 @@ jobs:
           
           mkdir -p static && cd $_
           touch ./AuthKey_39CUV6ST46.p8
-          echo "${{ secrets.CD_APPLICATION }}" > ./AuthKey_39CUV6ST46.p8
+          echo "${{ secrets.APPLE_CLIENT_PRIVATE_KEY }}" > ./AuthKey_39CUV6ST46.p8
           cat ./AuthKey_39CUV6ST46.p8
           chmod 400 ./AuthKey_39CUV6ST46.p8
         working-directory: ${{ env.working-directory }}
