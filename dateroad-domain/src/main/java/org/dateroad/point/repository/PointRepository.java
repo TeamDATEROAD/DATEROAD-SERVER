@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PointRepository extends JpaRepository<Point, Long> {
-    List<Point> findAllByUserIdOOrderByCreatedAtDesc(Long userId);
+    List<Point> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 }
