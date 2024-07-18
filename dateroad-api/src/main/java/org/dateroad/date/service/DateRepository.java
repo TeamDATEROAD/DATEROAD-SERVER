@@ -16,8 +16,17 @@ import java.util.Optional;
 
 @Repository
 public interface DateRepository extends JpaRepository<Date, Long> {
-    Optional<Date> findFirstByUserIdAndDateAfterOrDateAndStartAtAfterOrderByDateAscStartAtAsc(
-            Long userId, LocalDate currentDate, LocalDate sameDay, LocalTime currentTime);
+
+    @Query(value = "SELECT * FROM dates d " +
+            "WHERE d.user_id = :userId " +
+            "AND (d.date > :currentDate " +
+            "     OR (d.date = :currentDate AND d.start_at > :currentTime)) " +
+            "ORDER BY d.date ASC, d.start_at ASC " +
+            "LIMIT 1", nativeQuery = true)
+    Optional<Date> findClosestDateByUserIdAndCurrentDate(
+            @Param("userId") Long userId,
+            @Param("currentDate") LocalDate currentDate,
+            @Param("currentTime") LocalTime currentTime);
 
     @Query("select d from Date d where d.user.id = :userId and d.date < :currentDate order by d.date desc")
     List<Date> findPastDatesByUserId(@Param("userId") Long userId, @Param("currentDate") LocalDate currentDate);
