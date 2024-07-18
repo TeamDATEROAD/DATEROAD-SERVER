@@ -1,6 +1,7 @@
 package org.dateroad.course.api;
 
 
+import static org.dateroad.common.ValidatorUtil.validateListSizeMax;
 import static org.dateroad.common.ValidatorUtil.validateListSizeMin;
 import static org.dateroad.common.ValidatorUtil.validateTagSize;
 
@@ -66,7 +67,8 @@ public class CourseController implements CourseApi {
     ) {
         validateListSizeMin(places, 2,FailureCode.WRONG_COURSE_PLACE_SIZE);
         validateListSizeMin(tags,1,FailureCode.WRONG_TAG_SIZE);
-        validateListSizeMin(images, 10, FailureCode.WRONG_IMAGE_LIST_SIZE);
+        validateListSizeMax(tags,3,FailureCode.WRONG_TAG_SIZE);
+        validateListSizeMax(images, 10, FailureCode.WRONG_IMAGE_LIST_SIZE);
         Course course = courseService.createCourse(userId, courseCreateReq, places, images);
         asyncService.createCoursePlace(places, course);
         asyncService.createCourseTags(tags, course);
