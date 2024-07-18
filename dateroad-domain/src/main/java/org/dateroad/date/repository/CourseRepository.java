@@ -29,4 +29,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> , JpaSpeci
     @Modifying
     @Query("DELETE FROM UserTag ut WHERE ut.user.id = :userId")
     void deleteAllByUserId(@Param("userId") Long userId);
+
+    List<Course> findAllByUser(final User user);
 }

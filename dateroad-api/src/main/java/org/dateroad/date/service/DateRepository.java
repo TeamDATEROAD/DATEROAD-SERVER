@@ -29,6 +29,8 @@ public interface DateRepository extends JpaRepository<Date, Long> {
     @Query("DELETE FROM UserTag ut WHERE ut.user.id = :userId")
     void deleteAllByUserId(@Param("userId") Long userId);
 
+    List<Date> findAllByUser(final User user);
+
 }
 
 

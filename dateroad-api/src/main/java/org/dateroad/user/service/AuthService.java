@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.Token;
 import org.dateroad.code.FailureCode;
+import org.dateroad.date.domain.Course;
+import org.dateroad.date.domain.Date;
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.date.service.DateRepository;
 import org.dateroad.dateAccess.repository.DateAccessRepository;
@@ -98,8 +100,8 @@ public class AuthService {
         } else {
             throw new InvalidValueException(FailureCode.INVALID_PLATFORM_TYPE);
         }
-
-        deleteAllDataByUser(foundUser.getId());
+        
+        deleteRefreshToken(foundUser.getId());
     }
 
     //닉네임 중복체크
@@ -184,31 +186,38 @@ public class AuthService {
         refreshTokenRepository.deleteRefreshTokenByUserId(userId);
     }
 
-    //유저 탈퇴 시, 모든 유저 정보 삭제
-    private void deleteAllDataByUser(final Long userId) {
-
-        //유저태그 삭제
-        userTagRepository.deleteAllByUserId(userId);
-
-        //유저포인트 삭제
-        pointRepository.deleteAllByUserId(userId);
-
-        //유저데이트 삭제
-        dateRepository.deleteAllByUserId(userId);
-
-        //유저 date_access 삭제
-        dateAccessRepository.deleteAllByUserId(userId);
-
-        //유저 코스 삭제
-        courseRepository.deleteAllByUserId(userId);
-
-        //유저 좋아요 삭제
-        likeRepository.deleteAllByUserId(userId);
-
-        //리프레시토큰 삭제
-        deleteRefreshToken(userId);
-
-        //유저 삭제
-        userRepository.deleteById(userId);
-    }
+    //todo: 추후에 유저 탈퇴 시, 삭제 정보 정해지면 구현
+//    //유저 탈퇴 시, 모든 유저 정보 삭제
+//    private void deleteAllDataByUser(final User user) {
+//
+//        //유저태그 삭제
+////        userTagRepository.deleteAllByUserId(userId);
+//        user.setDeleted(true);
+//
+//        //유저포인트 삭제
+//        pointRepository.deleteAllByUserId(user.getId());
+//
+//        //유저데이트 삭제
+//        List<Date> foundDatesByUser = dateRepository.findAllByUser(user);
+//        foundDatesByUser.forEach(dates -> dates.setDeleted(true));
+////        dateRepository.deleteAllByUserId(userId);
+//
+//        //유저 date_access 삭제
+//        dateAccessRepository.deleteAllByUserId(user.getId());
+//
+//        //유저 코스 삭제
+////        courseRepository.deleteAllByUserId(userId);
+//        List<Course> foundCoursesByUser = courseRepository.findAllByUser(user);
+//        foundCoursesByUser.forEach(course -> course.setDeleted(true));
+//
+//        //유저 좋아요 삭제
+//        likeRepository.deleteAllByUserId(user.getId());
+//
+//        //리프레시토큰 삭제
+//        deleteRefreshToken(user.getId());
+//
+//        //유저 삭제
+////        userRepository.deleteById(userId);
+//        user.setDeleted(true);
+//    }
 }
