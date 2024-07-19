@@ -37,14 +37,14 @@ public interface DateApi {
                                         "startAt": "09:00 AM",
                                         "tags": [
                                             {
-                                                "tag": "TRAVEL"
+                                                "tag": "DRIVE"
                                             },
                                             {
-                                                "tag": "VACATION"
+                                                "tag": "FOOD"
                                             }
                                         ],
-                                        "country": "대한민국",
-                                        "city": "서울",
+                                        "country": "SEOUL",
+                                        "city": "SEOUL_ENTIRE",
                                         "places": [
                                             {
                                                 "title": "경복궁",
@@ -114,7 +114,7 @@ public interface DateApi {
                                                         "dateId": 1,
                                                         "title": "서울 여행",
                                                         "date": "2024.07.15",
-                                                        "city": "Seoul",
+                                                        "city": "서울 전체",
                                                         "tags": [
                                                             {
                                                                 "tag": "여행"
@@ -127,15 +127,15 @@ public interface DateApi {
                                                     },
                                                     {
                                                         "dateId": 2,
-                                                        "title": "부산 여행",
+                                                        "title": "경복궁 데이트",
                                                         "date": "2024.08.20",
-                                                        "city": "Busan",
+                                                        "city": "종로/중구",
                                                         "tags": [
                                                             {
-                                                                "tag": "여행"
+                                                                "tag": "DRIVE"
                                                             },
                                                             {
-                                                                "tag": "바다"
+                                                                "tag": "HEALING"
                                                             }
                                                         ],
                                                         "dDay": 25
@@ -188,13 +188,13 @@ public interface DateApi {
                                                 "dateId": 100,
                                                 "title": "서울 여행",
                                                 "startAt": "09:00 AM",
-                                                "city": "Seoul",
+                                                "city": "서울 전체",
                                                 "tags": [
                                                     {
-                                                        "tag": "여행"
+                                                        "tag": "DRIVE"
                                                     },
                                                     {
-                                                        "tag": "휴가"
+                                                        "tag": "FOOD"
                                                     }
                                                 ],
                                                 "date": "2024.07.15",

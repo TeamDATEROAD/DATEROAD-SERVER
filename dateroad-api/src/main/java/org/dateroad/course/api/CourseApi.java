@@ -79,7 +79,7 @@ public interface CourseApi {
                                                     {
                                                         "courseId": 1,
                                                         "thumbnail": "https://example.com/image1.jpg",
-                                                        "city": "Seoul",
+                                                        "city": "건대/상수/왕십리",,
                                                         "title": "Introduction to Java",
                                                         "like": 100,
                                                         "cost": 500,
@@ -88,7 +88,7 @@ public interface CourseApi {
                                                     {
                                                         "courseId": 2,
                                                         "thumbnail": "https://example.com/image2.jpg",
-                                                        "city": "Busan",
+                                                        "city": ""건대/상수/왕십리",,
                                                         "title": "Advanced Spring",
                                                         "like": 150,
                                                         "cost": 700,
@@ -222,7 +222,7 @@ public interface CourseApi {
                                                     {
                                                         "courseId": 1,
                                                         "thumbnail": "https://example.com/image1.jpg",
-                                                        "city": "Seoul",
+                                                        "city": ""건대/상수/왕십리",",
                                                         "title": "Java Programming",
                                                         "like": 100,
                                                         "cost": 500,
@@ -231,7 +231,7 @@ public interface CourseApi {
                                                     {
                                                         "courseId": 2,
                                                         "thumbnail": "https://example.com/image2.jpg",
-                                                        "city": "Busan",
+                                                        "city": ""건대/상수/왕십리",",
                                                         "title": "Spring Framework",
                                                         "like": 150,
                                                         "cost": 700,
@@ -278,11 +278,10 @@ public interface CourseApi {
                             schema = @Schema(implementation = CourseCreateSwaggerDto.class),
                             examples = @ExampleObject(value = """
                                     {
-                                        "userId": 123,
                                         "title": "Seoul Day Tour",
                                         "description": "A day tour visiting main attractions in Seoul",
-                                        "city": "Seoul",
-                                        "country": "South Korea",
+                                        "city": "SEOUL",
+                                        "country": "SEOUL_ENTIRE",
                                         "date": "2024.07.14",
                                         "startAt": "09:00 AM",
                                         "cost": 20000,
@@ -300,10 +299,10 @@ public interface CourseApi {
                                         ],
                                         "tags": [
                                             {
-                                                "tag": "여행"
+                                                "tag": "DRIVE"
                                             },
                                             {
-                                                "tag": "드라이브"
+                                                "tag": "HEALING"
                                             }
                                         ]
                                     }
@@ -370,7 +369,7 @@ public interface CourseApi {
                                                     {
                                                         "courseId": 1,
                                                         "thumbnail": "https://example.com/image1.jpg",
-                                                        "city": "Seoul",
+                                                        "city": "서울 전체",
                                                         "title": "Java Programming",
                                                         "like": 100,
                                                         "cost": 500,
@@ -379,7 +378,7 @@ public interface CourseApi {
                                                     {
                                                         "courseId": 2,
                                                         "thumbnail": "https://example.com/image2.jpg",
-                                                        "city": "Busan",
+                                                        "city": "서울 전체",
                                                         "title": "Spring Framework",
                                                         "like": 150,
                                                         "cost": 700,
@@ -432,7 +431,7 @@ public interface CourseApi {
                                     {
                                         "point": 100,
                                         "type": "POINT_USED",
-                                        "description": "포인트획득"
+                                        "description": "포인트 사용"
                                     }`
                                     """)
                     )
@@ -498,7 +497,7 @@ public interface CourseApi {
                                                 "like": 120,
                                                 "totalTime": 3.5,
                                                 "date": "2024.07.14",
-                                                "city": "Seoul",
+                                                "city": "종로/중구",
                                                 "title": "Seoul Day Tour",
                                                 "description": "A day tour visiting main attractions in Seoul",
                                                 "startAt": "09:00 AM",
@@ -517,10 +516,10 @@ public interface CourseApi {
                                                 "totalCost": 20000,
                                                 "tags": [
                                                     {
-                                                        "tag": "여행"
+                                                        "tag": "DRIVE"
                                                     },
                                                     {
-                                                        "tag": "드라이브"
+                                                        "tag": "WORKSHOP"
                                                     }
                                                 ],
                                                 "isAccess": true,

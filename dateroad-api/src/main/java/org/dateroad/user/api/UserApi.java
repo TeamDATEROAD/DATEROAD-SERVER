@@ -32,7 +32,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "유저 관련 API")
 public interface UserApi {
 
-
     @Operation(summary = "회원 가입", description = "사용자가 회원가입을 합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = UserJwtInfoRes.class))),
@@ -68,7 +67,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     ResponseEntity<Void> signout(
-            @Parameter(description = "사용자 ID", required = true) @UserId final Long userId
+            @Parameter(description = "사용자 ID", required = true, hidden = true) @UserId final Long userId
     );
 
     @Operation(summary = "닉네임 중복 체크", description = "닉네임 중복을 체크합니다.")
@@ -90,7 +89,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     ResponseEntity<Void> withdraw(
-            @Parameter(description = "사용자 ID", required = true) @UserId final Long userId,
+            @Parameter(description = "사용자 ID", required = true, hidden = true) @UserId final Long userId,
             @RequestBody(description = "애플 탈퇴 인증 코드 요청 데이터", required = true) final AppleWithdrawAuthCodeReq appleWithdrawAuthCodeReq
     );
 
@@ -114,7 +113,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     ResponseEntity<UserInfoMainRes> getUserInfo(
-            @Parameter(description = "사용자 ID", required = true) @UserId final Long userId
+            @Parameter(description = "사용자 ID", required = true, hidden = true) @UserId final Long userId
     );
 
     @Operation(summary = "내 프로필 조회 API", description = "마이페이지의 사용자의 정보를 조회.")
@@ -126,7 +125,10 @@ public interface UserApi {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping
-    ResponseEntity<UserInfoGetMyPageRes> getUserInfoMyPage(@UserId final Long userId);
+    ResponseEntity<UserInfoGetMyPageRes> getUserInfoMyPage(
+            @Parameter(description = "사용자 ID", required = true, hidden = true)
+            @UserId final Long userId
+    );
 
     @Operation(summary = "내 프로필 정보 수정", description = "마이페이지의 사용자의 정보를 수정합니다.")
     @SecurityRequirement(name = "Authorization")
@@ -136,10 +138,12 @@ public interface UserApi {
             @ApiResponse(responseCode = "401", description = "인증 실패"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    ResponseEntity<Void> patchUserProfile(@UserId final Long userId,
-                                          @RequestPart("name") final String name,
-                                          @RequestPart("tags") final List<DateTagType> tags,
-                                          @RequestPart("image") final MultipartFile image)
+    ResponseEntity<Void> patchUserProfile(
+            @Parameter(description = "사용자 ID", required = true, hidden = true)
+            @UserId final Long userId,
+            @RequestPart("name") final String name,
+            @RequestPart("tags") final List<DateTagType> tags,
+            @RequestPart("image") final MultipartFile image)
             throws IOException, ExecutionException, InterruptedException;
 
 }
