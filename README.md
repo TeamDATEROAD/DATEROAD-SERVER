@@ -14,16 +14,16 @@
 <details>
   <summary><h2>주요 기능</h2></summary>
   <h3>1️⃣ 코스 등록하기 및 열람</h3>
-  <img src="https://github.com/user-attachments/assets/00dd114b-81bd-4431-8162-b5a796537176" alt="기능 설명1">
-  <img src="https://github.com/user-attachments/assets/0a36c960-a846-48a2-ba52-f3a5bda0a03f" alt="기능 설명2">
+  <img src="https://github.com/user-attachments/assets/00dd114b-81bd-4431-8162-b5a796537176" alt="기능 설명1" width="49%">
+  <img src="https://github.com/user-attachments/assets/0a36c960-a846-48a2-ba52-f3a5bda0a03f" alt="기능 설명2" width="49%">
 
   - 내가 한 데이트 코스를 등록하고 포인트를 획득할 수 있습니다.
   - 다른 커플들이 한 데이트를 포인트를 사용해 열람할 수 있습니다.
   - 코스 상세 페이지에서 ‘내 일정에 추가하기’ 버튼을 눌러 내 데이트 일정으로 불러올 수 있습니다.
 
   <h3>2️⃣ 일정 등록하기 및 열람</h3>
-  <img src="https://github.com/user-attachments/assets/486822c4-6b02-4778-b9e4-70af58f355be" alt="기능 설명3">
-  <img src="https://github.com/user-attachments/assets/25ef0708-e718-4859-9c7f-e184fe375a42" alt="기능 설명4">
+  <img src="https://github.com/user-attachments/assets/486822c4-6b02-4778-b9e4-70af58f355be" alt="기능 설명3" width="49%">
+  <img src="https://github.com/user-attachments/assets/25ef0708-e718-4859-9c7f-e184fe375a42" alt="기능 설명4" width="49%">
 
   - 내 데이트 일정을 등록할 수 있습니다.
   - 내 데이트 일정을 확인할 수 있습니다.
