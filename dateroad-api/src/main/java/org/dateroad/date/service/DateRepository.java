@@ -28,10 +28,10 @@ public interface DateRepository extends JpaRepository<Date, Long> {
             @Param("currentDate") LocalDate currentDate,
             @Param("currentTime") LocalTime currentTime);
 
-    @Query("select d from Date d where d.user.id = :userId and d.date < :currentDate order by d.date desc")
+    @Query("select d from Date d where d.user.id = :userId and d.date < :currentDate order by d.date desc, d.startAt asc")
     List<Date> findPastDatesByUserId(@Param("userId") Long userId, @Param("currentDate") LocalDate currentDate);
 
-    @Query("select d from Date d where d.user.id = :userId and d.date >= :currentDate order by d.date asc")
+    @Query("select d from Date d where d.user.id = :userId and d.date >= :currentDate order by d.date asc, d.startAt asc")
     List<Date> findFutureDatesByUserId(@Param("userId") Long userId, @Param("currentDate") LocalDate currentDate);
 
     @Modifying
