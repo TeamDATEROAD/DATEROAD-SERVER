@@ -26,7 +26,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -76,6 +75,5 @@ class DateServiceTest {
         assertEquals(dateCreateReq.startAt(), createdDate.getStartAt());
         assertEquals(dateCreateReq.country(), createdDate.getCountry());
         assertEquals(dateCreateReq.city(), createdDate.getCity());
-
     }
 }
