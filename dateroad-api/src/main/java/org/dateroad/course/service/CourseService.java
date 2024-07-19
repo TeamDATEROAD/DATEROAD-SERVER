@@ -29,7 +29,6 @@ import org.dateroad.image.repository.ImageRepository;
 import org.dateroad.exception.ConflictException;
 import org.dateroad.like.domain.Like;
 import org.dateroad.like.repository.LikeRepository;
-import org.dateroad.point.domain.Point;
 import org.dateroad.point.repository.PointRepository;
 import org.dateroad.place.domain.CoursePlace;
 import org.dateroad.place.repository.CoursePlaceRepository;
@@ -201,9 +200,8 @@ public class CourseService {
         Course course = getCourse(courseId);
         User user = getUser(userId);
         validateUserAndCourse(user, course);
-        Point point = Point.create(user, pointUseReq.getPoint(), pointUseReq.getType(), pointUseReq.getDescription());
         CoursePaymentType coursePaymentType = validateUserFreeOrPoint(user, pointUseReq.getPoint());
-        processCoursePayment(coursePaymentType, userId, point, pointUseReq);
+        processCoursePayment(coursePaymentType, userId, pointUseReq);
         dateAccessRepository.save(DateAccess.create(course, user));
     }
 
@@ -216,8 +214,7 @@ public class CourseService {
         return CoursePaymentType.POINT;
     }
 
-    public void processCoursePayment(final CoursePaymentType coursePaymentType, final Long userId, final Point point,
-                                     final PointUseReq pointUseReq) {
+    public void processCoursePayment(final CoursePaymentType coursePaymentType, final Long userId, final PointUseReq pointUseReq) {
         if (coursePaymentType == CoursePaymentType.FREE) {
             asyncService.publishEventUserFree(userId);
         }
@@ -268,7 +265,7 @@ public class CourseService {
         if (!isCourseMine) {
             isUserLiked = likeRepository.existsByUserIdAndCourseId(foundUser.getId(), foundCourse.getId());
         } else {
-            isAccess = true;  //todo: 운영서버에서 지워야됨
+            isAccess = true;
         }
 
         return CourseGetDetailRes.of(foundCourse,
