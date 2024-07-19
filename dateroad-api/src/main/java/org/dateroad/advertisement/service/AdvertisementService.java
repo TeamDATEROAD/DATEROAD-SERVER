@@ -1,7 +1,6 @@
 package org.dateroad.advertisement.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.adImage.domain.AdImage;
 import org.dateroad.adImage.repository.AdImageRepository;
@@ -35,10 +34,10 @@ public class AdvertisementService {
 
     public AdvGetDetailRes getAdvertisementsDetail(final Long advId) {
         Advertisement advertisement = getAdvertisement(advId);
-        List<AdImage> adImages = adImageRepository.findAllById(advId);
+        List<AdImage> adImages = adImageRepository.findAllByAdvertisementId(advId);
         return AdvGetDetailRes.of(
                 getImages(adImages), advertisement.getTitle(), advertisement.getCreatedAt().toLocalDate(),
-                advertisement.getTitle(), advertisement.getTag()
+                advertisement.getDescription(), advertisement.getTag()
         );
     }
 
