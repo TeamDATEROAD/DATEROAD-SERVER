@@ -1,17 +1,36 @@
 # DATEROAD-SERVER
 탄탄데로 Server Repository🩷
 
-![image](https://github.com/TeamDATEROAD/DATEROAD-SERVER/assets/40743105/ee012011-5718-46d1-abad-1ddaa169dfc1)
-
 <br>
 
 ## 💘 Date Road
-<aside>
-장소 중심이 아닌 코스 중심의 데이트 추천 서비스 Date Road 입니다~!<br/>
-유저가 직접 공유한 생생한 데이트 코스를 통해 특별한 데이트를 계획할 수 있습니다.
-</aside>
+![dateroad](https://github.com/user-attachments/assets/19abcdff-47ee-41f8-b2ee-d345884ff83a)
 
-<br/><br/>
+<aside>
+데이트로드는 ‘장소 중심’이 아닌 ‘코스 중심’ 데이트 공유 서비스로 사용자가 직접 데이트 코스를 등록하고 공유합니다.
+</aside>
+<br/>
+
+<details>
+  <summary><h2>주요 기능</h2></summary>
+  <h3>1️⃣ 코스 등록하기 및 열람</h3>
+  <img src="https://github.com/user-attachments/assets/00dd114b-81bd-4431-8162-b5a796537176" alt="기능 설명1">
+  <img src="https://github.com/user-attachments/assets/0a36c960-a846-48a2-ba52-f3a5bda0a03f" alt="기능 설명2">
+
+  - 내가 한 데이트 코스를 등록하고 포인트를 획득할 수 있습니다.
+  - 다른 커플들이 한 데이트를 포인트를 사용해 열람할 수 있습니다.
+  - 코스 상세 페이지에서 ‘내 일정에 추가하기’ 버튼을 눌러 내 데이트 일정으로 불러올 수 있습니다.
+
+  <h3>2️⃣ 일정 등록하기 및 열람</h3>
+  <img src="https://github.com/user-attachments/assets/486822c4-6b02-4778-b9e4-70af58f355be" alt="기능 설명3">
+  <img src="https://github.com/user-attachments/assets/25ef0708-e718-4859-9c7f-e184fe375a42" alt="기능 설명4">
+
+  - 내 데이트 일정을 등록할 수 있습니다.
+  - 내 데이트 일정을 확인할 수 있습니다.
+  - 지난 데이트는 코스 등록하기로 연동해 등록하고 포인트를 받을 수 있습니다.
+  - 카카오톡 공유하기를 통해 데이트 일정을 연인에게 공유할 수 있습니다.
+</details>
+<br/>
 
 ## Contributors ✨
 
@@ -19,7 +38,7 @@
   
 | [@gardening-y](https://github.com/gardening-y) | [@sjk4618](https://github.com/sjk4618) | [@rlarlgnszx](https://github.com/rlarlgnszx) | 
 | :---: | :---: | :---: |
-|<img width="300" src="https://github.com/TeamDATEROAD/DATEROAD-SERVER/assets/102401928/b2e98dff-0e5f-49a7-b9bb-7cdca755dd64">|<img width="300" src="https://github.com/TeamDATEROAD/DATEROAD-SERVER/assets/102401928/2360f94a-bf0e-4b5e-b008-f34a6ab7bc77">|<img width="300" src="https://github.com/TeamDATEROAD/DATEROAD-SERVER/assets/102401928/054941bd-3132-4051-bac4-c2c9a04a366a">|
+|<img width="300" src="https://github.com/user-attachments/assets/353cfd1a-045f-4ff2-8c4e-03ba3c0982bf">|<img width="300" src="https://github.com/user-attachments/assets/e183a62a-13fd-4455-af0e-76bd90d517ca">|<img width="300" src="https://github.com/user-attachments/assets/5424e84a-6a4b-4e72-856c-61fcfcea91d3">|
   
 | | [@gardening-y](https://github.com/gardening-y) | [@sjk4618](https://github.com/sjk4618) | [@rlarlgnszx](https://github.com/rlarlgnszx) | 
 |-------|--------------|----------|-------------|
@@ -187,3 +206,18 @@
 | Other Tool | Discord, Postman, Figma |
 
 <br>
+
+
+## 서버데로 모음zip💜
+<p align="center">  
+  <img src="https://github.com/user-attachments/assets/46db3c82-dd8a-472e-ad95-bc2fcb1e2f0d" align="center" width="49%"> 
+  <img src="https://github.com/user-attachments/assets/0fd6fb91-830f-4fac-b734-a64fc1581a1d" align="center" width="49%"> 
+</p>
+<p align="center">  
+  <img src="https://github.com/user-attachments/assets/173ee2ac-97af-441c-8656-dc7acaf2b646" align="center" width="33%"> 
+  <img src="https://github.com/user-attachments/assets/045a9b9c-86f6-4885-bf84-db505913d882" align="center" width="33%">
+  <img src="https://github.com/user-attachments/assets/2deb0d97-87ff-4227-a386-f9307646c9d9" align="center" width="33%"> 
+</p>
+
+
+
