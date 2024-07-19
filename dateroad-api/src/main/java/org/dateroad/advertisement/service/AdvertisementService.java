@@ -35,7 +35,7 @@ public class AdvertisementService {
 
     public AdvGetDetailRes getAdvertisementsDetail(final Long advId) {
         Advertisement advertisement = getAdvertisement(advId);
-        List<AdImage> adImages = adImageRepository.findAllById(advId);
+        List<AdImage> adImages = adImageRepository.findAllByAdvertisementId(advId);
         return AdvGetDetailRes.of(
                 getImages(adImages), advertisement.getTitle(), advertisement.getCreatedAt().toLocalDate(),
                 advertisement.getTitle(), advertisement.getTag()

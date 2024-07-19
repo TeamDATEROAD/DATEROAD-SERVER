@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AdImageRepository extends JpaRepository<AdImage, Long> {
-    List<AdImage> findAllById(Long advertisementId);
+    List<AdImage> findAllByAdvertisementId(Long advertisementId);
 }
