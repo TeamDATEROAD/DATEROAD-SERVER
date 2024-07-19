@@ -152,7 +152,7 @@ public class CourseService {
     }
 
     private void duplicateCourseLike(User findUser, Course findCourse) {
-        if (likeRepository.findByUserAndCourse(findUser, findCourse).isPresent()) {
+        if (likeRepository.findLikeByUserAndCourse(findUser, findCourse).isPresent()) {
             throw new ConflictException(FailureCode.DUPLICATE_COURSE_LIKE);
         }
     }
@@ -163,7 +163,7 @@ public class CourseService {
     }
 
     private Like getLike(User findUser, Course findCourse) {
-        return likeRepository.findByUserAndCourse(findUser, findCourse)
+        return likeRepository.findLikeByUserAndCourse(findUser, findCourse)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.LIKE_NOT_FOUND));
     }
 
@@ -260,7 +260,7 @@ public class CourseService {
                 foundCourse.getId());
 
         if (!isCourseMine) {
-            isUserLiked = likeRepository.existsByUserIdAndCourseId(foundUser.getId(), foundCourse.getId());
+            isUserLiked = likeRepository.existsLikeByUserIdAndCourseId(foundUser.getId(), foundCourse.getId());
         } else {
             isAccess = true;
         }

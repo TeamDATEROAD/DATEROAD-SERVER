@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface LikeRepository extends JpaRepository<Like, Long> {
     int countByCourse(Course course);
-    boolean existsByUserIdAndCourseId(Long userId, Long courseId);
-    Optional<Like> findByUserAndCourse(User user, Course course);
+    boolean existsLikeByUserIdAndCourseId(Long userId, Long courseId);
+    Optional<Like> findLikeByUserAndCourse(User user, Course course);
 
     @Modifying
     @Transactional
