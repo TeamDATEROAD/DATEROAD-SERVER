@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.course.dto.request.CourseCreateReq;
@@ -126,7 +127,7 @@ public interface CourseApi {
                             content = @Content)})
     ResponseEntity<CourseGetAllRes> getAllCourses(
             @Parameter(required = false)
-            final @ModelAttribute CourseGetAllReq courseGetAllReq
+            final @ModelAttribute @Valid CourseGetAllReq courseGetAllReq
     );
 
     @Operation(
@@ -350,10 +351,10 @@ public interface CourseApi {
     ResponseEntity<CourseCreateRes> createCourse(
             @Parameter(hidden = true)
             @UserId final Long userId,
-            @RequestPart("course") final CourseCreateReq courseCreateReq,
-            @RequestPart("tags") final List<TagCreateReq> tags,
-            @RequestPart("places") final List<CoursePlaceGetReq> places,
-            @RequestPart("images") final List<MultipartFile> images
+            @RequestPart("course") @Valid final CourseCreateReq courseCreateReq,
+            @RequestPart("tags") @Valid final List<TagCreateReq> tags,
+            @RequestPart("places") @Valid final List<CoursePlaceGetReq> places,
+            @RequestPart("images") @Valid final List<MultipartFile> images
     );
 
 
@@ -433,7 +434,7 @@ public interface CourseApi {
                                         "point": 100,
                                         "type": "POINT_USED",
                                         "description": "포인트획득"
-                                    }`
+                                    }
                                     """)
                     )
             ),
@@ -471,7 +472,7 @@ public interface CourseApi {
             @Parameter(hidden = true)
             @UserId final Long userId,
             @PathVariable final Long courseId,
-            @RequestBody final PointUseReq pointUseReq
+            @RequestBody @Valid final PointUseReq pointUseReq
     );
 
     @Operation(

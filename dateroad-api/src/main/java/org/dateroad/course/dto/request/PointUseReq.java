@@ -1,5 +1,6 @@
 package org.dateroad.course.dto.request;
 
+import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +14,7 @@ import org.dateroad.point.domain.TransactionType;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PointUseReq {
     @Builder.Default
+    @Min(0)
     private final int point = 100;
     @Builder.Default
     private final TransactionType type = TransactionType.POINT_GAINED;
