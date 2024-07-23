@@ -12,7 +12,6 @@ import java.time.LocalTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
 import org.dateroad.date.domain.Region;
 import org.dateroad.date.domain.Region.MainRegion;

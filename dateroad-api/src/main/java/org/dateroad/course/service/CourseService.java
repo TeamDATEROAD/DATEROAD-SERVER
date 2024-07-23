@@ -29,7 +29,6 @@ import org.dateroad.image.repository.ImageRepository;
 import org.dateroad.exception.ConflictException;
 import org.dateroad.like.domain.Like;
 import org.dateroad.like.repository.LikeRepository;
-import org.dateroad.point.domain.Point;
 import org.dateroad.point.repository.PointRepository;
 import org.dateroad.place.domain.CoursePlace;
 import org.dateroad.place.repository.CoursePlaceRepository;
@@ -153,7 +152,7 @@ public class CourseService {
     }
 
     private void duplicateCourseLike(User findUser, Course findCourse) {
-        if (likeRepository.findByUserAndCourse(findUser, findCourse).isPresent()) {
+        if (likeRepository.findLikeByUserAndCourse(findUser, findCourse).isPresent()) {
             throw new ConflictException(FailureCode.DUPLICATE_COURSE_LIKE);
         }
     }
@@ -164,7 +163,7 @@ public class CourseService {
     }
 
     private Like getLike(User findUser, Course findCourse) {
-        return likeRepository.findByUserAndCourse(findUser, findCourse)
+        return likeRepository.findLikeByUserAndCourse(findUser, findCourse)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.LIKE_NOT_FOUND));
     }
 
@@ -187,12 +186,9 @@ public class CourseService {
                 totalTime
         );
         Course saveCourse = courseRepository.save(course);
-        DateAccess dateAccess = DateAccess.create(saveCourse, user);
-        dateAccessRepository.save(dateAccess);
         List<Image> imageList = asyncService.createImage(images, saveCourse);
         String thumbnailUrl = imageList.getFirst().getImageUrl();
         course.setThumbnail(thumbnailUrl);
-
         return saveCourse;
     }
 
@@ -201,9 +197,8 @@ public class CourseService {
         Course course = getCourse(courseId);
         User user = getUser(userId);
         validateUserAndCourse(user, course);
-        Point point = Point.create(user, pointUseReq.getPoint(), pointUseReq.getType(), pointUseReq.getDescription());
         CoursePaymentType coursePaymentType = validateUserFreeOrPoint(user, pointUseReq.getPoint());
-        processCoursePayment(coursePaymentType, userId, point, pointUseReq);
+        processCoursePayment(coursePaymentType, userId, pointUseReq);
         dateAccessRepository.save(DateAccess.create(course, user));
     }
 
@@ -216,8 +211,7 @@ public class CourseService {
         return CoursePaymentType.POINT;
     }
 
-    public void processCoursePayment(final CoursePaymentType coursePaymentType, final Long userId, final Point point,
-                                     final PointUseReq pointUseReq) {
+    public void processCoursePayment(final CoursePaymentType coursePaymentType, final Long userId, final PointUseReq pointUseReq) {
         if (coursePaymentType == CoursePaymentType.FREE) {
             asyncService.publishEventUserFree(userId);
         }
@@ -266,9 +260,9 @@ public class CourseService {
                 foundCourse.getId());
 
         if (!isCourseMine) {
-            isUserLiked = likeRepository.existsByUserIdAndCourseId(foundUser.getId(), foundCourse.getId());
+            isUserLiked = likeRepository.existsLikeByUserIdAndCourseId(foundUser.getId(), foundCourse.getId());
         } else {
-            isAccess = true;  //todo: 운영서버에서 지워야됨
+            isAccess = true;
         }
 
         return CourseGetDetailRes.of(foundCourse,

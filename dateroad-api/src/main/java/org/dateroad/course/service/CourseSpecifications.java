@@ -1,5 +1,6 @@
 package org.dateroad.course.service;
 
+import com.sun.tools.javac.Main;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
@@ -12,26 +13,32 @@ import java.util.function.BiFunction;
 import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.domain.Region;
+import org.dateroad.date.domain.Region.MainRegion;
 import org.springframework.data.jpa.domain.Specification;
 
 public class CourseSpecifications {
     public static Specification<Course> filterByCriteria(CourseGetAllReq courseGetAllReq) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            addPredicate(predicates, criteriaBuilder, root, "city", courseGetAllReq.city(),
-                    (path, value) -> {
-                        if (value == Region.SubRegion.SEOUL_ENTIRE || value == Region.SubRegion.GYEONGGI_ENTIRE || value == Region.SubRegion.INCHEON_ENTIRE) {
-                            return null;
-                        }
-                        return criteriaBuilder.equal(path, value);
-                    });
             addPredicate(predicates, criteriaBuilder, root, "country", courseGetAllReq.country(),
                     criteriaBuilder::equal);
+            if (courseGetAllReq.city() == Region.SubRegion.SEOUL_ENTIRE) {
+                predicates.add(criteriaBuilder.equal(root.get("country"), MainRegion.SEOUL));
+            } else if (courseGetAllReq.city() == Region.SubRegion.GYEONGGI_ENTIRE) {
+                predicates.add(criteriaBuilder.equal(root.get("country"), MainRegion.GYEONGGI));
+            } else if (courseGetAllReq.city() == Region.SubRegion.INCHEON_ENTIRE) {
+                predicates.add(criteriaBuilder.equal(root.get("country"), MainRegion.INCHEON));
+            } else {
+                addPredicate(predicates, criteriaBuilder, root, "city", courseGetAllReq.city(),
+                        criteriaBuilder::equal);
+            }
             addCostPredicate(predicates, criteriaBuilder, root, courseGetAllReq.cost());
             predicates.removeIf(Objects::isNull);
+            query.orderBy(criteriaBuilder.desc(root.get("createdAt")));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
+
 
     private static <T> void addPredicate(List<Predicate> predicates, CriteriaBuilder criteriaBuilder, Root<?> root,
                                          String attributeName, T value,
