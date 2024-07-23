@@ -103,8 +103,7 @@ public class FailureResponse {
                             error.getField(),
                             error.getRejectedValue() == null ? "" : error.getRejectedValue().toString(),
                             error.getDefaultMessage()))
-                    .collect(Collectors.toList());
+                    .toList();
         }
     }
-
 }
