@@ -1,5 +1,7 @@
 package org.dateroad.date.api;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.date.dto.request.DateCreateReq;
@@ -19,14 +21,14 @@ public class DateController implements DateApi{
 
     @PostMapping
     public ResponseEntity<Void> createDate(@UserId final Long userId,
-                                           @RequestBody final DateCreateReq dateCreateReq) {
+                                           @RequestBody @Valid final DateCreateReq dateCreateReq) {
         dateService.createDate(userId, dateCreateReq);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping
     public ResponseEntity<DatesGetRes> getDates(@UserId final Long userId,
-                                                @RequestParam final String time) {
+                                                @RequestParam @Valid @Pattern(regexp = "^(PAST|FUTURE)$", message = "time은 PAST 또는 FUTURE만 허용됩니다.") final String time) {
         DatesGetRes datesGetRes = dateService.getDates(userId, time);
         return ResponseEntity.ok(datesGetRes);
     }
