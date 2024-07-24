@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.date.dto.request.DateCreateReq;
 import org.dateroad.date.dto.response.DateDetailRes;
@@ -86,7 +88,7 @@ public interface DateApi {
     )
     ResponseEntity<Void> createDate(@Parameter(hidden = true)
                                     @UserId final Long userId,
-                                    @RequestBody final DateCreateReq dateCreateReq);
+                                    @RequestBody @Valid final DateCreateReq dateCreateReq);
 
     @Operation(
             summary = "지난 & 다가올 데이트 일정 전체 조회 API",
@@ -164,7 +166,7 @@ public interface DateApi {
     )
     ResponseEntity<DatesGetRes> getDates(@Parameter(hidden = true)
                                          @UserId final Long userId,
-                                         @RequestParam final String time);
+                                         @RequestParam @Valid @Pattern(regexp = "^(PAST|FUTURE)$", message = "time은 PAST 또는 FUTURE만 허용됩니다.") final String time);
 
     @Operation(
             summary = "데이트 일정 상세 조회 API",
