@@ -5,8 +5,10 @@ import static org.dateroad.common.ValidatorUtil.validateDateNotInFuture;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
@@ -33,6 +35,7 @@ public class CourseCreateReq {
     @Schema(description = "데이트 시작 날짜", example = "2024.07.04", pattern = "yyyy.MM.dd", type = "string")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
     @NotNull(message = "시작 날짜는 필수입니다. ex ) \"2024.07.04\",")
+    @Past
     private LocalDate date;
 
     @Schema(description = "데이트 시작 시간", example = "12:30 PM", pattern = "hh:mm a", type = "string")
@@ -47,14 +50,13 @@ public class CourseCreateReq {
     @Size(min = 100)
     private String description;
 
-    @Min(-1)
+    @Min(0)
     private int cost;
 
-    public static CourseCreateReq of(final String title,final LocalDate date,final LocalTime startAt,
-                                     final Region.MainRegion country,final Region.SubRegion city,final String description,
+    public static CourseCreateReq of(final String title, final LocalDate date, final LocalTime startAt,
+                                     final Region.MainRegion country, final Region.SubRegion city,
+                                     final String description,
                                      int cost) {
-        validStringMinSize(title, 5, FailureCode.WRONG_TITLE_SIZE);
-        validateDateNotInFuture(date, FailureCode.WRONG_DATE_TIME);
         return CourseCreateReq.builder()
                 .title(title)
                 .date(date)
