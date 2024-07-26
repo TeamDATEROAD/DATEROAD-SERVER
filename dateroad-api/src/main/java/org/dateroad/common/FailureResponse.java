@@ -30,13 +30,6 @@ public class FailureResponse {
         this.code = code.getCode();
     }
 
-    private FailureResponse(final FailureCode code) {
-        this.message = code.getMessage();
-        this.status = code.getHttpStatus();
-        this.code = code.getCode();
-        this.errors = new ArrayList<>();
-    }
-
     public static FailureResponse of(final FailureCode code, final BindingResult bindingResult) {
         return FailureResponse.builder()
                 .code(code.getCode())
