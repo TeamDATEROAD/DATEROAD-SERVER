@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
 import org.dateroad.date.domain.Course;
 import org.dateroad.exception.BadRequestException;
-import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.image.domain.Image;
 import org.dateroad.image.repository.ImageRepository;
 import org.dateroad.s3.S3Service;
@@ -48,12 +47,5 @@ public class ImageService {
         return futureImages.stream()
                 .map(CompletableFuture::join)
                 .toList();
-    }
-
-    public Image findFirstByCourseOrderBySequenceAsc(Course course) {
-        return imageRepository.findFirstByCourseOrderBySequenceAsc(course)
-                .orElseThrow(
-                        () -> new EntityNotFoundException(FailureCode.COURSE_THUMBNAIL_NOT_FOUND)
-                );
     }
 }

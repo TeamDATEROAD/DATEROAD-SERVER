@@ -17,7 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 @Component
 public class S3Service {
@@ -99,5 +102,17 @@ public class S3Service {
         } else {
             throw new BadRequestException(FailureCode.WRONG_IMAGE_URL);
         }
+    }
+
+    public List<String> getAllImageKeys(String prefix) {
+        final S3Client s3Client = awsConfig.getS3Client();
+        ListObjectsV2Request listRequest = ListObjectsV2Request.builder()
+                .bucket(bucketName)
+                .prefix(prefix) // 특정 디렉토리에서 가져오고 싶다면 prefix를 설정
+                .build();
+        ListObjectsV2Response listResponse = s3Client.listObjectsV2(listRequest);
+        return listResponse.contents().stream()
+                .map(S3Object::key)
+                .toList();
     }
 }
