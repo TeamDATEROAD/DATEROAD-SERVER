@@ -38,5 +38,5 @@ jobs:
     - name: build
       run: |
           chmod +x gradlew
-          ./gradlew build -x test --parallel
+          ./gradlew clean build -x test --parallel
       shell: bash
