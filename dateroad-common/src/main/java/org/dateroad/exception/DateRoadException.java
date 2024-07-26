@@ -11,4 +11,9 @@ public class DateRoadException extends RuntimeException {
         super(failureCode.getMessage());
         this.failureCode = failureCode;
     }
+
+    public DateRoadException(String message, FailureCode errorCode) {
+        super(message);
+        this.failureCode = errorCode;
+    }
 }

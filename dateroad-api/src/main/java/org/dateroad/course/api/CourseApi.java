@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.course.dto.request.CourseCreateReq;
@@ -125,8 +127,7 @@ public interface CourseApi {
                             description = "서버 내부 오류입니다.",
                             content = @Content)})
     ResponseEntity<CourseGetAllRes> getAllCourses(
-            @Parameter(required = false)
-            final @ModelAttribute CourseGetAllReq courseGetAllReq
+            @Parameter(required = false) final @ModelAttribute @Valid CourseGetAllReq courseGetAllReq
     );
 
     @Operation(
@@ -347,9 +348,8 @@ public interface CourseApi {
                             description = "서버 내부 오류입니다.",
                             content = @Content)})
     ResponseEntity<CourseCreateRes> createCourse(
-            @Parameter(hidden = true)
             @UserId final Long userId,
-            @RequestPart("course") final CourseCreateReq courseCreateReq,
+            @RequestPart("course") @Valid final CourseCreateReq courseCreateReq,
             @RequestPart("tags") final List<TagCreateReq> tags,
             @RequestPart("places") final List<CoursePlaceGetReq> places,
             @RequestPart("images") final List<MultipartFile> images
@@ -431,8 +431,8 @@ public interface CourseApi {
                                     {
                                         "point": 100,
                                         "type": "POINT_USED",
-                                        "description": "포인트 사용"
-                                    }`
+                                        "description": "포인트획득"
+                                    }
                                     """)
                     )
             ),
@@ -470,7 +470,7 @@ public interface CourseApi {
             @Parameter(hidden = true)
             @UserId final Long userId,
             @PathVariable final Long courseId,
-            @RequestBody final PointUseReq pointUseReq
+            @RequestBody @Valid final PointUseReq pointUseReq
     );
 
     @Operation(

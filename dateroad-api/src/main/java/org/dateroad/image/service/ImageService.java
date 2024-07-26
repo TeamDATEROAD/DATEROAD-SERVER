@@ -2,6 +2,7 @@ package org.dateroad.image.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
@@ -29,18 +30,22 @@ public class ImageService {
 
     public List<Image> saveImages(final List<MultipartFile> images, final Course course) {
         AtomicInteger sequence = new AtomicInteger(1);
-        List<Image> courseImages = images.stream()
-                .map(img -> {
+        List<CompletableFuture<Image>> futureImages = images.stream()
+                .map(img -> CompletableFuture.supplyAsync(() -> {
                     try {
-                        return Image.create(
+                        String imagePath = s3Service.uploadImage(path, img).get();
+                        Image newImage = Image.create(
                                 course,
-                                cachePath + s3Service.uploadImage(path, img).get(),
-                                sequence.getAndIncrement()
-                        );
+                                cachePath + imagePath,
+                                sequence.getAndIncrement());
+                        System.out.println(sequence);
+                        return newImage;
                     } catch (IOException | ExecutionException | InterruptedException e) {
                         throw new BadRequestException(FailureCode.BAD_REQUEST);
                     }
-                }).toList();
-        return imageRepository.saveAll(courseImages);
+                })).toList();
+        return futureImages.stream()
+                .map(CompletableFuture::join)
+                .toList();
     }
 }

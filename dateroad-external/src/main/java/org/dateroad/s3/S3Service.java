@@ -38,7 +38,6 @@ public class S3Service {
     public Future<String> uploadImage(String directoryPath, MultipartFile image) throws IOException {
         final String key = directoryPath + generateImageFileName(image);
         final S3Client s3Client = awsConfig.getS3Client();
-
         validateExtension(image);
         validateFileSize(image);
 
