@@ -1,11 +1,15 @@
 package org.dateroad.s3;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import org.dateroad.code.FailureCode;
-import org.dateroad.exception.InvalidValueException;
 import org.dateroad.exception.BadRequestException;
+import org.dateroad.exception.InvalidValueException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -14,11 +18,6 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 
 @Component
 public class S3Service {
@@ -36,7 +35,6 @@ public class S3Service {
     public Future<String> uploadImage(String directoryPath, MultipartFile image) throws IOException {
         final String key = directoryPath + generateImageFileName(image);
         final S3Client s3Client = awsConfig.getS3Client();
-
         validateExtension(image);
         validateFileSize(image);
 
