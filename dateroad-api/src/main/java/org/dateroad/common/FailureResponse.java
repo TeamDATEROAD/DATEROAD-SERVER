@@ -2,27 +2,26 @@ package org.dateroad.common;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AccessLevel;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.dateroad.code.FailureCode;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder(access = AccessLevel.PROTECTED)
 public class FailureResponse {
 
     private String message;
     private HttpStatus status;
     private List<FieldError> errors;
     private String code;
-
 
     protected FailureResponse(final FailureCode code, final List<FieldError> errors) {
         this.message = code.getMessage();
@@ -39,22 +38,37 @@ public class FailureResponse {
     }
 
     public static FailureResponse of(final FailureCode code, final BindingResult bindingResult) {
-        return new FailureResponse(code, FieldError.of(bindingResult));
+        return FailureResponse.builder()
+                .code(code.getCode())
+                .message(code.getMessage())
+                .status(code.getHttpStatus())
+                .errors(FieldError.of(bindingResult))
+                .build();
     }
 
     public static FailureResponse of(final FailureCode code) {
-        return new FailureResponse(code);
+        return FailureResponse.builder()
+                .code(code.getCode())
+                .message(code.getMessage())
+                .status(code.getHttpStatus())
+                .errors(new ArrayList<>())
+                .build();
     }
 
     public static FailureResponse of(final FailureCode code, final List<FieldError> errors) {
-        return new FailureResponse(code, errors);
+        return FailureResponse.builder()
+                .code(code.getCode())
+                .message(code.getMessage())
+                .status(code.getHttpStatus())
+                .errors(errors)
+                .build();
     }
 
     public static FailureResponse of(MethodArgumentTypeMismatchException e) {
         final String value = e.getValue() == null ? "" : e.getValue().toString();
         final List<FailureResponse.FieldError> errors = FailureResponse.FieldError.of(e.getName(), value,
                 e.getErrorCode());
-        return new FailureResponse(FailureCode.INVALID_TYPE_VALUE, errors);
+        return FailureResponse.of(FailureCode.INVALID_TYPE_VALUE, errors);
     }
 
     @Getter
