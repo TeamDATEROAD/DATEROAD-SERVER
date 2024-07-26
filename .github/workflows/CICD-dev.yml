@@ -19,6 +19,15 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '21'
+      - name: Gradle Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: application.yml 생성
         run: |
@@ -50,10 +59,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_LOGIN_USERNAME }}
           password: ${{ secrets.DOCKER_LOGIN_ACCESSTOKEN }}
-
+      
       - name: docker image 빌드 및 푸시
         run: |
-          docker build --platform linux/amd64 -t dateroad/dateroad-server .
+          docker build --cache-from dateroad/dateroad-server --platform linux/amd64 -t dateroad/dateroad-server .
           docker push dateroad/dateroad-server
         working-directory: ${{ env.working-directory }}
 
