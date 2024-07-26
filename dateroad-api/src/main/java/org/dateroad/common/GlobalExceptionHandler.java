@@ -1,52 +1,67 @@
 package org.dateroad.common;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;
+import org.dateroad.common.FailureResponse.FieldError;
 import org.dateroad.exception.DateRoadException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<FailureResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
-        log.error(">>> handle: MethodArgumentNotValidException ", e);
-        return FailureResponse.failure(FailureCode.BAD_REQUEST);
+    public ResponseEntity<FailureResponse> handleValidationExceptions(MethodArgumentNotValidException e) {
+        final BindingResult bindingResult = e.getBindingResult();
+        final List<FailureResponse.FieldError> errors = FailureResponse.FieldError.of(bindingResult);
+        FailureResponse response = new FailureResponse(FailureCode.INVALID_TYPE_VALUE, errors);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
-
     @ExceptionHandler(BindException.class)
     protected ResponseEntity<FailureResponse> handleBindException(final BindException e) {
         log.error(">>> handle: BindException ", e);
-        return  FailureResponse.failure(FailureCode.BAD_REQUEST);
+        final FailureResponse response = FailureResponse.of(FailureCode.INVALID_INPUT_VALUE,e.getBindingResult());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    protected ResponseEntity<FailureResponse> handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException e) {
-        log.error(">>> handle: MethodArgumentTypeMismatchException ", e);
-        return FailureResponse.failure(FailureCode.BAD_REQUEST);
+    public ResponseEntity<FailureResponse> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
+        final String value = e.getValue() == null ? "" : e.getValue().toString();
+        final List<FieldError> errors = FailureResponse.FieldError.of(e.getName(), value, e.getErrorCode());
+        return new ResponseEntity<>(new FailureResponse(FailureCode.INVALID_TYPE_VALUE, errors), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ResponseEntity<FailureResponse> handleHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
         log.error(">>> handle: HttpRequestMethodNotSupportedException ", e);
-        return FailureResponse.failure(FailureCode.METHOD_NOT_ALLOWED);
+        final FailureResponse response = FailureResponse.of(FailureCode.METHOD_NOT_ALLOWED);
+        return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler(DateRoadException.class)
-    protected ResponseEntity<FailureResponse> handleBusinessException(final DateRoadException e) {
+    protected ResponseEntity<FailureResponse> handleDateRoadException(final DateRoadException e) {
         log.error(">>> handle: DateRoadException ", e);
-        return FailureResponse.failure(e.getFailureCode());
+        final FailureCode errorCode = e.getFailureCode();
+        final FailureResponse response = FailureResponse.of(errorCode);
+        return new ResponseEntity<>(response,errorCode.getHttpStatus());
     }
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<FailureResponse> handleException(final Exception e) {
         log.error(">>> handle: Exception ", e);
-        return FailureResponse.failure(FailureCode.INTERNAL_SERVER_ERROR);
+        final FailureResponse response = FailureResponse.of(FailureCode.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -5,6 +5,8 @@ import static org.dateroad.common.ValidatorUtil.validateListSizeMax;
 import static org.dateroad.common.ValidatorUtil.validateListSizeMin;
 import static org.dateroad.common.ValidatorUtil.validateTagSize;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.argumentresolve.UserId;
@@ -37,7 +39,7 @@ public class CourseController implements CourseApi {
 
     @GetMapping
     public ResponseEntity<CourseGetAllRes> getAllCourses(
-            final @ModelAttribute CourseGetAllReq courseGetAllReq
+            final @ModelAttribute @Valid CourseGetAllReq courseGetAllReq
     ) {
         CourseGetAllRes courseAll = courseService.getAllCourses(courseGetAllReq);
         return ResponseEntity.ok(courseAll);
@@ -57,17 +59,18 @@ public class CourseController implements CourseApi {
     }
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,
-            MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_OCTET_STREAM_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CourseCreateRes> createCourse(
             @UserId final Long userId,
-            @RequestPart("course") final CourseCreateReq courseCreateReq,
+            @RequestPart("course") @Valid final CourseCreateReq courseCreateReq,
             @RequestPart("tags") final List<TagCreateReq> tags,
             @RequestPart("places") final List<CoursePlaceGetReq> places,
             @RequestPart("images") final List<MultipartFile> images
     ) {
-        validateListSizeMin(places, 2,FailureCode.WRONG_COURSE_PLACE_SIZE);
-        validateListSizeMin(tags,1,FailureCode.WRONG_TAG_SIZE);
-        validateListSizeMax(tags,3,FailureCode.WRONG_TAG_SIZE);
+        validateListSizeMin(places, 1, FailureCode.WRONG_COURSE_PLACE_SIZE);
+        validateListSizeMin(tags, 1, FailureCode.WRONG_TAG_SIZE);
+        validateListSizeMax(tags, 3, FailureCode.WRONG_TAG_SIZE);
         validateListSizeMax(images, 10, FailureCode.WRONG_IMAGE_LIST_SIZE);
         Course course = courseService.createCourse(userId, courseCreateReq, places, images);
         asyncService.createCoursePlace(places, course);
@@ -88,7 +91,7 @@ public class CourseController implements CourseApi {
     public ResponseEntity<Void> openCourse(
             @UserId final Long userId,
             @PathVariable final Long courseId,
-            @RequestBody final PointUseReq pointUseReq
+            @RequestBody @Valid final PointUseReq pointUseReq
     ) {
         courseService.openCourse(userId, courseId, pointUseReq);
         return ResponseEntity.ok().build();
