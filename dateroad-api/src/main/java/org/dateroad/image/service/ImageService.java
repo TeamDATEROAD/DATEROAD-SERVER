@@ -10,7 +10,6 @@ import org.dateroad.code.FailureCode;
 import org.dateroad.date.domain.Course;
 import org.dateroad.exception.BadRequestException;
 import org.dateroad.image.domain.Image;
-import org.dateroad.image.repository.ImageRepository;
 import org.dateroad.s3.S3Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ImageService {
-    private final ImageRepository imageRepository;
     private final S3Service s3Service;
     @Value("${s3.bucket.path}")
     private String path;
