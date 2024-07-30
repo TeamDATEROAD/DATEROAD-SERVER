@@ -1,7 +1,6 @@
 package org.dateroad.image.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,22 +19,15 @@ public class ImageCleanupService {
 
     @Scheduled(cron = "0 0 4 * * ?")
     @Transactional
-    public void findUnusedImages() throws IOException {
+    public void cleanupUnusedImages() throws IOException {
         String prefix = "course/";
         List<String> s3Keys = s3Service.getAllImageKeys(prefix);
         List<Image> dbImages = imageRepository.findAll();
-        List<Image> imagesToDelete = new ArrayList<>();
+        List<Image> imagesToDeleteFromDb = dbImages.stream()
+                .filter(image -> !s3Keys.contains(image.getImageUrl()))
+                .toList();
+        imageRepository.deleteAllInBatch(imagesToDeleteFromDb);
 
-        for (Image dbImage : dbImages) {
-            if (!s3Keys.contains(dbImage.getImageUrl())) {
-                imagesToDelete.add(dbImage);
-            }
-        }
-
-        // DB에서 한 번에 삭제
-        if (!imagesToDelete.isEmpty()) {
-            imageRepository.deleteAllInBatch(imagesToDelete);
-        }
 
         // DB에 없는 S3 키를 찾아 S3에서 삭제
         for (String s3Key : s3Keys) {
