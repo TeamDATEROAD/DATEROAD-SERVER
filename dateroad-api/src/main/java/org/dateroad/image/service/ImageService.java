@@ -28,6 +28,7 @@ public class ImageService {
     @Value("${cloudfront.domain}")
     private String cachePath;
 
+    @Transactional
     public List<Image> saveImages(final List<MultipartFile> images, final Course course) {
         AtomicInteger sequence = new AtomicInteger(1);
         List<CompletableFuture<Image>> futureImages = images.stream()
@@ -44,8 +45,10 @@ public class ImageService {
                         throw new BadRequestException(FailureCode.BAD_REQUEST);
                     }
                 })).toList();
-        return futureImages.stream()
+        List<Image> saveImages = futureImages.stream()
                 .map(CompletableFuture::join)
                 .toList();
+        imageRepository.saveAll(saveImages);
+        return saveImages;
     }
 }
