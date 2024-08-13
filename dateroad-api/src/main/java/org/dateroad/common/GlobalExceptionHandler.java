@@ -1,6 +1,5 @@
 package org.dateroad.common;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;
@@ -8,15 +7,12 @@ import org.dateroad.common.FailureResponse.FieldError;
 import org.dateroad.exception.DateRoadException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @Slf4j
@@ -51,7 +47,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DateRoadException.class)
-    protected ResponseEntity<FailureResponse> handleDateRoadException(final DateRoadException e) {
+    public ResponseEntity<FailureResponse> handleDateRoadException(final DateRoadException e) {
         log.error(">>> handle: DateRoadException ", e);
         final FailureCode errorCode = e.getFailureCode();
         final FailureResponse response = FailureResponse.of(errorCode);
@@ -61,7 +57,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<FailureResponse> handleException(final Exception e) {
         log.error(">>> handle: Exception ", e);
-        final FailureResponse response = FailureResponse.of(FailureCode.INTERNAL_SERVER_ERROR);
+        String errorMessage = e.getMessage() != null ? e.getMessage() : "Internal Server Error";
+        List<FailureResponse.FieldError> errors = FailureResponse.FieldError.of("Exception", "", errorMessage);
+        final FailureResponse response = FailureResponse.of(FailureCode.INTERNAL_SERVER_ERROR, errors);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
