@@ -49,10 +49,10 @@ public interface CourseApi {
                             required = false,
                             schema = @Schema(type = "string", allowableValues = {
                                     "SEOUL_ENTIRE", "GANGNAM_SEOCHO", "JAMSIL_SONGPA_GANGDONG",
-                                    "KONDAE_SUNGSOO_WANGSIMNI",
+                                    "KONDAE_SEONGSU_SEONGDONG",
                                     "JONGNO_JUNGRO", "HONGDAE_HAPJEONG_MAPO", "YEONGDEUNGPO_YEOUIDO",
                                     "YONGSAN_ITAEWON_HANNAM",
-                                    "YANGCHEON_GANGSEO", "SEONGBUK_NOWON_JUNGBANG", "GURO_GWANAK_DONGJAK",
+                                    "YANGCHEON_GANGSEO_GURO", "GWANGIN_JUNGBANG", "GWANAK_DONGJAK_GEUMCHEON",
                                     "GYEONGGI_ENTIRE",
                                     "SEONGNAM", "SUWON", "GOYANG_PAJU", "GIMPO", "YONGIN_HWASEONG", "ANYANG_GWACHEON",
                                     "POCHEON_YANGJU", "NAMYANGJU_UIJEONGBU", "GWANGJU_ICHEON_YEOJU",

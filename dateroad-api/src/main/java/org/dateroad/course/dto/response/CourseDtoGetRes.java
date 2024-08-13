@@ -3,12 +3,13 @@ package org.dateroad.course.dto.response;
 import lombok.AccessLevel;
 import lombok.Builder;
 import org.dateroad.date.domain.Course;
+import org.dateroad.date.domain.Region;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record CourseDtoGetRes(
         Long courseId,
         String thumbnail,
-        String city,
+        Region.SubRegion city,
         String title,
         int like,
         int cost,
@@ -21,7 +22,7 @@ public record CourseDtoGetRes(
         return CourseDtoGetRes.builder()
                 .courseId(course.getId())
                 .thumbnail(thumbnail)
-                .city(course.getCity().getDisplayName())
+                .city(course.getCity())
                 .title(course.getTitle())
                 .like(like)
                 .cost(course.getCost())

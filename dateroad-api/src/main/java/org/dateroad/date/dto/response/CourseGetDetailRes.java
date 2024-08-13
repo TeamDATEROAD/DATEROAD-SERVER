@@ -1,14 +1,15 @@
 package org.dateroad.date.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AccessLevel;
-import lombok.Builder;
-import org.dateroad.date.domain.Course;
-import org.dateroad.tag.domain.DateTagType;
-import org.dateroad.user.domain.User;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.Builder;
+import org.dateroad.date.domain.Course;
+import org.dateroad.date.domain.Region;
+import org.dateroad.tag.domain.DateTagType;
+import org.dateroad.user.domain.User;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record CourseGetDetailRes(
@@ -18,7 +19,7 @@ public record CourseGetDetailRes(
         float totalTime,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
         LocalDate date,
-        String city,
+        Region.SubRegion city,
         String title,
         String description,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm a", timezone = "Asia/Seoul",locale = "en")
@@ -48,7 +49,7 @@ public record CourseGetDetailRes(
                 .like(like)
                 .totalTime(course.getTime())
                 .date(course.getDate())
-                .city(course.getCity().getDisplayName())
+                .city(course.getCity())
                 .title(course.getTitle())
                 .description(course.getDescription())
                 .startAt(course.getStartAt())
