@@ -49,6 +49,7 @@ public enum FailureCode {
     INVALID_APPLE_TOKEN_ACCESS(HttpStatus.UNAUTHORIZED, "e40118", "잘못된 애플 토큰 통신 접근입니다."),
     INVALID_DATE_GET_TYPE(HttpStatus.UNAUTHORIZED, "e40119", "잘못된 데이트 타입 검색입니다."),
     INVALID_TRANSACTION_TYPE(HttpStatus.UNAUTHORIZED, "e40120", "잘못된 포인트 거래 타입 검색입니다."),
+    INVALID_REGION_TYPE(HttpStatus.UNAUTHORIZED, "e40121", "잘못된 지역 입력입니다."),
 
     /**
      * 403 Forbidden
