@@ -1,5 +1,14 @@
 package org.dateroad.date.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
 import org.dateroad.date.domain.Date;
 import org.dateroad.date.domain.Region;
 import org.dateroad.date.dto.request.DateCreateReq;
@@ -15,19 +24,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DateServiceTest {
@@ -53,7 +51,7 @@ class DateServiceTest {
         LocalTime startAt = LocalTime.of(10, 0); // 10:00 AM
         List<TagCreateReq> tags = List.of(new TagCreateReq(DateTagType.DRIVE), new TagCreateReq(DateTagType.SHOPPING));
         Region.MainRegion country = Region.MainRegion.GYEONGGI;
-        Region.SubRegion city = Region.SubRegion.SEONGBUK_NOWON_JUNGBANG;
+        Region.SubRegion city = Region.SubRegion.GWANAK_DONGJAK_GEUMCHEON;
         List<PlaceCreateReq> places = List.of(
                 new PlaceCreateReq("Place1", 1.5f, 1),
                 new PlaceCreateReq("Place2", 2.0f, 2));
