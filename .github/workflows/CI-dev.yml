@@ -22,7 +22,7 @@ jobs:
     - name: create application.yml
       run: |
         ## create application.yml
-        mkdir dateroad-api/src/main/resources
+        mkdir -p dateroad-api/src/main/resources
         cd dateroad-api/src/main/resources
 
         # application.yml 파일 생성
