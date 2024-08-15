@@ -71,8 +71,12 @@ public class AuthService {
         Token issuedToken = issueToken(newUser.getId());
 
         //디스코드 웹훅
-        int count = (int) userRepository.count();
-        discordFeignProvider.sendSignUpInfoToDiscord(SignUpEventInfo.of(EventCode.DISCORD_SIGNUP_EVENT, userSignUpReq.name(), count, String.valueOf(userSignUpReq.platform())));
+        int userCount = (int) userRepository.count();
+        discordFeignProvider.sendSignUpInfoToDiscord(SignUpEventInfo.of(
+                EventCode.DISCORD_SIGNUP_EVENT,
+                userSignUpReq.name(),
+                userCount,
+                String.valueOf(userSignUpReq.platform())));
 
         return UserJwtInfoRes.of(newUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
