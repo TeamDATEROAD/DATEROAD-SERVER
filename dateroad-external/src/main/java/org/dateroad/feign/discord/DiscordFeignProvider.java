@@ -3,7 +3,6 @@ package org.dateroad.feign.discord;
 import feign.FeignException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.EventCode;
 import org.dateroad.code.FailureCode;
 import org.dateroad.event.SignUpEventInfo;
@@ -25,7 +24,7 @@ public class DiscordFeignProvider {
                 signUpEventInfo.signUpPlatform()
         );
 
-        //discord 양식에 맞게 변경4
+        //discord 양식에 맞게 변경
         DiscordFeignReq discordFeignReq = DiscordFeignReq.of(discordMessage);
         doDiscordOpenFeign(discordFeignReq);
     }
