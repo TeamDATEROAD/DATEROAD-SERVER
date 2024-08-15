@@ -71,7 +71,7 @@ public class AuthService {
         Token issuedToken = issueToken(newUser.getId());
 
         //디스코드 웹훅
-        int userCount = (int) userRepository.count();
+        int userCount = (int) userRepository.countByNameNot("삭제된유저");
         discordFeignProvider.sendSignUpInfoToDiscord(SignUpEventInfo.of(
                 EventCode.DISCORD_SIGNUP_EVENT,
                 userSignUpReq.name(),
