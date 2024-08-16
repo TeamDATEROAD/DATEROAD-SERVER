@@ -5,13 +5,12 @@ import static org.dateroad.common.ValidatorUtil.validateUserAndCourse;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
-import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CourseCreateReq;
+import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
 import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.response.CourseDtoGetRes;
@@ -22,20 +21,21 @@ import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.dateAccess.domain.DateAccess;
 import org.dateroad.dateAccess.repository.DateAccessRepository;
+import org.dateroad.exception.ConflictException;
 import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.exception.ForbiddenException;
 import org.dateroad.image.domain.Image;
 import org.dateroad.image.repository.ImageRepository;
-import org.dateroad.exception.ConflictException;
 import org.dateroad.like.domain.Like;
 import org.dateroad.like.repository.LikeRepository;
-import org.dateroad.point.repository.PointRepository;
 import org.dateroad.place.domain.CoursePlace;
 import org.dateroad.place.repository.CoursePlaceRepository;
 import org.dateroad.tag.domain.CourseTag;
 import org.dateroad.tag.repository.CourseTagRepository;
 import org.dateroad.user.domain.User;
 import org.dateroad.user.repository.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -52,11 +52,11 @@ public class CourseService {
     private final DateAccessRepository dateAccessRepository;
     private final UserRepository userRepository;
     private final AsyncService asyncService;
-    private final PointRepository pointRepository;
     private final ImageRepository imageRepository;
     private final CoursePlaceRepository coursePlaceRepository;
     private final CourseTagRepository courseTagRepository;
 
+    @Cacheable(value = "courses", key = "#courseGetAllReq")
     public CourseGetAllRes getAllCourses(final CourseGetAllReq courseGetAllReq) {
         Specification<Course> spec = CourseSpecifications.filterByCriteria(courseGetAllReq);
         List<Course> courses = courseRepository.findAll(spec);
@@ -64,6 +64,7 @@ public class CourseService {
         return CourseGetAllRes.of(courseDtoGetResList);
     }
 
+    @Cacheable(value = "courses", key = "#sortBy")
     public CourseGetAllRes getSortedCourses(String sortBy) {
         List<Course> courses;
         if (sortBy.equalsIgnoreCase("POPULAR")) {
@@ -78,6 +79,7 @@ public class CourseService {
     }
 
     @Transactional
+    @CacheEvict(value = "courses", allEntries = true)
     public void createCourseLike(final Long userId, final Long courseId) {
         User findUser = getUser(userId);
         Course findCourse = getCourse(courseId);
@@ -87,6 +89,7 @@ public class CourseService {
     }
 
     @Transactional
+    @CacheEvict(value = "courses", allEntries = true)
     public void deleteCourseLike(Long userId, Long courseId) {
         User findUser = getUser(userId);
         Course findCourse = getCourse(courseId);
@@ -168,6 +171,7 @@ public class CourseService {
     }
 
     @Transactional
+    @CacheEvict(value = "courses", allEntries = true)
     public Course createCourse(final Long userId, final CourseCreateReq courseRegisterReq,
                                final List<CoursePlaceGetReq> places, final List<MultipartFile> images) {
         final float totalTime = places.stream()
@@ -308,6 +312,7 @@ public class CourseService {
     }
 
     @Transactional
+    @CacheEvict(value = "courses", allEntries = true)
     public void deleteCourse(final Long userId, final Long courseId) {
         User findUser = getUser(userId);
         Course findCourse = getCourse(courseId);
