@@ -9,10 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.dateroad.common.BaseTimeEntity;
-import org.dateroad.tag.domain.UserTag;
-
-import java.util.Set;
-
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

@@ -5,19 +5,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.Token;
+import org.dateroad.code.EventCode;
 import org.dateroad.code.FailureCode;
-import org.dateroad.date.domain.Course;
-import org.dateroad.date.domain.Date;
-import org.dateroad.date.repository.CourseRepository;
-import org.dateroad.date.service.DateRepository;
-import org.dateroad.dateAccess.repository.DateAccessRepository;
+import org.dateroad.event.SignUpEventInfo;
 import org.dateroad.exception.*;
 import org.dateroad.feign.apple.AppleFeignProvider;
+import org.dateroad.feign.discord.DiscordFeignProvider;
 import org.dateroad.feign.kakao.KakaoFeignProvider;
 import org.dateroad.exception.ConflictException;
 import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.exception.UnauthorizedException;
-import org.dateroad.like.repository.LikeRepository;
 import org.dateroad.point.repository.PointRepository;
 import org.dateroad.refreshtoken.domain.RefreshToken;
 import org.dateroad.refreshtoken.repository.RefreshTokenRepository;
@@ -54,6 +51,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserService userService;
     private final PointRepository pointRepository;
+    private final DiscordFeignProvider discordFeignProvider;
 
     @Transactional
     public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, @Nullable final MultipartFile image, final List<DateTagType> tag) {
@@ -64,6 +62,14 @@ public class AuthService {
         User newUser = saveUser(userSignUpReq.name(), userService.getImageUrl(image), userSignUpReq.platform(), platformUserId);
         saveUserTag(newUser, tag);
         Token issuedToken = issueToken(newUser.getId());
+
+        //디스코드 웹훅
+        int userCount = (int) userRepository.countByNameNot("삭제된유저");
+        discordFeignProvider.sendSignUpInfoToDiscord(SignUpEventInfo.of(
+                EventCode.DISCORD_SIGNUP_EVENT,
+                userSignUpReq.name(),
+                userCount,
+                String.valueOf(userSignUpReq.platform())));
         return UserJwtInfoRes.of(newUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
 

@@ -25,6 +25,8 @@ public enum FailureCode {
     WRONG_DATE_TIME(HttpStatus.BAD_REQUEST, "e4101", "미래 날짜는 등록할수 없습니다. "),
     INVALID_TYPE_VALUE(HttpStatus.BAD_REQUEST, "e4102", "필드가 잘못되었습니다."),
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "e4103", "잘못된 필드를 넣었습니다."),
+    INVALID_DISCORD_SIGNUP_MESSAGE(HttpStatus.BAD_REQUEST, "e4104", "회원가입 디스코드 알림 전송에 실패하였습니다."),
+
     /**
      * 401 Unauthorized
      */
