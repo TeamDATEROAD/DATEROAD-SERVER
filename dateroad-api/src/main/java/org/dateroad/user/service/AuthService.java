@@ -70,7 +70,6 @@ public class AuthService {
                 userSignUpReq.name(),
                 userCount,
                 String.valueOf(userSignUpReq.platform())));
-
         return UserJwtInfoRes.of(newUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
 

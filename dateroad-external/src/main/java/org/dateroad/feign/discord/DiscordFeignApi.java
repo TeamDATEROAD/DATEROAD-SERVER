@@ -8,5 +8,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface DiscordFeignApi {
 
     @PostMapping
-    void sendMessage(@RequestBody DiscordFeignReq discordFeignReq);
+    void sendMessage(@RequestBody final DiscordFeignReq discordFeignReq);
 }

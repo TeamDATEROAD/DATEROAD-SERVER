@@ -17,5 +17,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByName(final String name);
 
     @Query("SELECT COUNT(u) FROM User u WHERE u.name <> :excludedName")
-    long countByNameNot(@Param("excludedName") String excludedName);
+    long countByNameNot(@Param("excludedName") final String excludedName);
 }
