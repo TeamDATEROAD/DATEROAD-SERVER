@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
@@ -35,7 +36,7 @@ public class CourseCreateReq {
     @Schema(description = "데이트 시작 날짜", example = "2024.07.04", pattern = "yyyy.MM.dd", type = "string")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
     @NotNull(message = "시작 날짜는 필수입니다. ex ) \"2024.07.04\",")
-    @Past
+    @PastOrPresent
     private LocalDate date;
 
     @Schema(description = "데이트 시작 시간", example = "12:30 PM", pattern = "hh:mm a", type = "string")

@@ -55,7 +55,6 @@ public class UserService {
                                 final List<DateTagType> tags,
                                 @Nullable final MultipartFile newImage) {
         User foundUser = findUserById(userId);
-
         //이름 변경
         foundUser.setName(name);
 
@@ -71,17 +70,18 @@ public class UserService {
         if (userImage != null && (newImage == null || newImage.isEmpty())) {
             deleteImage(userImage);
             foundUser.setImageUrl(null);
-
         // 2. 원래 이미지가 있다가 새로운 이미지로 변경
-        }  else if ((userImage != null) && (newImage != null || !newImage.isEmpty())) {
-            deleteImage(userImage);
-            String newImageUrl = getImageUrl(newImage);
-            foundUser.setImageUrl(newImageUrl);
+        }  else {
+            if ((userImage != null)) {
+                deleteImage(userImage);
+                String newImageUrl = getImageUrl(newImage);
+                foundUser.setImageUrl(newImageUrl);
 
-        // 3. 원래 이미지가 없다가 새로운 이미지로 변경
-        } else if (userImage == null && (newImage != null || !newImage.isEmpty())) {
-            String newImageUrl = getImageUrl(newImage);
-            foundUser.setImageUrl(newImageUrl);
+                // 3. 원래 이미지가 없다가 새로운 이미지로 변경
+            } else if (newImage != null && !newImage.isEmpty()) {
+                String newImageUrl = getImageUrl(newImage);
+                foundUser.setImageUrl(newImageUrl);
+            }
         }
         userRepository.save(foundUser);
     }
