@@ -34,12 +34,12 @@ public class ImageService {
         List<CompletableFuture<Image>> futureImages = images.stream()
                 .map(img -> CompletableFuture.supplyAsync(() -> {
                     try {
+                        int count = sequence.getAndIncrement();
                         String imagePath = s3Service.uploadImage(path, img).get();
                         Image newImage = Image.create(
                                 course,
                                 cachePath + imagePath,
-                                sequence.getAndIncrement());
-                        System.out.println(sequence);
+                                count);
                         return newImage;
                     } catch (IOException | ExecutionException | InterruptedException e) {
                         throw new BadRequestException(FailureCode.BAD_REQUEST);
