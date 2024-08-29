@@ -67,7 +67,7 @@ public class UserService {
         String userImage = foundUser.getImageUrl();
 
         // 1. 원래 이미지가 있다가 null로 변경
-        if (userImage != null && (newImage == null || newImage.isEmpty())) {
+        if (userImage != null && newImage == null) {
             deleteImage(userImage);
             foundUser.setImageUrl(null);
 
