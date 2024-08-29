@@ -67,21 +67,20 @@ public class UserService {
         String userImage = foundUser.getImageUrl();
 
         // 1. 원래 이미지가 있다가 null로 변경
-        if (userImage != null && (newImage == null || newImage.isEmpty())) {
+        if (userImage != null && newImage == null) {
             deleteImage(userImage);
             foundUser.setImageUrl(null);
-        // 2. 원래 이미지가 있다가 새로운 이미지로 변경
-        }  else {
-            if ((userImage != null)) {
-                deleteImage(userImage);
-                String newImageUrl = getImageUrl(newImage);
-                foundUser.setImageUrl(newImageUrl);
 
-                // 3. 원래 이미지가 없다가 새로운 이미지로 변경
-            } else if (newImage != null && !newImage.isEmpty()) {
+        // 2. 원래 이미지가 있다가 새로운 이미지로 변경
+        } else if (userImage != null && (!newImage.isEmpty() || newImage != null)) {
+            deleteImage(userImage);
+            String newImageUrl = getImageUrl(newImage);
+            foundUser.setImageUrl(newImageUrl);
+
+        // 3. 원래 이미지가 없다가 새로운 이미지로 변경
+        } else if (userImage == null && (!newImage.isEmpty() || newImage != null)){
                 String newImageUrl = getImageUrl(newImage);
                 foundUser.setImageUrl(newImageUrl);
-            }
         }
         userRepository.save(foundUser);
     }
