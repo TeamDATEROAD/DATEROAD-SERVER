@@ -11,6 +11,8 @@ import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.request.TagCreateReq;
 import org.dateroad.date.domain.Course;
 import org.dateroad.image.domain.Image;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,7 @@ public class AsyncService {
     private final CoursePlaceService coursePlaceService;
     private final CourseTagService courseTagService;
     private final ImageService imageService;
-    private final StringRedisTemplate redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Transactional
     public List<Image> createImage(final List<MultipartFile> images, final Course course) {
