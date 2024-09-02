@@ -87,8 +87,9 @@ public class UserController implements UserApi {
     public ResponseEntity<Void> patchUserProfile(@UserId final Long userId,
                                                  @RequestPart("name") final String name,
                                                  @RequestPart("tags") final List<DateTagType> tags,
-                                                 @Nullable @RequestPart(name = "image", required = false) final MultipartFile image ) throws IOException, ExecutionException, InterruptedException {
-        userService.editUserProfile(userId, name, tags, image);
+                                                 @Nullable @RequestPart(name = "image", required = false) final MultipartFile image,
+                                                 @RequestPart("isDefaultImage") final boolean isDefaultImage ) {
+        userService.editUserProfile(userId, name, tags, image, isDefaultImage);
         return ResponseEntity
                 .ok()
                 .build();

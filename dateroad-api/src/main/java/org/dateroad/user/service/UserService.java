@@ -53,7 +53,8 @@ public class UserService {
     public void editUserProfile(final Long userId,
                                 final String name,
                                 final List<DateTagType> tags,
-                                @Nullable final MultipartFile newImage) {
+                                @Nullable final MultipartFile newImage,
+                                final boolean isDefaultImage) {
         User foundUser = findUserById(userId);
         //이름 변경
         foundUser.setName(name);
@@ -64,23 +65,29 @@ public class UserService {
         saveUserTag(foundUser, tags);
 
         //이미지 변경
+        boolean isNewImageEmpty = newImage.isEmpty() || newImage == null;
         String userImage = foundUser.getImageUrl();
 
-        // 1. 원래 이미지가 있다가 null로 변경
-        if (userImage != null && newImage == null) {
-            deleteImage(userImage);
+        // 기본이미지로 변경
+        if(isNewImageEmpty && isDefaultImage) {
+            //원래 이미지가 기본 이미지가 아닐 경우
+            if(userImage != null) {
+                deleteImage(userImage);
+            }
             foundUser.setImageUrl(null);
 
-        // 2. 원래 이미지가 있다가 새로운 이미지로 변경
-        } else if (userImage != null && (!newImage.isEmpty() || newImage != null)) {
-            deleteImage(userImage);
+        // 원래 이미지를 그대로 사용하거나, 새로운 이미지로 변경
+        } else if(!isDefaultImage) {
+
+            // 아요 : 이게 원래 사진 그대로 사용했거나, 새로운 사진으로 변경
+            // 안드 : 원래 이미지에서 새로운 이미지
+            if(userImage != null && !isNewImageEmpty) {
+                deleteImage(userImage);
+            }
             String newImageUrl = getImageUrl(newImage);
             foundUser.setImageUrl(newImageUrl);
-
-        // 3. 원래 이미지가 없다가 새로운 이미지로 변경
-        } else if (userImage == null && (!newImage.isEmpty() || newImage != null)){
-                String newImageUrl = getImageUrl(newImage);
-                foundUser.setImageUrl(newImageUrl);
+        } else {
+            throw new BadRequestException(FailureCode.INVALID_IMAGE_EDIT);
         }
         userRepository.save(foundUser);
     }

@@ -26,6 +26,7 @@ public enum FailureCode {
     INVALID_TYPE_VALUE(HttpStatus.BAD_REQUEST, "e4102", "필드가 잘못되었습니다."),
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "e4103", "잘못된 필드를 넣었습니다."),
     INVALID_DISCORD_SIGNUP_MESSAGE(HttpStatus.BAD_REQUEST, "e4104", "회원가입 디스코드 알림 전송에 실패하였습니다."),
+    INVALID_IMAGE_EDIT(HttpStatus.BAD_REQUEST, "e4105", "프로필 이미지 수정에 실패하였습니다."),
 
     /**
      * 401 Unauthorized
