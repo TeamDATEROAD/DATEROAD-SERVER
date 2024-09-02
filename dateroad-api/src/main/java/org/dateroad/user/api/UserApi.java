@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "유저 관련 API")
@@ -143,7 +144,8 @@ public interface UserApi {
             @UserId final Long userId,
             @RequestPart("name") final String name,
             @RequestPart("tags") final List<DateTagType> tags,
-            @RequestPart("image") final MultipartFile image)
+            @RequestPart("image") final MultipartFile image,
+            @RequestPart("isDefaultImage") final boolean isDefaultImage)
             throws IOException, ExecutionException, InterruptedException;
 
 }
