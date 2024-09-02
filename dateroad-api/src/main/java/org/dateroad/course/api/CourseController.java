@@ -75,7 +75,7 @@ public class CourseController implements CourseApi {
         Course course = courseService.createCourse(userId, courseCreateReq, places, images);
         asyncService.createCoursePlace(places, course);
         asyncService.createCourseTags(tags, course);
-        asyncService.publishEvenUserPoint(userId, PointUseReq.of(100, TransactionType.POINT_GAINED, "코스 생성"));
+        asyncService.publishEvenUserPoint(userId, PointUseReq.of(100, TransactionType.POINT_GAINED, "코스 생성하기"));
         return ResponseEntity.status(
                 HttpStatus.CREATED
         ).body(CourseCreateRes.of(course.getId()));
