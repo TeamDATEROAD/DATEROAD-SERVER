@@ -68,36 +68,28 @@ public class UserService {
         boolean isNewImageEmpty = newImage.isEmpty() || newImage == null;
         String userImage = foundUser.getImageUrl();
 
-        // 1. 원래 이미지가 있다가 기본 이미지로 변경( A -> 기본 이미지)
-            // 아요 : null, isDefaultImage(T)
-            // 안드 : null, isDefaultImage(T)
-        if (userImage != null && isNewImageEmpty && isDefaultImage) {
-            deleteImage(userImage);
-            foundUser.setImageUrl(null);
-            userRepository.save(foundUser);
-
-        // 2. 원래 이미지가 있다가 다른 새로운 이미지로 변경되거나 원래 이미지 그대로 (A -> B or A -> A)
-            // 아요 : new imageUrl or imageUrl, isDefaultImage(F)
-            // 안드 : new imageUrl or null, isDefaultImage(F)
-        } else if (userImage != null && !isDefaultImage) {
-
-            // 아요 : 원래 이미지 그대로일수도 있고, 새로운 이미지일수도 있음
-            // 안드 : 새로운 이미지
-            if(!isNewImageEmpty) {
+        // 기본이미지로 변경
+        if(isNewImageEmpty && isDefaultImage) {
+            //원래 이미지가 기본 이미지가 아닐 경우
+            if(userImage != null) {
                 deleteImage(userImage);
-                String newImageUrl = getImageUrl(newImage);
-                foundUser.setImageUrl(newImageUrl);
             }
-            userRepository.save(foundUser);
+            foundUser.setImageUrl(null);
 
-        // 3. 기본이미지에서 새로운 이미지로 변경 (기본 이미지 -> A)
-        } else if (userImage == null && !isNewImageEmpty && !isDefaultImage){
-                String newImageUrl = getImageUrl(newImage);
-                foundUser.setImageUrl(newImageUrl);
-            userRepository.save(foundUser);
+        // 원래 이미지를 그대로 사용하거나, 새로운 이미지로 변경
+        } else if(!isDefaultImage) {
+
+            // 아요 : 이게 원래 사진 그대로 사용했거나, 새로운 사진으로 변경
+            // 안드 : 원래 이미지에서 새로운 이미지
+            if(userImage != null && !isNewImageEmpty) {
+                deleteImage(userImage);
+            }
+            String newImageUrl = getImageUrl(newImage);
+            foundUser.setImageUrl(newImageUrl);
         } else {
             throw new BadRequestException(FailureCode.INVALID_IMAGE_EDIT);
         }
+        userRepository.save(foundUser);
     }
 
     public UserInfoMainRes getUserInfoMain(final Long userId) {
