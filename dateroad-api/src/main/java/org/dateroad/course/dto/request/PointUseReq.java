@@ -19,7 +19,7 @@ public class PointUseReq {
     @Builder.Default
     private final TransactionType type = TransactionType.POINT_GAINED;
     @Builder.Default
-    private final String description = "포인트획득";
+    private final String description = "코스 열람하기";
 
     public static PointUseReq of(final int point, final TransactionType type, final String description) {
         return PointUseReq.builder()
