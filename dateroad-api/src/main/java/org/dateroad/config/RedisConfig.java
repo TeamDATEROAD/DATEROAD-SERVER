@@ -33,7 +33,7 @@ public class RedisConfig {
                 .clusterNode(host, 7005)
                 .clusterNode(host, 7006);
         SocketOptions socketOptions = SocketOptions.builder()
-                .connectTimeout(Duration.ofMillis(200L))
+                .connectTimeout(Duration.ofMillis(500L))
                 .keepAlive(true)
                 .build();
         //----------------- (2) Cluster topology refresh 옵션
@@ -56,14 +56,13 @@ public class RedisConfig {
                         || it.is(NodeFlag.NOADDR)
                         || it.is(NodeFlag.HANDSHAKE)))
                 .validateClusterNodeMembership(false)
-                .maxRedirects(3).build();
+                .maxRedirects(5).build();
         //----------------- (4) Lettuce Client 옵션
         final LettuceClientConfiguration clientConfig = LettuceClientConfiguration
                 .builder()
-                .commandTimeout(Duration.ofMillis(500L))
                 .clientOptions(clusterClientOptions)
                 .build();
-        clusterConfig.setMaxRedirects(3);
+        clusterConfig.setMaxRedirects(5);
         LettuceConnectionFactory factory = new LettuceConnectionFactory(clusterConfig, clientConfig);
         //----------------- (5) LettuceConnectionFactory 옵션
         factory.setValidateConnection(false);
