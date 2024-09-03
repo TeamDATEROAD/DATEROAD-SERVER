@@ -3,6 +3,7 @@ package org.dateroad.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -16,14 +17,15 @@ public class RedisConfig {
     private String host;
 
     @Bean
+    @Primary
     public RedisConnectionFactory redisConnectionFactoryForCluster() {
         RedisClusterConfiguration clusterConfig = new RedisClusterConfiguration()
-                .clusterNode(host, 7000)
                 .clusterNode(host, 7001)
                 .clusterNode(host, 7002)
                 .clusterNode(host, 7003)
                 .clusterNode(host, 7004)
-                .clusterNode(host, 7005);
+                .clusterNode(host, 7005)
+                .clusterNode(host, 7006);
         // 클러스터 모드로 LettuceConnectionFactory 설정
         LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(clusterConfig);
         lettuceConnectionFactory.setShareNativeConnection(false); // 클러스터 모드에서 필요에 따라 사용할 수 있음
@@ -31,7 +33,8 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
+    @Primary
+    public RedisTemplate<String, Object> redistemplate() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 //        redisTemplate.setEnableTransactionSupport(true);
         redisTemplate.setConnectionFactory(redisConnectionFactoryForCluster());
