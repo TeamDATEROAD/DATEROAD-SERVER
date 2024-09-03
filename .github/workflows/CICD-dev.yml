@@ -7,9 +7,6 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-22.04
-    env:
-      working-directory: .
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -40,13 +37,11 @@ jobs:
           echo "${{ secrets.APPLE_CLIENT_PRIVATE_KEY }}" > static/AuthKey_39CUV6ST46.p8
           cat static/AuthKey_39CUV6ST46.p8
           chmod 400 static/AuthKey_39CUV6ST46.p8
-        working-directory: ${{ env.working-directory }}
 
       - name: Build with Gradle
         run: |
           chmod +x gradlew
           ./gradlew clean build -x test --parallel --build-cache --daemon
-        working-directory: ${{ env.working-directory }}
         shell: bash
 
       - name: Docker Login
@@ -59,7 +54,6 @@ jobs:
         run: |
           DOCKER_BUILDKIT=1 docker build --cache-from dateroad/dateroad-server --platform linux/amd64 -t dateroad/dateroad-server .
           docker push dateroad/dateroad-server
-        working-directory: ${{ env.working-directory }}
 
   cd:
     needs: ci
