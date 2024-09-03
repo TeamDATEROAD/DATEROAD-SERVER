@@ -65,11 +65,11 @@ public class UserService {
         saveUserTag(foundUser, tags);
 
         //이미지 변경
-        boolean isNewImageEmpty = newImage.isEmpty() || newImage == null;
+        boolean isNewImageNull = newImage == null;
         String userImage = foundUser.getImageUrl();
 
         // 기본이미지로 변경
-        if(isNewImageEmpty && isDefaultImage) {
+        if(isNewImageNull && isDefaultImage) {
             //원래 이미지가 기본 이미지가 아닐 경우
             if(userImage != null) {
                 deleteImage(userImage);
@@ -81,7 +81,7 @@ public class UserService {
 
             // 아요 : 이게 원래 사진 그대로 사용했거나, 새로운 사진으로 변경
             // 안드 : 원래 이미지에서 새로운 이미지
-            if(userImage != null && !isNewImageEmpty) {
+            if(userImage != null && !isNewImageNull) {
                 deleteImage(userImage);
             }
             String newImageUrl = getImageUrl(newImage);
