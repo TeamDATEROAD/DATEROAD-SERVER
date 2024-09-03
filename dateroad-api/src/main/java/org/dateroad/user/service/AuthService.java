@@ -92,9 +92,7 @@ public class AuthService {
         return UserJwtInfoRes.of(userId, newToken.accessToken(), newToken.refreshToken());
     }
 
-    @Transactional
     public void withdraw(final Long userId, final AppleWithdrawAuthCodeReq AppleWithdrawAuthCodeReq) {
-
         User foundUser = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
         if (foundUser.getPlatForm() == Platform.KAKAO) {    //카카오 유저면 카카오와 연결 끊기
             kakaoFeignProvider.unLinkWithKakao(foundUser.getPlatformUserId());
@@ -190,7 +188,8 @@ public class AuthService {
 
     //todo: 추후에 유저 탈퇴 시, 삭제 정보 정해지면 삭제 추가 구현
     //유저 탈퇴 시, 유저 관련 데이터만 삭제
-    private void deleteAllDataByUser(final User user) {
+    @Transactional
+    protected void deleteAllDataByUser(final User user) {
 
         //유저태그 삭제
         userTagRepository.deleteAllByUserId(user.getId());
@@ -220,7 +219,6 @@ public class AuthService {
 
         user.setPlatformUserId("USER DELETED");
         user.setName("삭제된유저");
-
         //유저 삭제
 //        userRepository.deleteById(userId);
 //        user.setDeleted(true);
