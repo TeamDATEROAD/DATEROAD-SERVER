@@ -6,11 +6,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04 
+    runs-on: ubuntu-22.04
 
-
-    steps: 
-    - name: checkout
+    steps:
+    - name: Checkout
       uses: actions/checkout@v3
 
     - name: Set up JDK 21
@@ -18,25 +17,26 @@ jobs:
       with:
         distribution: 'corretto'
         java-version: '21'
+      
+    - name: Gradle Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/build.gradle') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
 
-    - name: create application.yml
+    - name: Create application.yml
       run: |
-        ## create application.yml
         mkdir -p dateroad-api/src/main/resources
-        cd dateroad-api/src/main/resources
-
-        # application.yml 파일 생성
-        touch ./application.yml
-
-        # GitHub-Actions 에서 설정한 값을 application.yml 파일에 쓰기
-        echo "${{ secrets.CI_APPLICATION }}" >> ./application.yml
-        
-        # application.yml 파일 확인
-        cat ./application.yml
+        echo "${{ secrets.CI_APPLICATION }}" > dateroad-api/src/main/resources/application.yml
+        cat dateroad-api/src/main/resources/application.yml
       shell: bash
       
-    - name: build
+    - name: Build with Gradle
       run: |
-          chmod +x gradlew
-          ./gradlew clean build -x test --parallel
+        chmod +x gradlew
+        ./gradlew clean build -x test --parallel --build-cache --daemon
       shell: bash
