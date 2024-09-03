@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;
 import org.dateroad.exception.BadRequestException;
+import org.dateroad.exception.ConflictException;
 import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.s3.S3Service;
 import org.dateroad.tag.domain.DateTagType;
@@ -57,6 +58,7 @@ public class UserService {
                                 final boolean isDefaultImage) {
         User foundUser = findUserById(userId);
         //이름 변경
+        checkDuplicateNickname(name, foundUser);
         foundUser.setName(name);
 
         //tag 변경
@@ -128,6 +130,15 @@ public class UserService {
         } catch (InterruptedException | ExecutionException | IOException e) {
             log.error(e.getMessage());
             throw new BadRequestException(FailureCode.WRONG_IMAGE_URL);
+        }
+    }
+
+    //닉네임 중복체크
+    private void checkDuplicateNickname(final String nickname, final User foundUser) {
+        if (userRepository.existsByName(nickname)) {
+            if(!foundUser.getName().equals(nickname)) {
+                throw new ConflictException(FailureCode.DUPLICATE_NICKNAME);
+            }
         }
     }
 }
