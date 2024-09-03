@@ -49,7 +49,7 @@ EOL
 done
 
 # Docker Compose로 Redis 노드들을 백그라운드에서 실행
-docker compose -f docker-compose-local.yml up -d redis-master-1 redis-master-2 redis-master-3 redis-slave-1 redis-slave-2 redis-slave-3
+docker compose -f docker-compose-local.yml up -d redis-master-1 redis-master-2 redis-master-3 redis-slave-1 redis-slave-2 redis-slave-3 database redis
 echo "REDIS IP : ${REDIS_IP}"
 
 # 모든 노드들이 완전히 실행될 때까지 대기
