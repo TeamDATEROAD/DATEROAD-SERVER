@@ -189,7 +189,6 @@ public class AuthService {
 
     //todo: 추후에 유저 탈퇴 시, 삭제 정보 정해지면 삭제 추가 구현
     //유저 탈퇴 시, 유저 관련 데이터만 삭제
-    @Transactional
     protected void deleteAllDataByUser(final User user) {
 
         //유저태그 삭제
