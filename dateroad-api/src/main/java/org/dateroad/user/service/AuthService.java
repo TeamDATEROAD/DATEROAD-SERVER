@@ -92,6 +92,7 @@ public class AuthService {
         return UserJwtInfoRes.of(userId, newToken.accessToken(), newToken.refreshToken());
     }
 
+    @Transactional
     public void withdraw(final Long userId, final AppleWithdrawAuthCodeReq AppleWithdrawAuthCodeReq) {
         User foundUser = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
         if (foundUser.getPlatForm() == Platform.KAKAO) {    //카카오 유저면 카카오와 연결 끊기
