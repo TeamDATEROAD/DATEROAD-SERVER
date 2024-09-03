@@ -27,8 +27,8 @@ services:
       - ./redis_conf/redis-master-1.conf:/etc/redis.conf
     restart: always
     ports:
-      - 7000:7000
-      - 17000:17000
+      - 7001:7001
+      - 17001:17001
     networks:
       - redis-cluster
     healthcheck:
@@ -45,8 +45,8 @@ services:
       - ./redis_conf/redis-master-2.conf:/etc/redis.conf
     restart: always
     ports:
-      - 7001:7001
-      - 17001:17001
+      - 7002:7002
+      - 17002:17002
     networks:
       - redis-cluster
     healthcheck:
@@ -63,8 +63,8 @@ services:
       - ./redis_conf/redis-master-3.conf:/etc/redis.conf
     restart: always
     ports:
-      - 7002:7002
-      - 17002:17002
+      - 7003:7003
+      - 17003:17003
     networks:
       - redis-cluster
     healthcheck:
@@ -81,8 +81,8 @@ services:
       - ./redis_conf/redis-slave-1.conf:/etc/redis.conf
     restart: always
     ports:
-      - 7003:7003
-      - 17003:17003
+      - 7004:7004
+      - 17004:17004
     networks:
       - redis-cluster
     healthcheck:
@@ -99,8 +99,8 @@ services:
       - ./redis_conf/redis-slave-2.conf:/etc/redis.conf
     restart: always
     ports:
-      - 7004:7004
-      - 17004:17004
+      - 7005:7005
+      - 17005:17005
     networks:
       - redis-cluster
     healthcheck:
@@ -117,8 +117,8 @@ services:
       - ./redis_conf/redis-slave-3.conf:/etc/redis.conf
     restart: always
     ports:
-      - 7005:7005
-      - 17005:17005
+      - 7006:7006
+      - 17006:17006
     networks:
       - redis-cluster
     healthcheck:
@@ -131,7 +131,7 @@ services:
     image: redis
     container_name: redis-cluster-entry
     command: >
-      redis-cli --cluster create redis-master-1:7000 redis-master-2:7001 redis-master-3:7002 redis-slave-1:7003 redis-slave-2:7004 redis-slave-3:7005 --cluster-replicas 1 --cluster-yes
+      redis-cli --cluster create redis-master-1:7001 redis-master-2:7002 redis-master-3:7003 redis-slave-1:7004 redis-slave-2:7005 redis-slave-3:7006 --cluster-replicas 1 --cluster-yes
     depends_on:
       - redis-master-1
       - redis-master-2
