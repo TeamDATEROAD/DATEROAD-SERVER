@@ -49,13 +49,11 @@ EOL
 done
 
 # Docker Compose로 Redis 노드들을 백그라운드에서 실행
-docker compose -f docker-compose-redis.yml up -d redis-master-1 redis-master-2 redis-master-3 redis-slave-1 redis-slave-2 redis-slave-3
+docker compose -f docker-compose-local.yml up -d redis-master-1 redis-master-2 redis-master-3 redis-slave-1 redis-slave-2 redis-slave-3
 echo "REDIS IP : ${REDIS_IP}"
 
 # 모든 노드들이 완전히 실행될 때까지 대기
 echo "Waiting for Redis nodes to be ready..."
-sleep 5  # 필요시 대기 시간을 조정하세요.
-
 # 클러스터 구성 명령어 실행
 docker exec -it redis-master-1 redis-cli --cluster create \
   redis-master-1:7000 \

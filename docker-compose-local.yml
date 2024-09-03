@@ -1,4 +1,24 @@
 services:
+  database:
+    container_name: database
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=0319
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    container_name: redis
+    image: redis
+    expose:
+      - 6379
+    ports:
+      - 6379:6379
+
   redis-master-1:
     container_name: redis-master-1
     image: redis
@@ -110,10 +130,8 @@ services:
   redis-cluster-entry:
     image: redis
     container_name: redis-cluster-entry
-    command:
-      "
+    command: >
       redis-cli --cluster create redis-master-1:7000 redis-master-2:7001 redis-master-3:7002 redis-slave-1:7003 redis-slave-2:7004 redis-slave-3:7005 --cluster-replicas 1 --cluster-yes
-      "
     depends_on:
       - redis-master-1
       - redis-master-2
@@ -123,6 +141,9 @@ services:
       - redis-slave-3
     networks:
       - redis-cluster
+
+volumes:
+  pgdata:
 
 networks:
   redis-cluster:
