@@ -89,6 +89,12 @@ public class UserService {
                 foundUser.setImageUrl(newImageUrl);
             }
 
+            //기본 -> A
+            else if(userImage == null && !isNewImageNull) {
+                String newImageUrl = getImageUrl(newImage);
+                foundUser.setImageUrl(newImageUrl);
+            }
+
             //안드에서 원래 이미지를 그대로 사용하면 굳이 뭐를 안해도됨
         } else {
             throw new BadRequestException(FailureCode.INVALID_IMAGE_EDIT);
