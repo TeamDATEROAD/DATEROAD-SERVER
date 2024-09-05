@@ -139,7 +139,7 @@ public class CourseService {
     }
 
     public DateAccessGetAllRes getAllDataAccessCourse(final Long userId) {
-        List<Course> accesses = dateAccessRepository.findCoursesByUserId(userId);
+        List<Course> accesses = dateAccessRepository.findCoursesByUserIdOrderByIdDesc(userId);
         List<CourseDtoGetRes> courseDtoGetResList = convertToDtoList(accesses, Function.identity());
         return DateAccessGetAllRes.of(courseDtoGetResList);
     }
