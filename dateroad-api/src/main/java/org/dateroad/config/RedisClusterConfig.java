@@ -1,5 +1,8 @@
 package org.dateroad.config;
 
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import io.lettuce.core.ReadFrom;
 import io.lettuce.core.SocketOptions;
 import io.lettuce.core.cluster.ClusterClientOptions;
@@ -23,14 +26,19 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-public class RedisConfig {
+public class RedisClusterConfig {
 
     @Value("${aws.ip}")
     private String host;
 
+    private RedisConnectionFactory redisConnectionFactory;
     @Bean
     @Primary
     public RedisConnectionFactory redisConnectionFactoryForCluster() {
+        if (this.redisConnectionFactory != null) {
+            return this.redisConnectionFactory;
+        }
+
         RedisClusterConfiguration clusterConfig = new RedisClusterConfiguration()
                 .clusterNode(host, 7001)
                 .clusterNode(host, 7002)
@@ -43,47 +51,46 @@ public class RedisConfig {
                 .tcpNoDelay(true)
                 .keepAlive(true)
                 .build();
-        //----------------- (2) Cluster topology refresh 옵션
+
         ClusterTopologyRefreshOptions clusterTopologyRefreshOptions = ClusterTopologyRefreshOptions
                 .builder()
                 .dynamicRefreshSources(true)
                 .enableAllAdaptiveRefreshTriggers()
                 .enablePeriodicRefresh(Duration.ofSeconds(30))
                 .build();
-        //----------------- (3) Cluster client 옵션
+
         ClusterClientOptions clusterClientOptions = ClusterClientOptions
                 .builder()
                 .pingBeforeActivateConnection(true)
                 .autoReconnect(true)
-//                .socketOptions(socketOptions)
                 .topologyRefreshOptions(clusterTopologyRefreshOptions)
                 .nodeFilter(it ->
-                        ! (it.is(NodeFlag.EVENTUAL_FAIL)
-                        || it.is(NodeFlag.FAIL)
-                        || it.is(NodeFlag.NOADDR)
-                        || it.is(NodeFlag.HANDSHAKE)))
+                        !(it.is(NodeFlag.EVENTUAL_FAIL)
+                                || it.is(NodeFlag.FAIL)
+                                || it.is(NodeFlag.NOADDR)
+                                || it.is(NodeFlag.HANDSHAKE)))
                 .validateClusterNodeMembership(false)
                 .maxRedirects(5).build();
-        //----------------- (4) Lettuce Client 옵션
+
         final LettuceClientConfiguration clientConfig = LettuceClientConfiguration
                 .builder()
                 .readFrom(ReadFrom.REPLICA_PREFERRED)
                 .commandTimeout(Duration.ofSeconds(10L))
                 .clientOptions(clusterClientOptions)
                 .build();
+
         clusterConfig.setMaxRedirects(3);
         LettuceConnectionFactory factory = new LettuceConnectionFactory(clusterConfig, clientConfig);
-        //----------------- (5) LettuceConnectionFactory 옵션
         factory.setValidateConnection(false);
-        factory.setShareNativeConnection(true); // 클러스터
+        factory.setShareNativeConnection(true);
+
+        this.redisConnectionFactory = factory;  // 재사용을 위해 저장
         return factory;
     }
 
     @Bean
-    @Primary
-    public RedisTemplate<String, Object> redistemplate() {
+    public RedisTemplate<String, Object> redistemplateForCluster() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-//        redisTemplate.setEnableTransactionSupport(true);
         redisTemplate.setConnectionFactory(redisConnectionFactoryForCluster());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
@@ -100,7 +107,7 @@ public class RedisConfig {
                         RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
                         new GenericJackson2JsonRedisSerializer()))
-                .entryTtl(Duration.ofMinutes(60L)); // 캐쉬 저장 시간 1시간 설정
+                .entryTtl(Duration.ofMinutes(60L));
 
         return RedisCacheManager
                 .RedisCacheManagerBuilder
@@ -109,3 +116,4 @@ public class RedisConfig {
                 .build();
     }
 }
+

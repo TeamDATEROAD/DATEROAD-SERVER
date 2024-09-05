@@ -26,7 +26,7 @@ public class AsyncService {
     private final CoursePlaceService coursePlaceService;
     private final CourseTagService courseTagService;
     private final ImageService imageService;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redistemplateForCluster;
 
     @Transactional
     public List<Image> createImage(final List<MultipartFile> images, final Course course) {
@@ -44,17 +44,17 @@ public class AsyncService {
     }
 
     public void publishEvenUserPoint(final Long userId, PointUseReq pointUseReq) {
-        Map<String, Object> fieldMap = new HashMap<>();
+        Map<String, String> fieldMap = new HashMap<>();
         fieldMap.put("userId", userId.toString());
-        fieldMap.put("point", Integer.toString(pointUseReq.getPoint()));
-        fieldMap.put("type", pointUseReq.getType().toString());
+        fieldMap.put("point", String.valueOf(pointUseReq.getPoint()));
+        fieldMap.put("type", String.valueOf(pointUseReq.getType()));
         fieldMap.put("description", pointUseReq.getDescription());
-        redisTemplate.opsForStream().add("coursePoint", fieldMap);
+        redistemplateForCluster.opsForStream().add("coursePoint", fieldMap);
     }
 
     public void publishEventUserFree(final Long userId) {
         Map<String, Object> fieldMap = new HashMap<>();
         fieldMap.put("userId", userId.toString());
-        redisTemplate.opsForStream().add("courseFree", fieldMap);
+        redistemplateForCluster.opsForStream().add("courseFree", fieldMap);
     }
 }

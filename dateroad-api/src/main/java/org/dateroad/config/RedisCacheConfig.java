@@ -26,21 +26,21 @@ public class RedisCacheConfig {
     private int port;
 
     @Bean
-    public RedisConnectionFactory redisConnectionFactoryForCache() {
+    public RedisConnectionFactory redisConnectionFactoryForOne() {
         return new LettuceConnectionFactory(new RedisStandaloneConfiguration(host, port));
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplateForCache() {
+    public RedisTemplate<String, Object> redisTemplateForOne() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactoryForCache());
+        redisTemplate.setConnectionFactory(redisConnectionFactoryForOne());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
         return redisTemplate;
     }
 
     @Bean
-    public CacheManager cacheManager() {
+    public CacheManager cacheManagerForOne() {
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeKeysWith(
                         RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
@@ -50,7 +50,7 @@ public class RedisCacheConfig {
 
         return RedisCacheManager
                 .RedisCacheManagerBuilder
-                .fromConnectionFactory(redisConnectionFactoryForCache())
+                .fromConnectionFactory(redisConnectionFactoryForOne())
                 .cacheDefaults(redisCacheConfiguration)
                 .build();
     }
