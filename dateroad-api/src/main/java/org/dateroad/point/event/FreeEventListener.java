@@ -23,8 +23,8 @@ public class FreeEventListener implements StreamListener<String, MapRecord<Strin
         Map<String, String> map = message.getValue();
         Long userId = Long.valueOf(map.get("userId"));
         User user = getUser(userId);
-        int userPoint = user.getFree();
-        user.setFree(userPoint -1);
+        int userFree = user.getFree();
+        user.setFree(userFree -1);
         userRepository.save(user);
     }
 
