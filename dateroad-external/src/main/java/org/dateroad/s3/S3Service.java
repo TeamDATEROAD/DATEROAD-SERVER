@@ -40,14 +40,12 @@ public class S3Service {
         final S3Client s3Client = awsConfig.getS3Client();
         validateExtension(image);
         validateFileSize(image);
-
         PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
                 .contentType(image.getContentType())
                 .contentDisposition("inline")
                 .build();
-
         RequestBody requestBody = RequestBody.fromBytes(image.getBytes());
         s3Client.putObject(request, requestBody);
         return CompletableFuture.completedFuture(key);
