@@ -29,15 +29,17 @@ jobs:
 
       - name: Create application.yml
         run: |
-          mkdir -p dateroad-api/src/main/resources
-          echo "${{ secrets.CD_APPLICATION }}" > dateroad-api/src/main/resources/application.yml
-          cat dateroad-api/src/main/resources/application.yml
-
-          mkdir -p static
-          echo "${{ secrets.APPLE_CLIENT_PRIVATE_KEY }}" > static/AuthKey_39CUV6ST46.p8
-          cat static/AuthKey_39CUV6ST46.p8
-          chmod 400 static/AuthKey_39CUV6ST46.p8
-
+          mkdir -p dateroad-api/src/main/resources && cd $_
+          touch ./application.yml
+          echo "${{ secrets.CD_APPLICATION }}" > ./application.yml
+          cat ./application.yml
+          
+          mkdir -p static && cd $_
+          touch ./AuthKey_39CUV6ST46.p8
+          echo "${{ secrets.APPLE_CLIENT_PRIVATE_KEY }}" > ./AuthKey_39CUV6ST46.p8
+          cat ./AuthKey_39CUV6ST46.p8
+          chmod 400 ./AuthKey_39CUV6ST46.p8
+        working-directory: ${{ env.working-directory }}
       - name: Build with Gradle
         run: |
           chmod +x gradlew
