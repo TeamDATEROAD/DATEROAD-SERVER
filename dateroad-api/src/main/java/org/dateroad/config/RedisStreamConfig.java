@@ -25,7 +25,7 @@ import java.util.Iterator;
 public class RedisStreamConfig {
     private final PointEventListener pointEventListener;
     private final FreeEventListener freeEventListener;
-    private final RedisTemplate<String, Object> redistemplateForCluster;
+    private final RedisTemplate<String, String> redistemplateForCluster;
 
     public void createStreamConsumerGroup(final String streamKey, final String consumerGroupName) {
         if (Boolean.FALSE.equals(redistemplateForCluster.hasKey(streamKey))) {
