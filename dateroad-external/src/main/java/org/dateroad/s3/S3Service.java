@@ -20,6 +20,7 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
 @Component
@@ -34,22 +35,26 @@ public class S3Service {
         this.awsConfig = awsConfig;
     }
 
-    @Async
-    public Future<String> uploadImage(String directoryPath, MultipartFile image) throws IOException {
-        final String key = directoryPath + generateImageFileName(image);
-        final S3Client s3Client = awsConfig.getS3Client();
-        validateExtension(image);
-        validateFileSize(image);
+    public String uploadImage(String directoryPath, MultipartFile image) throws IOException {
+        final String key = directoryPath + generateImageFileName(image);  // 이미지 파일 이름 생성
+        final S3Client s3Client = awsConfig.getS3Client();  // S3 클라이언트 가져오기
+        validateExtension(image);  // 파일 확장자 유효성 검사
+        validateFileSize(image);   // 파일 크기 유효성 검사
         PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
                 .contentType(image.getContentType())
                 .contentDisposition("inline")
                 .build();
-        RequestBody requestBody = RequestBody.fromBytes(image.getBytes());
-        s3Client.putObject(request, requestBody);
-        return CompletableFuture.completedFuture(key);
+        RequestBody requestBody = RequestBody.fromBytes(image.getBytes());  // 파일 바이트 배열로 변환
+        try {
+            s3Client.putObject(request, requestBody);
+        } catch (S3Exception e) {
+            throw new IOException("이미지 업로드 중 오류가 발생했습니다.", e);  // 예외 발생 시 IOException 처리
+        }
+        return key;  // S3에 저장된 이미지 경로 반환
     }
+
 
     public void deleteImage(String imageUrl) throws IOException {
         String imageKey = extractImageKeyFromImageUrl(imageUrl);
