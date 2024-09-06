@@ -24,6 +24,7 @@ import org.dateroad.course.dto.response.CourseGetAllRes;
 import org.dateroad.course.dto.response.DateAccessGetAllRes;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -347,12 +348,12 @@ public interface CourseApi {
                             responseCode = "500",
                             description = "서버 내부 오류입니다.",
                             content = @Content)})
-    ResponseEntity<CourseCreateRes> createCourse(
+    public ResponseEntity<CourseCreateRes> createCourse(
             @UserId final Long userId,
             @RequestPart("course") @Valid final CourseCreateReq courseCreateReq,
-            @RequestPart("tags") final List<TagCreateReq> tags,
-            @RequestPart("places") final List<CoursePlaceGetReq> places,
-            @RequestPart("images") final List<MultipartFile> images
+            @RequestPart("tags") @Validated @Size(min = 1, max = 3) final List<TagCreateReq> tags,
+            @RequestPart("places") @Validated @Size(min = 1) final List<CoursePlaceGetReq> places,
+            @RequestPart("images") @Validated @Size(min =1, max = 10) final List<MultipartFile> images
     );
 
 

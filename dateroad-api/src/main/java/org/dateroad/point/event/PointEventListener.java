@@ -1,10 +1,12 @@
 package org.dateroad.point.event;
 
+import java.util.EventListener;
 import java.util.Map;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
 import org.dateroad.course.dto.request.PointUseReq;
+import org.dateroad.exception.DateRoadException;
 import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.exception.UnauthorizedException;
 import org.dateroad.point.domain.Point;
@@ -16,16 +18,17 @@ import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.stream.StreamListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class PointEventListener implements StreamListener<String, MapRecord<String,String,String>> {
+public class PointEventListener implements StreamListener<String, MapRecord<String,String,String>>, EventListener {
     private final UserRepository userRepository;
     private final PointRepository pointRepository;
 
     @Override
     @Transactional
-    public void onMessage(final MapRecord<String, String, String> message) {
+    public void onMessage(final MapRecord<String, String, String> message) throws DateRoadException {
         try {
             Map<String, String> map = message.getValue();
             Long userId = Long.valueOf(map.get("userId"));
@@ -46,7 +49,7 @@ public class PointEventListener implements StreamListener<String, MapRecord<Stri
             pointRepository.save(Point.create(user, point, type, description));
             userRepository.save(user);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DateRoadException(FailureCode.POINT_CREATE_ERROR);
         }
     }
 
