@@ -2,6 +2,7 @@ package org.dateroad.user.repository;
 
 import org.dateroad.user.domain.Platform;
 import org.dateroad.user.domain.User;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +19,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT COUNT(u) FROM User u WHERE u.name <> :excludedName")
     long countByNameNot(@Param("excludedName") final String excludedName);
+    @Cacheable(cacheNames = "user", key = "#userId", unless = "#result == null", cacheManager = "cacheManagerForOne")
+    Optional<User> findUserById(Long userId);
 }
