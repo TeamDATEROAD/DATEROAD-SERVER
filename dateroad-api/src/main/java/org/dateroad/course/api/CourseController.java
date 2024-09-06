@@ -27,6 +27,8 @@ import org.dateroad.point.domain.TransactionType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -64,18 +66,15 @@ public class CourseController implements CourseApi {
     public ResponseEntity<CourseCreateRes> createCourse(
             @UserId final Long userId,
             @RequestPart("course") @Valid final CourseCreateReq courseCreateReq,
-            @RequestPart("tags") final List<TagCreateReq> tags,
-            @RequestPart("places") final List<CoursePlaceGetReq> places,
-            @RequestPart("images") final List<MultipartFile> images
+            @RequestPart("tags") @Validated @Size(min = 1, max = 3) final List<TagCreateReq> tags,
+            @RequestPart("places") @Validated @Size(min = 1) final List<CoursePlaceGetReq> places,
+            @RequestPart("images") @Validated @Size(min =1, max = 10) final List<MultipartFile> images
     ) {
         validateListSizeMin(places, 1, FailureCode.WRONG_COURSE_PLACE_SIZE);
         validateListSizeMin(tags, 1, FailureCode.WRONG_TAG_SIZE);
         validateListSizeMax(tags, 3, FailureCode.WRONG_TAG_SIZE);
         validateListSizeMax(images, 10, FailureCode.WRONG_IMAGE_LIST_SIZE);
-        Course course = courseService.createCourse(userId, courseCreateReq, places, images);
-        asyncService.createCoursePlace(places, course);
-        asyncService.createCourseTags(tags, course);
-        asyncService.publishEvenUserPoint(userId, PointUseReq.of(100, TransactionType.POINT_GAINED, "코스 생성하기"));
+        Course course = courseService.createCourse(userId, courseCreateReq, places, images, tags);
         return ResponseEntity.status(
                 HttpStatus.CREATED
         ).body(CourseCreateRes.of(course.getId()));

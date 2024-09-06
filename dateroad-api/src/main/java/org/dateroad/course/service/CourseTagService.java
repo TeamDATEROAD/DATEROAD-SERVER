@@ -16,12 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class CourseTagService {
     private final CourseTagRepository courseTagRepository;
 
-    @Async
-    @Transactional
     public void createCourseTags(final List<TagCreateReq> tags, final Course course) {
         List<CourseTag> coursePlaces = tags.stream()
                 .map(tag -> CourseTag.create(course, tag.getTag()))
                 .toList();
-        courseTagRepository.saveAllAndFlush(coursePlaces);
+        courseTagRepository.saveAll(coursePlaces);
     }
 }

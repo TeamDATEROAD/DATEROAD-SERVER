@@ -21,8 +21,6 @@ public class CoursePlaceService {
         return coursePlaceRepository.findTotalDurationByCourseId(id);
     }
 
-    @Async
-    @Transactional
     public void createCoursePlace(final List<CoursePlaceGetReq> places, final Course course) {
         List<CoursePlace> coursePlaces = places.stream()
                 .map(placeReq -> CoursePlace.create(
@@ -32,6 +30,6 @@ public class CoursePlaceService {
                         placeReq.getSequence()
                 ))
                 .collect(Collectors.toList());
-        coursePlaceRepository.saveAllAndFlush(coursePlaces);
+        coursePlaceRepository.saveAll(coursePlaces);
     }
 }
