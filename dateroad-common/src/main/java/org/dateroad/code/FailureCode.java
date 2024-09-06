@@ -97,7 +97,9 @@ public enum FailureCode {
     /**
      * 500 Internal Server Error
      */
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "e5000", "서버 내부 오류입니다.");
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "e5000", "서버 내부 오류입니다."),
+    COURSE_CREATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"e5001" , "코스 생성에 실패했습니다."),
+    POINT_CREATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "e5002", "포인트 생성에 실패했습니다");
 
 
     private final HttpStatus httpStatus;
