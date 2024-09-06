@@ -15,9 +15,11 @@ import org.dateroad.feign.kakao.KakaoFeignProvider;
 import org.dateroad.exception.ConflictException;
 import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.exception.UnauthorizedException;
+import org.dateroad.image.service.ImageService;
 import org.dateroad.point.repository.PointRepository;
 import org.dateroad.refreshtoken.domain.RefreshToken;
 import org.dateroad.refreshtoken.repository.RefreshTokenRepository;
+import org.dateroad.s3.S3Service;
 import org.dateroad.tag.domain.DateTagType;
 import org.dateroad.tag.domain.UserTag;
 import org.dateroad.tag.repository.UserTagRepository;
@@ -49,9 +51,9 @@ public class AuthService {
     private final UserTagRepository userTagRepository;
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserService userService;
     private final PointRepository pointRepository;
     private final DiscordFeignProvider discordFeignProvider;
+    private final ImageService imageService;;
 
     @Transactional
     public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, @Nullable final MultipartFile image, final List<DateTagType> tag) {
@@ -59,7 +61,7 @@ public class AuthService {
         validateTagSize(tag,FailureCode.WRONG_USER_TAG_SIZE);
         checkNickname(userSignUpReq.name());
         validateDuplicatedUser(userSignUpReq.platform(), platformUserId);
-        User newUser = saveUser(userSignUpReq.name(), userService.getImageUrl(image), userSignUpReq.platform(), platformUserId);
+        User newUser = saveUser(userSignUpReq.name(), imageService.getImageUrl(image), userSignUpReq.platform(), platformUserId);
         saveUserTag(newUser, tag);
         Token issuedToken = issueToken(newUser.getId());
 

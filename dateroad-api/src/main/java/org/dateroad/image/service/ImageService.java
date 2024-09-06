@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;
 import org.dateroad.date.domain.Course;
 import org.dateroad.exception.BadRequestException;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class ImageService {
     private final ImageRepository imageRepository;
     private final S3Service s3Service;
@@ -50,5 +52,17 @@ public class ImageService {
                 .toList();
         imageRepository.saveAll(saveImages);
         return saveImages;
+    }
+
+    public String getImageUrl(final MultipartFile image) {
+        if (image == null || image.isEmpty()) {
+            return null;
+        }
+        try {
+            return cachePath + s3Service.uploadImage("/user", image).get();
+        } catch (InterruptedException | ExecutionException | IOException e) {
+            log.error(e.getMessage());
+            throw new BadRequestException(FailureCode.WRONG_IMAGE_URL);
+        }
     }
 }
