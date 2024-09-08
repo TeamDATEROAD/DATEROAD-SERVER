@@ -15,16 +15,14 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class CourseCreateEvent{
     private Course course;
-    private Long userId;
     private List<CoursePlaceGetReq> places;
     private List<TagCreateReq> tags;
 
-    public static CourseCreateEvent of(Course course, Long userId,
+    public static CourseCreateEvent of(Course course,
                               List<CoursePlaceGetReq> places,
                               List<TagCreateReq> tags) {
         return CourseCreateEvent.builder()
                 .course(course)
-                .userId(userId)
                 .places(places)
                 .tags(tags)
                 .build();

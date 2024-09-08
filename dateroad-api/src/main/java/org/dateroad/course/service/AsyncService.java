@@ -16,7 +16,6 @@ import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.request.TagCreateReq;
 import org.dateroad.date.domain.Course;
 import org.dateroad.image.domain.Image;
-import org.dateroad.point.domain.TransactionType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,7 +59,7 @@ public class AsyncService {
 
     @Transactional
     public void runAsyncTasks(List<CoursePlaceGetReq> places, List<TagCreateReq> tags,
-                                Course saveCourse, Long userId)
+                                Course saveCourse)
             throws InterruptedException {
         List<Thread> threads = new ArrayList<>();
         final boolean[] hasError = {false};  // 에러 발생 여부 확인
