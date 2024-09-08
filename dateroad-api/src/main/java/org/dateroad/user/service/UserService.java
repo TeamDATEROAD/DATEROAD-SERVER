@@ -116,4 +116,15 @@ public class UserService {
             }
         }
     }
+
+    @CachePut(cacheNames = "user", key = "#user.id", unless = "#result == null", cacheManager = "cacheManagerForOne")
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public User getUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND)
+        );
+    }
 }

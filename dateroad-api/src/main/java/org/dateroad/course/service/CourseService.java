@@ -47,7 +47,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -155,7 +154,7 @@ public class CourseService {
 
     private User getUser(final Long userId) {
         return userRepository.findUserById(userId)
-                .orElseThrow(()-> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }
 
     private Course getCourse(final Long courseId) {
@@ -199,23 +198,22 @@ public class CourseService {
                 courseRegisterReq.getStartAt(),
                 totalTime
         );
-        courseRepository.save(course);
-        eventPublisher.publishEvent(CourseCreateEvent.of(course, userId, places, tags));
-        String thumbnail = asyncService.createCourseImages(images, course);// 썸
+        Course newcourse = courseRepository.save(course);
+        eventPublisher.publishEvent(CourseCreateEvent.of(newcourse, places, tags));
+        String thumbnail = asyncService.createCourseImages(images, newcourse);// 썸
         course.setThumbnail(thumbnail);
-        courseRepository.save(course);  // 최종적으로 썸네일을 반영하여 저장
+        courseRepository.save(newcourse);  // 최종적으로 썸네일을 반영하여 저장
         asyncService.publishEvenUserPoint(userId, PointUseReq.of(100, TransactionType.POINT_GAINED, "코스 생성하기"));
-        return course;
+        return newcourse;
     }
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener
     public void handleCourseCreatedEvent(CourseCreateEvent event) {
         Course course = event.getCourse();
-        Long userId = event.getUserId();
         List<CoursePlaceGetReq> places = event.getPlaces();
         List<TagCreateReq> tags = event.getTags();
         try {
-            asyncService.runAsyncTasks(places, tags, course, userId);
+            asyncService.runAsyncTasks(places, tags, course);
         } catch (Exception e) {
             throw new DateRoadException(FailureCode.COURSE_CREATE_ERROR);
         }
@@ -240,11 +238,11 @@ public class CourseService {
         return CoursePaymentType.POINT;
     }
 
-    public void processCoursePayment(final CoursePaymentType coursePaymentType, final Long userId, final PointUseReq pointUseReq) {
+    public void processCoursePayment(final CoursePaymentType coursePaymentType, final Long userId,
+                                     final PointUseReq pointUseReq) {
         if (coursePaymentType == CoursePaymentType.FREE) {
             asyncService.publishEventUserFree(userId);
-        }
-        else if (coursePaymentType == CoursePaymentType.POINT) {
+        } else if (coursePaymentType == CoursePaymentType.POINT) {
             asyncService.publishEvenUserPoint(userId, pointUseReq);
         }
     }
@@ -281,7 +279,7 @@ public class CourseService {
 
         int likesCount = likeRepository.countByCourse(foundCourse);
 
-        boolean isCourseMine = courseRepository.existsCourseByUserAndId(foundUser,courseId);
+        boolean isCourseMine = courseRepository.existsCourseByUserAndId(foundUser, courseId);
 
         boolean isUserLiked = false;
 
