@@ -54,7 +54,6 @@ public class RedisStreamConfig {
         }
     }
 
-    // ConsumerGroup 존재 여부 확인
     public boolean isStreamConsumerGroupExist(final String streamKey, final String consumerGroupName) {
         Iterator<StreamInfo.XInfoGroup> iterator = redistemplateForCluster
                 .opsForStream().groups(streamKey).stream().iterator();
@@ -69,14 +68,12 @@ public class RedisStreamConfig {
 
     @Bean
     public Subscription pointSubscription(RedisConnectionFactory redisConnectionFactoryForCluster) {
-        createStreamConsumerGroup("coursePoint", "courseGroup");
+        createStreamConsumerGroup("coursePoint", "coursePointGroup");
         StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> containerOptions = StreamMessageListenerContainerOptions
-                .builder().pollTimeout(Duration.ofMillis(100)).build();
-
+                .builder().pollTimeout(Duration.ofMillis(500)).build();
         StreamMessageListenerContainer<String, MapRecord<String, String, String>> container = StreamMessageListenerContainer.create(
                 redisConnectionFactoryForCluster, containerOptions);
-
-        Subscription subscription = container.receiveAutoAck(Consumer.from("courseGroup", "instance-1"),
+        Subscription subscription = container.receiveAutoAck(Consumer.from("coursePointGroup", "instance-1"),
                 StreamOffset.create("coursePoint", ReadOffset.lastConsumed()), pointEventListener);
         container.start();
         return subscription;
@@ -84,15 +81,18 @@ public class RedisStreamConfig {
 
     @Bean
     public Subscription freeSubscription(RedisConnectionFactory redisConnectionFactoryForCluster) {
-        createStreamConsumerGroup("courseFree", "courseGroup");
+        createStreamConsumerGroup("courseFree", "courseFreeGroup");
         StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> containerOptions = StreamMessageListenerContainerOptions
-                .builder().pollTimeout(Duration.ofMillis(100)).build();
+                .builder().pollTimeout(Duration.ofMillis(500))
+                .build();
+
         StreamMessageListenerContainer<String, MapRecord<String, String, String>> container = StreamMessageListenerContainer.create(
                 redisConnectionFactoryForCluster,
                 containerOptions);
-        Subscription subscription = container.receiveAutoAck(Consumer.from("courseGroup", "instance-2"),
+        Subscription subscription = container.receiveAutoAck(Consumer.from("courseFreeGroup", "instance-2"),
                 StreamOffset.create("courseFree", ReadOffset.lastConsumed()), freeEventListener);
         container.start();
         return subscription;
     }
 }
+
