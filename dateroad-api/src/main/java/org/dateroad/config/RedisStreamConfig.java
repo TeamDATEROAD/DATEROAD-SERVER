@@ -70,7 +70,7 @@ public class RedisStreamConfig {
     public Subscription pointSubscription(RedisConnectionFactory redisConnectionFactoryForCluster) {
         createStreamConsumerGroup("coursePoint", "coursePointGroup");
         StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> containerOptions = StreamMessageListenerContainerOptions
-                .builder().pollTimeout(Duration.ofMillis(100)).build();
+                .builder().pollTimeout(Duration.ofMillis(500)).build();
         StreamMessageListenerContainer<String, MapRecord<String, String, String>> container = StreamMessageListenerContainer.create(
                 redisConnectionFactoryForCluster, containerOptions);
         Subscription subscription = container.receiveAutoAck(Consumer.from("coursePointGroup", "instance-1"),
@@ -83,7 +83,7 @@ public class RedisStreamConfig {
     public Subscription freeSubscription(RedisConnectionFactory redisConnectionFactoryForCluster) {
         createStreamConsumerGroup("courseFree", "courseFreeGroup");
         StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> containerOptions = StreamMessageListenerContainerOptions
-                .builder().pollTimeout(Duration.ofMillis(100))
+                .builder().pollTimeout(Duration.ofMillis(500))
                 .build();
 
         StreamMessageListenerContainer<String, MapRecord<String, String, String>> container = StreamMessageListenerContainer.create(
