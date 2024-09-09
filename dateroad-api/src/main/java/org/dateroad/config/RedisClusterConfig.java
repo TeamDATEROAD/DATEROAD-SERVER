@@ -18,18 +18,22 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 public class RedisClusterConfig {
 
     @Value("${aws.ip}")
     private String host;
+    @Value("${spring.data.redis.cluster.password}")
+    private String password;
 
     private RedisConnectionFactory redisConnectionFactory;
     @Bean
@@ -46,6 +50,7 @@ public class RedisClusterConfig {
                 .clusterNode(host, 7004)
                 .clusterNode(host, 7005)
                 .clusterNode(host, 7006);
+        clusterConfig.setPassword(RedisPassword.of(password));
         SocketOptions socketOptions = SocketOptions.builder()
                 .connectTimeout(Duration.ofSeconds(3L))
                 .tcpNoDelay(true)
@@ -56,7 +61,7 @@ public class RedisClusterConfig {
                 .builder()
                 .dynamicRefreshSources(true)
                 .enableAllAdaptiveRefreshTriggers()
-                .enablePeriodicRefresh(Duration.ofSeconds(30))
+                .enablePeriodicRefresh(Duration.ofHours(1L))
                 .build();
 
         ClusterClientOptions clusterClientOptions = ClusterClientOptions
@@ -96,6 +101,7 @@ public class RedisClusterConfig {
         redisTemplate.setValueSerializer(new StringRedisSerializer());
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(new StringRedisSerializer());
+//        redisTemplate.setEnableTransactionSupport(true);
         return redisTemplate;
     }
 
