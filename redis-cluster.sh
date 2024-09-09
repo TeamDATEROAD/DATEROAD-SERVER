@@ -6,6 +6,7 @@ if command -v hostname >/dev/null 2>&1; then
   else
     REDIS_IP=$(hostname -I | awk '{print $1}')  # Linux
   fi
+  export REDISCLI_AUTH=$(echo $REDISCLI_AUTH)
 else
   echo "호스트 이름 명령어를 찾을 수 없습니다."
   exit 1
@@ -13,7 +14,7 @@ fi
 
 # 환경변수 설정
 export REDIS_IP
-
+export REDISCLI_AUTH
 # Redis 설정 파일을 저장할 디렉토리 생성
 mkdir -p redis_conf
 
@@ -31,7 +32,8 @@ cluster-enabled yes
 cluster-config-file nodes.conf
 cluster-node-timeout 3000
 appendonly yes
-# requirepass xxxx
+requirepass  ${REDISCLI_AUTH}
+masterauth  ${REDISCLI_AUTH}
 protected-mode no
 bind 0.0.0.0
 cluster-announce-ip ${REDIS_IP}
@@ -47,7 +49,8 @@ cluster-enabled yes
 cluster-config-file nodes.conf
 cluster-node-timeout 3000
 appendonly yes
-# requirepass xxxx
+requirepass  ${REDISCLI_AUTH}
+masterauth  ${REDISCLI_AUTH}
 protected-mode no
 bind 0.0.0.0
 cluster-announce-ip ${REDIS_IP}
@@ -55,6 +58,7 @@ cluster-announce-port ${slave_ports[$i]}
 cluster-announce-bus-port $((17001 + ${slave_ports[$i]} - 7001))
 EOL
 done
+
 
 # Docker Compose로 Redis 노드들을 백그라운드에서 실행
 docker compose -f docker-compose-local.yml up -d redis-master-1 redis-master-2 redis-master-3 redis-slave-1 redis-slave-2 redis-slave-3 redis
@@ -70,7 +74,7 @@ docker exec -it redis-master-1 redis-cli --cluster create \
   redis-slave-1:7004 \
   redis-slave-2:7005 \
   redis-slave-3:7006 \
-  --cluster-replicas 1 --cluster-yes
+  --cluster-replicas 1 -a ${REDISCLI_AUTH} --cluster-yes
 
 # 성공 메시지 출력
 echo "Redis cluster has been created successfully."
