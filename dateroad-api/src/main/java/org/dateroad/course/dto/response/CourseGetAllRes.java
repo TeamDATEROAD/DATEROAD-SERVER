@@ -2,7 +2,9 @@ package org.dateroad.course.dto.response;
 
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record CourseGetAllRes(

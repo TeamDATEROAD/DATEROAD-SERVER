@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Builder(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class CoursePlaceGetReq {
     private String title;
     private float duration;

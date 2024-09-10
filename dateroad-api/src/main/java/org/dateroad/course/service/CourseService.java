@@ -152,7 +152,7 @@ public class CourseService {
         return DateAccessGetAllRes.of(courseDtoGetResList);
     }
 
-    private User getUser(final Long userId) {
+    public User getUser(final Long userId) {
         return userRepository.findUserById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }

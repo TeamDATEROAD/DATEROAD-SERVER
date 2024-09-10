@@ -20,7 +20,7 @@ import org.dateroad.user.domain.User;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @Builder(access = AccessLevel.PRIVATE)
 @Table(name = "likes")
 public class Like extends BaseTimeEntity {

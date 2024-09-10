@@ -11,7 +11,7 @@ import lombok.Setter;
 import org.dateroad.common.BaseTimeEntity;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
 @Setter

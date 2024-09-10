@@ -41,7 +41,6 @@ class DateServiceTest {
     DateService dateService;
 
     @Test
-    @DisplayName("잘 생성된다")
     void dateCreate() {
       // given
         User user = User.create("가든잉", "platformUserId123", Platform.KAKAO, "imageUrl");

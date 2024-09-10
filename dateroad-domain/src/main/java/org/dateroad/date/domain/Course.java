@@ -23,7 +23,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "courses")
 public class Course extends DateBase {

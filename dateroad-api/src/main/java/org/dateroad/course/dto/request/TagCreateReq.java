@@ -13,7 +13,7 @@ import org.dateroad.tag.domain.DateTagType;
 @Setter
 @Builder(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class TagCreateReq{
     private DateTagType tag;
 
