@@ -28,7 +28,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Getter
 @Builder(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class CourseCreateReq {
     @Size(min = 5)
     private String title;

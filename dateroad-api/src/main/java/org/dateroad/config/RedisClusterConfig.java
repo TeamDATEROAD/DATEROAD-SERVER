@@ -1,14 +1,12 @@
 package org.dateroad.config;
 
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import io.lettuce.core.ReadFrom;
 import io.lettuce.core.SocketOptions;
 import io.lettuce.core.cluster.ClusterClientOptions;
 import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
-import io.lettuce.core.cluster.models.partitions.RedisClusterNode.NodeFlag;
+import io.lettuce.core.cluster.models.partitions.RedisClusterNode;
 import java.time.Duration;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
@@ -25,24 +23,20 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
+@Slf4j
 public class RedisClusterConfig {
 
     @Value("${aws.ip}")
     private String host;
+
     @Value("${spring.data.redis.cluster.password}")
     private String password;
 
-    private RedisConnectionFactory redisConnectionFactory;
     @Bean
     @Primary
     public RedisConnectionFactory redisConnectionFactoryForCluster() {
-        if (this.redisConnectionFactory != null) {
-            return this.redisConnectionFactory;
-        }
-
         RedisClusterConfiguration clusterConfig = new RedisClusterConfiguration()
                 .clusterNode(host, 7001)
                 .clusterNode(host, 7002)
@@ -52,7 +46,7 @@ public class RedisClusterConfig {
                 .clusterNode(host, 7006);
         clusterConfig.setPassword(RedisPassword.of(password));
         SocketOptions socketOptions = SocketOptions.builder()
-                .connectTimeout(Duration.ofSeconds(3L))
+                .connectTimeout(Duration.ofSeconds(5L))
                 .tcpNoDelay(true)
                 .keepAlive(true)
                 .build();
@@ -61,26 +55,28 @@ public class RedisClusterConfig {
                 .builder()
                 .dynamicRefreshSources(true)
                 .enableAllAdaptiveRefreshTriggers()
-                .enablePeriodicRefresh(Duration.ofHours(1L))
+                .enablePeriodicRefresh() // 60초마다 refresh
+                .refreshTriggersReconnectAttempts(3) // 재연결 시도 후 갱신
                 .build();
 
         ClusterClientOptions clusterClientOptions = ClusterClientOptions
                 .builder()
-                .pingBeforeActivateConnection(true)
+                .socketOptions(socketOptions)
+                .pingBeforeActivateConnection(true) // 연결 활성화 전에 ping
                 .autoReconnect(true)
                 .topologyRefreshOptions(clusterTopologyRefreshOptions)
-                .nodeFilter(it ->
-                        !(it.is(NodeFlag.EVENTUAL_FAIL)
-                                || it.is(NodeFlag.FAIL)
-                                || it.is(NodeFlag.NOADDR)
-                                || it.is(NodeFlag.HANDSHAKE)))
                 .validateClusterNodeMembership(false)
-                .maxRedirects(5).build();
+                .nodeFilter(it ->
+                        ! (it.is(RedisClusterNode.NodeFlag.FAIL)
+                                || it.is(RedisClusterNode.NodeFlag.EVENTUAL_FAIL)
+                                || it.is(RedisClusterNode.NodeFlag.HANDSHAKE)
+                                || it.is(RedisClusterNode.NodeFlag.NOADDR)))
+                .maxRedirects(3).build();
 
         final LettuceClientConfiguration clientConfig = LettuceClientConfiguration
                 .builder()
                 .readFrom(ReadFrom.REPLICA_PREFERRED)
-                .commandTimeout(Duration.ofSeconds(10L))
+                .commandTimeout(Duration.ofSeconds(5L)) // 명령 타임아웃 5초로 설정
                 .clientOptions(clusterClientOptions)
                 .build();
 
@@ -89,9 +85,9 @@ public class RedisClusterConfig {
         factory.setValidateConnection(false);
         factory.setShareNativeConnection(true);
 
-        this.redisConnectionFactory = factory;  // 재사용을 위해 저장
         return factory;
     }
+
 
     @Bean
     public RedisTemplate<String, String> redistemplateForCluster() {
@@ -101,7 +97,6 @@ public class RedisClusterConfig {
         redisTemplate.setValueSerializer(new StringRedisSerializer());
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(new StringRedisSerializer());
-//        redisTemplate.setEnableTransactionSupport(true);
         return redisTemplate;
     }
 

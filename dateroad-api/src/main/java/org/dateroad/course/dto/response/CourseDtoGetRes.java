@@ -1,7 +1,9 @@
 package org.dateroad.course.dto.response;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.domain.Region;
 
