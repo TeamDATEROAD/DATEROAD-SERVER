@@ -8,14 +8,16 @@ import java.util.List;
 import java.util.Map;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;
-import org.dateroad.exception.DateRoadException;
-import org.dateroad.image.service.ImageService;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
 import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.request.TagCreateReq;
 import org.dateroad.date.domain.Course;
+import org.dateroad.exception.DateRoadException;
 import org.dateroad.image.domain.Image;
+import org.dateroad.image.service.ImageService;
+import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Transactional(readOnly = true)
+@Slf4j
 public class AsyncService {
     private final CoursePlaceService coursePlaceService;
     private final CourseTagService courseTagService;
@@ -44,17 +47,33 @@ public class AsyncService {
 
     public void publishEvenUserPoint(final Long userId, PointUseReq pointUseReq) {
         Map<String, String> fieldMap = new HashMap<>();
-        fieldMap.put("userId", userId.toString());
-        fieldMap.put("point", String.valueOf(pointUseReq.getPoint()));
-        fieldMap.put("type", pointUseReq.getType().name());
-        fieldMap.put("description", pointUseReq.getDescription());
-        redistemplateForCluster.opsForStream().add("coursePoint", fieldMap);
+        try {
+            fieldMap.put("userId", userId.toString());
+            fieldMap.put("point", String.valueOf(pointUseReq.getPoint()));
+            fieldMap.put("type", pointUseReq.getType().name());
+            fieldMap.put("description", pointUseReq.getDescription());
+            redistemplateForCluster.opsForStream().add("coursePoint", fieldMap);
+        } catch (QueryTimeoutException e) {
+            log.error("Redis command timed out for userId: {} - Retrying...", userId, e);
+            throw new DateRoadException(FailureCode.REDIS_CONNECTION_ERROR);
+        } catch (Exception e) {
+            log.error("Unexpected error while publishing point event for userId: {}", userId, e);
+            throw new DateRoadException(FailureCode.REDIS_CONNECTION_ERROR);
+        }
     }
 
     public void publishEventUserFree(final Long userId) {
         Map<String, String> fieldMap = new HashMap<>();
-        fieldMap.put("userId", userId.toString());
-        redistemplateForCluster.opsForStream().add("courseFree", fieldMap);
+        try {
+            fieldMap.put("userId", userId.toString());
+            redistemplateForCluster.opsForStream().add("courseFree", fieldMap);
+        } catch (QueryTimeoutException e) {
+            log.error("Redis command timed out for userId: {} - Retrying...", userId, e);
+            throw new DateRoadException(FailureCode.REDIS_CONNECTION_ERROR);
+        } catch (Exception e) {
+            log.error("Unexpected error while publishing free event for userId: {}", userId, e);
+            throw new DateRoadException(FailureCode.REDIS_CONNECTION_ERROR);
+        }
     }
 
     @Transactional

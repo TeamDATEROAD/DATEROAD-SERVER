@@ -1,5 +1,6 @@
 package org.dateroad.common;
 
+import io.lettuce.core.RedisConnectionException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;
@@ -61,5 +62,14 @@ public class GlobalExceptionHandler {
         List<FailureResponse.FieldError> errors = FailureResponse.FieldError.of("Exception", "", errorMessage);
         final FailureResponse response = FailureResponse.of(FailureCode.INTERNAL_SERVER_ERROR, errors);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(RedisConnectionException.class)
+    protected ResponseEntity<FailureResponse> handleRedisConnectionException(final RedisConnectionException e) {
+        log.error(">>> handle: RedisConnectionException ", e);
+        String errorMessage = "Redis connection error: " + e.getMessage();
+        List<FailureResponse.FieldError> errors = FailureResponse.FieldError.of("RedisConnection", "", errorMessage);
+        final FailureResponse response = FailureResponse.of(FailureCode.REDIS_CONNECTION_ERROR, errors);
+        return new ResponseEntity<>(response, HttpStatus.SERVICE_UNAVAILABLE);
     }
 }
