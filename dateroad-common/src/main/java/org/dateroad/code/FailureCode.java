@@ -76,7 +76,7 @@ public enum FailureCode {
     COURSE_TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "e40410", "데이트 태그를 찾을 수 없습니다."),
     NEAREST_DATE_NOT_FOUND(HttpStatus.NOT_FOUND, "e40411", "다가오는 데이트를 찾을 수 없습니다."),
     LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "e40412", "해당 데이트 코스에 좋아요를 찾을 수 없습니다."),
-    COURSE_DELETE_ACCESS_DENIED(HttpStatus.NOT_FOUND, "e40414", "해당 코스를 삭제할수 없습니다."),
+    COURSE_DELETE_ACCESS_DENIED(HttpStatus.NOT_FOUND, "e40414", "해당 코스를 삭제할 수 없습니다."),
     INSUFFICIENT_USER_POINTS(HttpStatus.NOT_FOUND, "e40413", "유저의 포인트가 부족합니다."),
     SORT_TYPE_NOT_FOUND(HttpStatus.UNAUTHORIZED, "e40414", "해당 순서 타입을 찾을 수 없습니다."),
     ADVERTISEMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "e40415", "해당 광고를 찾을 수 없습니다."),
