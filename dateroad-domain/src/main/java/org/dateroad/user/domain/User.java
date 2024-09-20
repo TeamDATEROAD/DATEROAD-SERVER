@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.dateroad.common.BaseTimeEntity;
 
+import java.util.Objects;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder(access = AccessLevel.PRIVATE)
@@ -52,6 +54,14 @@ public class User extends BaseTimeEntity {
     @NotNull
     @Setter
     private int totalPoint = 0;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof User)) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.getId());  // Compare using the unique ID
+    }
 
     public static User create(final String name, final String platformUserId, final Platform platForm, final String imageUrl) {
         return User.builder()

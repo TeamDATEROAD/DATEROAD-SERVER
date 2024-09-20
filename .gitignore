@@ -48,3 +48,6 @@ dateroad-api/src/test/resources/application.yml
 
 ### File ###
 **/static/*.p8
+
+### Redis Config ###
+redis_conf/
