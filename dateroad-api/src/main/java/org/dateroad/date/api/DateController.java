@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.date.dto.request.DateCreateReq;
+import org.dateroad.date.dto.response.DateCreateRes;
 import org.dateroad.date.dto.response.DateDetailRes;
 import org.dateroad.date.dto.response.DatesGetRes;
 import org.dateroad.date.dto.response.DateGetNearestRes;
@@ -20,10 +21,10 @@ public class DateController implements DateApi{
     private final DateService dateService;
 
     @PostMapping
-    public ResponseEntity<Void> createDate(@UserId final Long userId,
-                                           @RequestBody @Valid final DateCreateReq dateCreateReq) {
-        dateService.createDate(userId, dateCreateReq);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<DateCreateRes> createDate(@UserId final Long userId,
+                                                    @RequestBody @Valid final DateCreateReq dateCreateReq) {
+        DateCreateRes dateCreateRes = dateService.createDate(userId, dateCreateReq);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dateCreateRes);
     }
 
     @GetMapping
