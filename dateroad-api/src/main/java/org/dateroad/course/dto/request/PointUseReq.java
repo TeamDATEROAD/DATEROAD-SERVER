@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.dateroad.common.Constants;
 import org.dateroad.point.domain.TransactionType;
 
 @Getter
@@ -15,7 +16,7 @@ import org.dateroad.point.domain.TransactionType;
 public class PointUseReq {
     @Builder.Default
     @Min(0)
-    private final int point = 100;
+    private final int point = Constants.COURSE_CREATE_POINT;
     @Builder.Default
     private final TransactionType type = TransactionType.POINT_GAINED;
     @Builder.Default

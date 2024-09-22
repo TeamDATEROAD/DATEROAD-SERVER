@@ -3,7 +3,7 @@ package org.dateroad.course.dto.response;
 import lombok.AccessLevel;
 import lombok.Builder;
 
-@Builder(access = AccessLevel.PROTECTED)
+@Builder(access = AccessLevel.PRIVATE)
 public record CourseCreateRes(
         Long courseId,
         int userPoint,

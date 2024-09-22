@@ -16,10 +16,7 @@ import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
 import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.request.TagCreateReq;
-import org.dateroad.course.dto.response.CourseCreateRes;
-import org.dateroad.course.dto.response.CourseDtoGetRes;
-import org.dateroad.course.dto.response.CourseGetAllRes;
-import org.dateroad.course.dto.response.CourseAccessGetAllRes;
+import org.dateroad.course.dto.response.*;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.dateroad.date.repository.CourseRepository;
@@ -222,13 +219,25 @@ public class CourseService {
     }
 
     @Transactional
-    public void openCourse(final Long userId, final Long courseId, final PointUseReq pointUseReq) {
+    public DateAccessCreateRes openCourse(final Long userId, final Long courseId, final PointUseReq pointUseReq) {
         Course course = getCourse(courseId);
         User user = getUser(userId);
         validateUserAndCourse(user, course);
         CoursePaymentType coursePaymentType = validateUserFreeOrPoint(user, pointUseReq.getPoint());
         processCoursePayment(coursePaymentType, userId, pointUseReq);
         dateAccessRepository.save(DateAccess.create(course, user));
+        Long userPurchaseCount = dateAccessRepository.countCoursesByUserId(userId);
+        return calculateUserInfo(coursePaymentType, user.getTotalPoint(), user.getFree(), userPurchaseCount);
+    }
+
+    private DateAccessCreateRes calculateUserInfo(CoursePaymentType coursePaymentType, int userTotalPoint, int userFree, Long userPurchaseCount) {
+        if (coursePaymentType == CoursePaymentType.FREE) {
+            return DateAccessCreateRes.of(userTotalPoint, userFree-1, userPurchaseCount);
+
+        } else if (coursePaymentType == CoursePaymentType.POINT) {
+            return DateAccessCreateRes.of(userTotalPoint - Constants.COURSE_OPEN_POINT, userFree, userPurchaseCount);
+        }
+        return DateAccessCreateRes.of(userTotalPoint - Constants.COURSE_OPEN_POINT, userFree, userPurchaseCount);
     }
 
     private CoursePaymentType validateUserFreeOrPoint(final User user, final int requiredPoints) {
