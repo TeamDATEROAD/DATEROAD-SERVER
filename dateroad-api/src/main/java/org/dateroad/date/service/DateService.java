@@ -6,10 +6,7 @@ import org.dateroad.date.domain.Date;
 import org.dateroad.date.dto.request.DateCreateReq;
 import org.dateroad.date.dto.request.PlaceCreateReq;
 import org.dateroad.date.dto.request.TagCreateReq;
-import org.dateroad.date.dto.response.DateDetailRes;
-import org.dateroad.date.dto.response.DateGetRes;
-import org.dateroad.date.dto.response.DatesGetRes;
-import org.dateroad.date.dto.response.DateGetNearestRes;
+import org.dateroad.date.dto.response.*;
 import org.dateroad.date.repository.DatePlaceRepository;
 import org.dateroad.date.repository.DateTagRepository;
 import org.dateroad.exception.EntityNotFoundException;
@@ -37,11 +34,14 @@ public class DateService {
     private final DatePlaceRepository datePlaceRepository;
 
     @Transactional
-    public void createDate(final Long userId, final DateCreateReq dateCreateReq) {
+    public DateCreateRes createDate(final Long userId, final DateCreateReq dateCreateReq) {
         User findUser = getUser(userId);
         Date date = saveDate(findUser, dateCreateReq);
         saveDateTag(date, dateCreateReq.tags());
         saveDatePlace(date, dateCreateReq.places());
+        LocalDate currentDate = LocalDate.now();
+        Long dateScheduleNum = dateRepository.countFutureDatesByUserId(userId, currentDate);
+        return DateCreateRes.of(dateScheduleNum);
     }
 
     public DatesGetRes getDates(final Long userId, final String time) {

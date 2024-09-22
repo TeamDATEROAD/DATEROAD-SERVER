@@ -40,6 +40,8 @@ public interface DateRepository extends JpaRepository<Date, Long> {
 
     List<Date> findAllByUser(final User user);
 
+    @Query("select count(d) from Date d where d.user.id = :userId and d.date >= :currentDate")
+    Long countFutureDatesByUserId(@Param("userId") Long userId, @Param("currentDate") LocalDate currentDate);
 }
 
 

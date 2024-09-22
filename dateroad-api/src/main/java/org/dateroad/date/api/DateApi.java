@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.date.dto.request.DateCreateReq;
+import org.dateroad.date.dto.response.DateCreateRes;
 import org.dateroad.date.dto.response.DateDetailRes;
 import org.dateroad.date.dto.response.DateGetNearestRes;
 import org.dateroad.date.dto.response.DatesGetRes;
@@ -86,9 +87,9 @@ public interface DateApi {
                     )
             }
     )
-    ResponseEntity<Void> createDate(@Parameter(hidden = true)
+    ResponseEntity<DateCreateRes> createDate(@Parameter(hidden = true)
                                     @UserId final Long userId,
-                                    @RequestBody @Valid final DateCreateReq dateCreateReq);
+                                             @RequestBody @Valid final DateCreateReq dateCreateReq);
 
     @Operation(
             summary = "지난 & 다가올 데이트 일정 전체 조회 API",

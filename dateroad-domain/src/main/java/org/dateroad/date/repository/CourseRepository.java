@@ -31,4 +31,5 @@ public interface CourseRepository extends JpaRepository<Course, Long> , JpaSpeci
     void deleteAllByUserId(@Param("userId") Long userId);
 
     List<Course> findAllByUser(final User user);
+    Long countByUser(User user);
 }

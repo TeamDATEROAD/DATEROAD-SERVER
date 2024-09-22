@@ -21,7 +21,8 @@ import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.request.TagCreateReq;
 import org.dateroad.course.dto.response.CourseCreateRes;
 import org.dateroad.course.dto.response.CourseGetAllRes;
-import org.dateroad.course.dto.response.DateAccessGetAllRes;
+import org.dateroad.course.dto.response.CourseAccessGetAllRes;
+import org.dateroad.course.dto.response.DateAccessCreateRes;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -217,7 +218,7 @@ public interface CourseApi {
                     @ApiResponse(
                             responseCode = "200",
                             content = @Content(
-                                    schema = @Schema(implementation = DateAccessGetAllRes.class),
+                                    schema = @Schema(implementation = CourseAccessGetAllRes.class),
                                     examples = @ExampleObject(value = """
                                             {
                                                 "courses": [
@@ -269,7 +270,7 @@ public interface CourseApi {
                             responseCode = "500",
                             description = "서버 내부 오류입니다.",
                             content = @Content)})
-    ResponseEntity<DateAccessGetAllRes> getAllDataAccessCourse(
+    ResponseEntity<CourseAccessGetAllRes> getAllDataAccessCourse(
             @Parameter(hidden = true) final @UserId Long userId
     );
 
@@ -348,7 +349,7 @@ public interface CourseApi {
                             responseCode = "500",
                             description = "서버 내부 오류입니다.",
                             content = @Content)})
-    public ResponseEntity<CourseCreateRes> createCourse(
+    ResponseEntity<CourseCreateRes> createCourse(
             @UserId final Long userId,
             @RequestPart("course") @Valid final CourseCreateReq courseCreateReq,
             @RequestPart("tags") @Validated @Size(min = 1, max = 3) final List<TagCreateReq> tags,
@@ -363,7 +364,7 @@ public interface CourseApi {
                     @ApiResponse(
                             responseCode = "200",
                             content = @Content(
-                                    schema = @Schema(implementation = DateAccessGetAllRes.class),
+                                    schema = @Schema(implementation = CourseAccessGetAllRes.class),
                                     examples = @ExampleObject(value = """
                                             {
                                                 "courses": [
@@ -415,7 +416,7 @@ public interface CourseApi {
                             responseCode = "500",
                             description = "서버 내부 오류입니다.",
                             content = @Content)})
-    ResponseEntity<DateAccessGetAllRes> getMyCourses(
+    ResponseEntity<CourseAccessGetAllRes> getMyCourses(
             @Parameter(hidden = true) final @UserId Long userId
     );
 
@@ -467,7 +468,7 @@ public interface CourseApi {
                             responseCode = "500",
                             description = "서버 내부 오류입니다.",
                             content = @Content)})
-    ResponseEntity<Void> openCourse(
+    ResponseEntity<DateAccessCreateRes> openCourse(
             @Parameter(hidden = true)
             @UserId final Long userId,
             @PathVariable final Long courseId,

@@ -4,21 +4,19 @@ import static org.dateroad.common.ValidatorUtil.validateUserAndCourse;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
+import org.dateroad.common.Constants;
 import org.dateroad.course.dto.request.CourseCreateEvent;
 import org.dateroad.course.dto.request.CourseCreateReq;
 import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
 import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.request.TagCreateReq;
-import org.dateroad.course.dto.response.CourseDtoGetRes;
-import org.dateroad.course.dto.response.CourseGetAllRes;
-import org.dateroad.course.dto.response.DateAccessGetAllRes;
+import org.dateroad.course.dto.response.*;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.dateroad.date.repository.CourseRepository;
@@ -139,17 +137,17 @@ public class CourseService {
         );
     }
 
-    public DateAccessGetAllRes getMyCourses(Long userId) {
+    public CourseAccessGetAllRes getMyCourses(Long userId) {
         User findUser = getUser(userId);
         List<Course> courses = courseRepository.findByUser(findUser);
         List<CourseDtoGetRes> courseDtoGetResList = convertToDtoList(courses, Function.identity());
-        return DateAccessGetAllRes.of(courseDtoGetResList);
+        return CourseAccessGetAllRes.of(courseDtoGetResList);
     }
 
-    public DateAccessGetAllRes getAllDataAccessCourse(final Long userId) {
+    public CourseAccessGetAllRes getAllCourseAccessCourse(final Long userId) {
         List<Course> accesses = dateAccessRepository.findCoursesByUserIdOrderByIdDesc(userId);
         List<CourseDtoGetRes> courseDtoGetResList = convertToDtoList(accesses, Function.identity());
-        return DateAccessGetAllRes.of(courseDtoGetResList);
+        return CourseAccessGetAllRes.of(courseDtoGetResList);
     }
 
     public User getUser(final Long userId) {
@@ -180,9 +178,9 @@ public class CourseService {
 
     @Transactional
     @CacheEvict(value = "courses", allEntries = true)
-    public Course createCourse(final Long userId, final CourseCreateReq courseRegisterReq,
-                               final List<CoursePlaceGetReq> places, final List<MultipartFile> images,
-                               List<TagCreateReq> tags) {
+    public CourseCreateRes createCourse(final Long userId, final CourseCreateReq courseRegisterReq,
+                                        final List<CoursePlaceGetReq> places, final List<MultipartFile> images,
+                                        List<TagCreateReq> tags) {
         final float totalTime = places.stream()
                 .map(CoursePlaceGetReq::getDuration)
                 .reduce(0.0f, Float::sum);
@@ -203,8 +201,9 @@ public class CourseService {
         String thumbnail = asyncService.createCourseImages(images, newcourse);// 썸
         course.setThumbnail(thumbnail);
         courseRepository.save(newcourse);  // 최종적으로 썸네일을 반영하여 저장
-        asyncService.publishEvenUserPoint(userId, PointUseReq.of(100, TransactionType.POINT_GAINED, "코스 생성하기"));
-        return newcourse;
+        asyncService.publishEvenUserPoint(userId, PointUseReq.of(Constants.COURSE_CREATE_POINT, TransactionType.POINT_GAINED, "코스 등록하기"));
+        Long userCourseCount = courseRepository.countByUser(user);
+        return CourseCreateRes.of(newcourse.getId(), user.getTotalPoint() + Constants.COURSE_CREATE_POINT, userCourseCount);
     }
 
     @TransactionalEventListener
@@ -220,13 +219,25 @@ public class CourseService {
     }
 
     @Transactional
-    public void openCourse(final Long userId, final Long courseId, final PointUseReq pointUseReq) {
+    public DateAccessCreateRes openCourse(final Long userId, final Long courseId, final PointUseReq pointUseReq) {
         Course course = getCourse(courseId);
         User user = getUser(userId);
         validateUserAndCourse(user, course);
         CoursePaymentType coursePaymentType = validateUserFreeOrPoint(user, pointUseReq.getPoint());
         processCoursePayment(coursePaymentType, userId, pointUseReq);
         dateAccessRepository.save(DateAccess.create(course, user));
+        Long userPurchaseCount = dateAccessRepository.countCoursesByUserId(userId);
+        return calculateUserInfo(coursePaymentType, user.getTotalPoint(), user.getFree(), userPurchaseCount);
+    }
+
+    private DateAccessCreateRes calculateUserInfo(CoursePaymentType coursePaymentType, int userTotalPoint, int userFree, Long userPurchaseCount) {
+        if (coursePaymentType == CoursePaymentType.FREE) {
+            return DateAccessCreateRes.of(userTotalPoint, userFree-1, userPurchaseCount);
+
+        } else if (coursePaymentType == CoursePaymentType.POINT) {
+            return DateAccessCreateRes.of(userTotalPoint - Constants.COURSE_OPEN_POINT, userFree, userPurchaseCount);
+        }
+        return DateAccessCreateRes.of(userTotalPoint - Constants.COURSE_OPEN_POINT, userFree, userPurchaseCount);
     }
 
     private CoursePaymentType validateUserFreeOrPoint(final User user, final int requiredPoints) {

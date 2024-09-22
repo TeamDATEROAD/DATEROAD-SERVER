@@ -3,13 +3,17 @@ package org.dateroad.course.dto.response;
 import lombok.AccessLevel;
 import lombok.Builder;
 
-@Builder(access = AccessLevel.PROTECTED)
+@Builder(access = AccessLevel.PRIVATE)
 public record CourseCreateRes(
-        Long courseId
+        Long courseId,
+        int userPoint,
+        Long userCourseCount
 ) {
-    public static CourseCreateRes of(final Long courseId) {
+    public static CourseCreateRes of(final Long courseId, final int userPoint, final Long userCourseCount) {
         return CourseCreateRes.builder()
                 .courseId(courseId)
+                .userPoint(userPoint)
+                .userCourseCount(userCourseCount)
                 .build();
     }
 }
