@@ -3,7 +3,6 @@ package org.dateroad.course.api;
 
 import static org.dateroad.common.ValidatorUtil.validateListSizeMax;
 import static org.dateroad.common.ValidatorUtil.validateListSizeMin;
-import static org.dateroad.common.ValidatorUtil.validateTagSize;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
@@ -18,16 +17,13 @@ import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.request.TagCreateReq;
 import org.dateroad.course.dto.response.CourseCreateRes;
 import org.dateroad.course.dto.response.CourseGetAllRes;
-import org.dateroad.course.dto.response.DateAccessGetAllRes;
+import org.dateroad.course.dto.response.CourseAccessGetAllRes;
 import org.dateroad.course.service.AsyncService;
 import org.dateroad.course.service.CourseService;
-import org.dateroad.date.domain.Course;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
-import org.dateroad.point.domain.TransactionType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,10 +50,10 @@ public class CourseController implements CourseApi {
     }
 
     @GetMapping("/date-access")
-    public ResponseEntity<DateAccessGetAllRes> getAllDataAccessCourse(final @UserId Long userId
+    public ResponseEntity<CourseAccessGetAllRes> getAllDataAccessCourse(final @UserId Long userId
     ) {
-        DateAccessGetAllRes dateAccessGetAllRes = courseService.getAllDataAccessCourse(userId);
-        return ResponseEntity.ok(dateAccessGetAllRes);
+        CourseAccessGetAllRes courseAccessGetAllRes = courseService.getAllCourseAccessCourse(userId);
+        return ResponseEntity.ok(courseAccessGetAllRes);
     }
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -74,16 +70,14 @@ public class CourseController implements CourseApi {
         validateListSizeMin(tags, 1, FailureCode.WRONG_TAG_SIZE);
         validateListSizeMax(tags, 3, FailureCode.WRONG_TAG_SIZE);
         validateListSizeMax(images, 10, FailureCode.WRONG_IMAGE_LIST_SIZE);
-        Course course = courseService.createCourse(userId, courseCreateReq, places, images, tags);
-        return ResponseEntity.status(
-                HttpStatus.CREATED
-        ).body(CourseCreateRes.of(course.getId()));
+        CourseCreateRes courseCreateRes = courseService.createCourse(userId, courseCreateReq, places, images, tags);
+        return ResponseEntity.status(HttpStatus.CREATED).body(courseCreateRes);
     }
 
     @GetMapping("/users")
-    public ResponseEntity<DateAccessGetAllRes> getMyCourses(final @UserId Long userId) {
-        DateAccessGetAllRes dateAccessGetAllRes = courseService.getMyCourses(userId);
-        return ResponseEntity.ok(dateAccessGetAllRes);
+    public ResponseEntity<CourseAccessGetAllRes> getMyCourses(final @UserId Long userId) {
+        CourseAccessGetAllRes courseAccessGetAllRes = courseService.getMyCourses(userId);
+        return ResponseEntity.ok(courseAccessGetAllRes);
     }
 
     @PostMapping("/{courseId}/date-access")
