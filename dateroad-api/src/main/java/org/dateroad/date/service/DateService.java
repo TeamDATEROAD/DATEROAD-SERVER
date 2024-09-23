@@ -83,7 +83,7 @@ public class DateService {
     }
 
     private User getUser(Long userId) {
-        return userRepository.findById(userId)
+        return userRepository.findUserById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }
 
@@ -106,11 +106,12 @@ public class DateService {
     }
 
     private List<Date> fetchDatesByUserIdAndTime(final Long userId, final String time, final LocalDate currentDate) {
+        LocalTime currentTime = LocalTime.now();
         if (time.equalsIgnoreCase("PAST")) {
-            return dateRepository.findPastDatesByUserId(userId, currentDate);
+            return dateRepository.findPastDatesByUserId(userId, currentDate, currentTime);
         }
         else if (time.equalsIgnoreCase("FUTURE")) {
-            return dateRepository.findFutureDatesByUserId(userId, currentDate);
+            return dateRepository.findFutureDatesByUserId(userId, currentDate, currentTime);
         }
         else {
             throw new UnauthorizedException(FailureCode.INVALID_DATE_GET_TYPE);
