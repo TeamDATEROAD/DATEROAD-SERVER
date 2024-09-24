@@ -43,4 +43,11 @@ out/
 
 ### Yml ###
 dateroad-api/src/main/resources/application.yml
+dateroad-api/src/main/resources/*.sql
 dateroad-api/src/test/resources/application.yml
+
+### File ###
+**/static/*.p8
+
+### Redis Config ###
+redis_conf/

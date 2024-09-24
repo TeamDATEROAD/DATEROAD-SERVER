@@ -1,5 +1,13 @@
 dependencies {
+    //feign
     implementation project(path: ':dateroad-common')
+    api 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.2'
+    // AWS sdk
+    api("software.amazon.awssdk:bom:2.21.0")
+    api("software.amazon.awssdk:s3:2.21.0")
+    // apple secretKey
+    api 'org.bouncycastle:bcprov-jdk15on:1.70'
+    api 'org.bouncycastle:bcpkix-jdk18on:1.75'
 }
 
 bootJar.enabled = false

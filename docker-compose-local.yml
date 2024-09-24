@@ -1,0 +1,150 @@
+services:
+  database:
+    container_name: database
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=0319
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    container_name: redis
+    image: redis
+    expose:
+      - 6379
+    ports:
+      - 6379:6379
+
+  redis-master-1:
+    container_name: redis-master-1
+    image: redis
+    command: redis-server /etc/redis.conf
+    volumes:
+      - ./redis_conf/redis-master-1.conf:/etc/redis.conf
+    restart: always
+    ports:
+      - 7001:7001
+      - 17001:17001
+    networks:
+      - redis-cluster
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis-master-2:
+    container_name: redis-master-2
+    image: redis
+    command: redis-server /etc/redis.conf
+    volumes:
+      - ./redis_conf/redis-master-2.conf:/etc/redis.conf
+    restart: always
+    ports:
+      - 7002:7002
+      - 17002:17002
+    networks:
+      - redis-cluster
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis-master-3:
+    container_name: redis-master-3
+    image: redis
+    command: redis-server /etc/redis.conf
+    volumes:
+      - ./redis_conf/redis-master-3.conf:/etc/redis.conf
+    restart: always
+    ports:
+      - 7003:7003
+      - 17003:17003
+    networks:
+      - redis-cluster
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis-slave-1:
+    container_name: redis-slave-1
+    image: redis
+    command: redis-server /etc/redis.conf
+    volumes:
+      - ./redis_conf/redis-slave-1.conf:/etc/redis.conf
+    restart: always
+    ports:
+      - 7004:7004
+      - 17004:17004
+    networks:
+      - redis-cluster
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis-slave-2:
+    container_name: redis-slave-2
+    image: redis
+    command: redis-server /etc/redis.conf
+    volumes:
+      - ./redis_conf/redis-slave-2.conf:/etc/redis.conf
+    restart: always
+    ports:
+      - 7005:7005
+      - 17005:17005
+    networks:
+      - redis-cluster
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis-slave-3:
+    container_name: redis-slave-3
+    image: redis
+    command: redis-server /etc/redis.conf
+    volumes:
+      - ./redis_conf/redis-slave-3.conf:/etc/redis.conf
+    restart: always
+    ports:
+      - 7006:7006
+      - 17006:17006
+    networks:
+      - redis-cluster
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis-cluster-entry:
+    image: redis
+    container_name: redis-cluster-entry
+    command: >
+      redis-cli --cluster create redis-master-1:7001 redis-master-2:7002 redis-master-3:7003 redis-slave-1:7004 redis-slave-2:7005 redis-slave-3:7006 --cluster-replicas 1 --cluster-yes
+    depends_on:
+      - redis-master-1
+      - redis-master-2
+      - redis-master-3
+      - redis-slave-1
+      - redis-slave-2
+      - redis-slave-3
+    networks:
+      - redis-cluster
+
+volumes:
+  pgdata:
+
+networks:
+  redis-cluster:
+    driver: bridge

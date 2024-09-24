@@ -1,5 +1,6 @@
 dependencies {
-    implementation project(path: ':dateroad-common')
+    api project(path: ':dateroad-common')
+    api 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 bootJar.enabled = false
