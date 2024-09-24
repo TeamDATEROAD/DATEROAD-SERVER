@@ -1,0 +1,74 @@
+name: CICD
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  ci:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Gradle Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/build.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Create application.yml
+        run: |
+          mkdir -p dateroad-api/src/main/resources && cd $_
+          touch ./application.yml
+          echo "${{ secrets.CD_MAIN_APPLICATION }}" > ./application.yml
+          cat ./application.yml
+          
+          mkdir -p static && cd $_
+          touch ./AuthKey_39CUV6ST46.p8
+          echo "${{ secrets.APPLE_CLIENT_PRIVATE_KEY }}" > ./AuthKey_39CUV6ST46.p8
+          cat ./AuthKey_39CUV6ST46.p8
+          chmod 400 ./AuthKey_39CUV6ST46.p8
+        working-directory: ${{ env.working-directory }}
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew clean build -x test --parallel --build-cache --daemon
+        shell: bash
+
+      - name: Docker Login
+        uses: docker/login-action@v2.2.0
+        with:
+          username: ${{ secrets.DOCKER_LOGIN_USERNAME }}
+          password: ${{ secrets.DOCKER_LOGIN_ACCESSTOKEN }}
+
+      - name: Docker Image Build and Push
+        run: |
+          DOCKER_BUILDKIT=1 docker build --cache-from dateroad/dateroad-server --platform linux/amd64 -t dateroad/dateroad-server .
+          docker push dateroad/dateroad-server
+
+  cd:
+    needs: ci
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.MAIN_SERVER_IP }}
+          username: ${{ secrets.MAIN_SERVER_USER }}
+          key: ${{ secrets.MAIN_SERVER_KEY }}
+          script: |
+            cd ~
+            ./deploy.sh
+            docker image prune -f
