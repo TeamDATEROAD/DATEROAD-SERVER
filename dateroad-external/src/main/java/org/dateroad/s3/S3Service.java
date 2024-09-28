@@ -5,13 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import org.dateroad.code.FailureCode;
 import org.dateroad.exception.BadRequestException;
 import org.dateroad.exception.InvalidValueException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -27,12 +24,14 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 public class S3Service {
     private final String bucketName;
     private final AWSConfig awsConfig;
+    private final String basePath;
     private static final List<String> IMAGE_EXTENSIONS = Arrays.asList("image/jpeg", "image/png", "image/jpg", "image/webp", "image/heic", "image/heif");
     private static final Long MAX_FILE_SIZE = 7 * 1024 * 1024L;
 
-    public S3Service(@Value("${aws-property.s3-bucket-name}") final String bucketName, AWSConfig awsConfig) {
+    public S3Service(@Value("${aws-property.s3-bucket-name}") final String bucketName, AWSConfig awsConfig, @Value("${cloudfront.domain}") String basePath) {
         this.bucketName = bucketName;
         this.awsConfig = awsConfig;
+        this.basePath = basePath;
     }
 
     public String uploadImage(String directoryPath, MultipartFile image) throws IOException {
@@ -98,9 +97,8 @@ public class S3Service {
         }
     }
 
-    private static String extractImageKeyFromImageUrl(String url) {
-        String basePath = "https://d2rjs92glrj91n.cloudfront.net";
-        if (url.startsWith(basePath)) {
+    private String extractImageKeyFromImageUrl(String url) {
+        if (url.startsWith(this.basePath)) {
             return url.substring(basePath.length());
         } else {
             throw new BadRequestException(FailureCode.WRONG_IMAGE_URL);
