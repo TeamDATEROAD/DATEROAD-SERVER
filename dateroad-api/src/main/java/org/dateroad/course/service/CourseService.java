@@ -42,6 +42,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -270,7 +271,7 @@ public class CourseService {
                         imageList.getSequence())
                 ).toList();
 
-        List<CoursePlace> foundCoursePlaces = coursePlaceRepository.findAllCoursePlacesByCourseId(foundCourse.getId());
+        List<CoursePlace> foundCoursePlaces = coursePlaceRepository.findAllCoursePlacesByCourseId(foundCourse.getId(), Sort.by(Sort.Direction.ASC, "sequence"));
         validateCoursePlace(foundCoursePlaces);
 
         List<CourseGetDetailRes.Places> places = foundCoursePlaces.stream()
