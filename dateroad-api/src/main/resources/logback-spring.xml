@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <springProperty name="discordLogUrl" source="feign.discord.webhook.log-url"/>
+    <include resource="console-appender.xml"/>
+    <include resource="discord-appender.xml"/>
+
+    <!-- 로그 레벨 지정 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ASYNC_DISCORD" />
+    </root>
+</configuration>
