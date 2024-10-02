@@ -1,8 +1,9 @@
 package org.dateroad.event;
+import lombok.AccessLevel;
 import lombok.Builder;
 import org.dateroad.code.EventCode;
 
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 public record SignUpEventInfo (
         EventCode eventCode,
         String nickName,
