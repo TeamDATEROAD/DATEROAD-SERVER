@@ -46,6 +46,10 @@ public class MDCManager {
         }
     }
 
+    public static String getRequestUri(HttpServletRequest request) {
+        return request.getRequestURI();
+    }
+
     public static String getUserIP(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
         if (ip == null)
