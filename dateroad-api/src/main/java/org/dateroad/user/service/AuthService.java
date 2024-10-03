@@ -19,7 +19,6 @@ import org.dateroad.image.service.ImageService;
 import org.dateroad.point.repository.PointRepository;
 import org.dateroad.refreshtoken.domain.RefreshToken;
 import org.dateroad.refreshtoken.repository.RefreshTokenRepository;
-import org.dateroad.s3.S3Service;
 import org.dateroad.tag.domain.DateTagType;
 import org.dateroad.tag.domain.UserTag;
 import org.dateroad.tag.repository.UserTagRepository;
