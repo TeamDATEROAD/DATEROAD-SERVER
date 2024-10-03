@@ -1,0 +1,18 @@
+<included>
+    <appender name="DISCORD" class="org.dateroad.feign.discord.DiscordLogAppender">
+        <param name="discordLogUrl" value="${discordLogUrl}" />
+    </appender>
+    <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="DISCORD" />
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+    <!-- 비동기 Discord 로그 설정 -->
+    <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="DISCORD" />
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+</included>

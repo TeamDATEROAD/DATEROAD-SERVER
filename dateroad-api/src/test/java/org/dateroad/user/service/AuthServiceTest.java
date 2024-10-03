@@ -10,8 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.Optional;
-import org.assertj.core.api.Assertions;
 import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.Token;
 import org.dateroad.code.FailureCode;
