@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.dateroad.common.BaseTimeEntity;
 
 @Entity
@@ -38,6 +39,7 @@ public class Advertisement extends BaseTimeEntity {
 
     @Column(name = "thumbnail")
     @NotNull
+    @Setter
     private String thumbnail;
 
     @Column(name = "tag")
