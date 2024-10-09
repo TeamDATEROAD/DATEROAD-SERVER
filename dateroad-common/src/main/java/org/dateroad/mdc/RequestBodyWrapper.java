@@ -20,6 +20,11 @@ public class RequestBodyWrapper extends HttpServletRequestWrapper {
     public RequestBodyWrapper(HttpServletRequest request) {
         super(request);
 
+        if (request.getContentType() != null && request.getContentType().startsWith("multipart/")) {
+            requestBody = "Multipart 요청, 본문을 기록하지 않음";
+            return;
+        }
+
         StringBuilder stringBuilder = new StringBuilder();
         try (BufferedReader bufferedReader = request.getReader()) {
             char[] charBuffer = new char[128];
