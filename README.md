@@ -54,8 +54,11 @@
 
 <hr></hr>
 
-## Architecture
+## Architecture v1
 ![DateRoad_Server_Arch](https://github.com/user-attachments/assets/2e040d8f-bc44-4c24-ad17-8f4bccb9af4c)
+
+## Architecture v2
+<img width="2477" alt="Untitled (15)" src="https://github.com/user-attachments/assets/9ccd345b-bb2a-434c-9dd0-f4996a402a41">
 
 <br>
 
