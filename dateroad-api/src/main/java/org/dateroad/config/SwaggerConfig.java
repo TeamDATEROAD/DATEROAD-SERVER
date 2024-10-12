@@ -1,8 +1,10 @@
 package org.dateroad.config;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import java.util.ArrayList;
@@ -17,6 +19,16 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
         in = SecuritySchemeIn.HEADER,
         bearerFormat = "JWT",
         scheme = "Bearer"
+)
+@OpenAPIDefinition(
+        info = @io.swagger.v3.oas.annotations.info.Info(
+                title = "SOPT APP Team API",
+                version = "v2",
+                description = "SOPT 공식 앱팀 API입니다."
+        ),
+        servers= {
+                @Server(url = "${app.base.url}")
+        }
 )
 @Configuration
 public class SwaggerConfig {
