@@ -2,6 +2,7 @@ package org.dateroad.place.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -16,7 +17,7 @@ import org.dateroad.date.domain.Course;
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Table(name = "course_places")
+@Table(name = "course_places",indexes = @Index(columnList = "course_id"))
 public class CoursePlace extends Place {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")

@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,7 +21,7 @@ import org.dateroad.user.domain.User;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Table(name = "dates")
+@Table(name = "dates",indexes = @Index(columnList = "user_id"))
 public class Date extends DateBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
