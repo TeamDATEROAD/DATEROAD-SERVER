@@ -21,7 +21,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> , JpaSpeci
     @Query(value = "DELETE FROM courses WHERE course_id = :courseId", nativeQuery = true)
     void deleteByCourse(@Param("courseId") Long courseId);
     List<Course> findByUser(User user);
-    @Query("SELECT c FROM Course c LEFT JOIN Like l ON c.id = l.course.id GROUP BY c.id ORDER BY COUNT(l) DESC")
+    @Query("SELECT c FROM Course c INNER JOIN Like l ON c.id = l.course.id GROUP BY c.id ORDER BY COUNT(l) DESC")
     List<Course> findTopCoursesByLikes(Pageable pageable);
     @Query("SELECT c FROM Course c ORDER BY c.createdAt DESC")
     List<Course> findTopCoursesByCreatedAt(Pageable pageable);
