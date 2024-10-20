@@ -2,15 +2,14 @@ package org.dateroad.image.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,31 +38,28 @@ public class ImageService {
 
     @Transactional
     public List<Image> saveImages(final List<MultipartFile> images, final Course course) {
-        List<Image> savedImages = new ArrayList<>();
+        // Use thread-safe Queue to collect saved images
+        Queue<Image> savedImages = new ConcurrentLinkedQueue<>();
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             List<CompletableFuture<Void>> futures = IntStream.range(0, images.size())
                     .mapToObj(index -> CompletableFuture.runAsync(() -> {
                         try {
                             String imagePath = s3Service.uploadImage(path, images.get(index));
-                            Image newImage = Image.create(
-                                    course,
-                                    cachePath + imagePath,
-                                    index + 1
-                            );
+                            Image newImage = Image.create(course, cachePath + imagePath, index + 1);
                             savedImages.add(newImage);
                         } catch (IOException e) {
-                            throw new BadRequestException(FailureCode.BAD_REQUEST);
+                            throw new CompletionException(new BadRequestException(FailureCode.BAD_REQUEST));
                         }
                     }, executor))
                     .toList();
-            // Wait for all tasks to complete
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-            savedImages.sort(Comparator.comparing(Image::getSequence));
-            imageRepository.saveAll(savedImages);
-            executor.shutdown(); // Shutdown the ExecutorService
+            List<Image> sortedImages = new ArrayList<>(savedImages);
+            sortedImages.sort(Comparator.comparing(Image::getSequence));
+            imageRepository.saveAll(sortedImages);
+            return sortedImages;
         }
-        return savedImages;
     }
+
 
 
     public String getImageUrl(final MultipartFile image) {
