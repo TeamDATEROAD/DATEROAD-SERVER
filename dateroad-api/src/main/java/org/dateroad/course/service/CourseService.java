@@ -16,14 +16,17 @@ import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
 import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.request.TagCreateReq;
-import org.dateroad.course.dto.response.*;
+import org.dateroad.course.dto.response.CourseAccessGetAllRes;
+import org.dateroad.course.dto.response.CourseCreateRes;
+import org.dateroad.course.dto.response.CourseDtoGetRes;
+import org.dateroad.course.dto.response.CourseGetAllRes;
+import org.dateroad.course.dto.response.DateAccessCreateRes;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.dateAccess.domain.DateAccess;
 import org.dateroad.dateAccess.repository.DateAccessRepository;
 import org.dateroad.exception.ConflictException;
-import org.dateroad.exception.DateRoadException;
 import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.exception.ForbiddenException;
 import org.dateroad.image.domain.Image;
@@ -40,13 +43,13 @@ import org.dateroad.user.repository.UserRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -207,16 +210,12 @@ public class CourseService {
         return CourseCreateRes.of(newcourse.getId(), user.getTotalPoint() + Constants.COURSE_CREATE_POINT, userCourseCount);
     }
 
-    @TransactionalEventListener
+    @EventListener
     public void handleCourseCreatedEvent(CourseCreateEvent event) {
         Course course = event.getCourse();
         List<CoursePlaceGetReq> places = event.getPlaces();
         List<TagCreateReq> tags = event.getTags();
-        try {
-            asyncService.runAsyncTasks(places, tags, course);
-        } catch (Exception e) {
-            throw new DateRoadException(FailureCode.COURSE_CREATE_ERROR);
-        }
+        asyncService.runAsyncTasks(places, tags, course);
     }
 
     @Transactional
@@ -234,7 +233,6 @@ public class CourseService {
     private DateAccessCreateRes calculateUserInfo(CoursePaymentType coursePaymentType, int userTotalPoint, int userFree, Long userPurchaseCount) {
         if (coursePaymentType == CoursePaymentType.FREE) {
             return DateAccessCreateRes.of(userTotalPoint, userFree-1, userPurchaseCount);
-
         } else if (coursePaymentType == CoursePaymentType.POINT) {
             return DateAccessCreateRes.of(userTotalPoint - Constants.COURSE_OPEN_POINT, userFree, userPurchaseCount);
         }
