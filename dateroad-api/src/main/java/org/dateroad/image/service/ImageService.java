@@ -38,7 +38,6 @@ public class ImageService {
 
     @Transactional
     public List<Image> saveImages(final List<MultipartFile> images, final Course course) {
-        // Use thread-safe Queue to collect saved images
         Queue<Image> savedImages = new ConcurrentLinkedQueue<>();
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             List<CompletableFuture<Void>> futures = IntStream.range(0, images.size())
