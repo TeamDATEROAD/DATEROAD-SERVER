@@ -4,6 +4,7 @@ import static org.dateroad.common.ValidatorUtil.validateUserAndCourse;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
@@ -43,13 +44,14 @@ import org.dateroad.user.repository.UserRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -65,6 +67,7 @@ public class CourseService {
     private final CoursePlaceRepository coursePlaceRepository;
     private final CourseTagRepository courseTagRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final CourseRollbackService courseRollbackService;
 
     @Cacheable(value = "courses", key = "#courseGetAllReq")
     public CourseGetAllRes getAllCourses(final CourseGetAllReq courseGetAllReq) {
@@ -184,7 +187,7 @@ public class CourseService {
     @CacheEvict(value = "courses", allEntries = true)
     public CourseCreateRes createCourse(final Long userId, final CourseCreateReq courseRegisterReq,
                                         final List<CoursePlaceGetReq> places, final List<MultipartFile> images,
-                                        List<TagCreateReq> tags) {
+                                        List<TagCreateReq> tags) throws ExecutionException, InterruptedException {
         final float totalTime = places.stream()
                 .map(CoursePlaceGetReq::getDuration)
                 .reduce(0.0f, Float::sum);
@@ -205,17 +208,15 @@ public class CourseService {
         String thumbnail = asyncService.createCourseImages(images, newcourse);// 썸
         course.setThumbnail(thumbnail);
         courseRepository.save(newcourse);  // 최종적으로 썸네일을 반영하여 저장
-        asyncService.publishEvenUserPoint(userId, PointUseReq.of(Constants.COURSE_CREATE_POINT, TransactionType.POINT_GAINED, "코스 등록하기"));
+        RecordId recordId = asyncService.publishEvenUserPoint(userId, PointUseReq.of(Constants.COURSE_CREATE_POINT, TransactionType.POINT_GAINED, "코스 등록하기"));
         Long userCourseCount = courseRepository.countByUser(user);
+        courseRollbackService.rollbackCourse(recordId);
         return CourseCreateRes.of(newcourse.getId(), user.getTotalPoint() + Constants.COURSE_CREATE_POINT, userCourseCount);
     }
 
-    @EventListener
+    @TransactionalEventListener
     public void handleCourseCreatedEvent(CourseCreateEvent event) {
-        Course course = event.getCourse();
-        List<CoursePlaceGetReq> places = event.getPlaces();
-        List<TagCreateReq> tags = event.getTags();
-        asyncService.runAsyncTasks(places, tags, course);
+        asyncService.runAsyncTasks(event);
     }
 
     @Transactional
