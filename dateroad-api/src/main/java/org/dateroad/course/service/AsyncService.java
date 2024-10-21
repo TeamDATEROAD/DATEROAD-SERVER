@@ -8,9 +8,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;
-import org.dateroad.course.dto.request.CoursePlaceGetReq;
+import org.dateroad.course.dto.request.CourseCreateEvent;
 import org.dateroad.course.dto.request.PointUseReq;
-import org.dateroad.course.dto.request.TagCreateReq;
 import org.dateroad.date.domain.Course;
 import org.dateroad.exception.DateRoadException;
 import org.dateroad.image.domain.Image;
@@ -18,6 +17,7 @@ import org.dateroad.image.service.ImageService;
 import org.dateroad.point.event.MessageDto.FreeMessageDTO;
 import org.dateroad.point.event.MessageDto.PointMessageDTO;
 import org.springframework.dao.QueryTimeoutException;
+import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@Transactional(readOnly = true)
 @Slf4j
 public class AsyncService {
     private final CoursePlaceService coursePlaceService;
@@ -36,18 +35,11 @@ public class AsyncService {
         return imageService.saveImages(images, course);
     }
 
-    public void createCourseTags(final List<TagCreateReq> tags, final Course course) {
-        courseTagService.createCourseTags(tags, course);
-    }
-
-    public void createCoursePlace(final List<CoursePlaceGetReq> places, final Course course) {
-        coursePlaceService.createCoursePlace(places, course);
-    }
-
-    public void publishEvenUserPoint(final Long userId, PointUseReq pointUseReq) {
+    @Transactional
+    public RecordId publishEvenUserPoint(final Long userId, PointUseReq pointUseReq) {
         try {
             PointMessageDTO pointMessage = PointMessageDTO.of(userId, pointUseReq);
-            redistemplateForCluster.opsForStream().add("coursePoint", pointMessage.toMap());
+            return redistemplateForCluster.opsForStream().add("coursePoint", pointMessage.toMap());
         } catch (QueryTimeoutException e) {
             log.error("Redis command timed out for userId: {} - Retrying...", userId, e);
             throw new DateRoadException(FailureCode.REDIS_CONNECTION_ERROR);
@@ -57,6 +49,7 @@ public class AsyncService {
         }
     }
 
+    @Transactional
     public void publishEventUserFree(final Long userId) {
         try {
             FreeMessageDTO freeMessage = FreeMessageDTO.of(userId);
@@ -71,15 +64,14 @@ public class AsyncService {
     }
 
     @Transactional
-    public void runAsyncTasks(List<CoursePlaceGetReq> places, List<TagCreateReq> tags, Course saveCourse) {
+    public void runAsyncTasks(CourseCreateEvent event) {
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            CompletableFuture<Void> placeFuture = CompletableFuture.runAsync(() -> createCoursePlace(places, saveCourse), executor);
-            CompletableFuture<Void> tagFuture = CompletableFuture.runAsync(() -> createCourseTags(tags, saveCourse), executor);
+            CompletableFuture<Void> placeFuture = CompletableFuture.runAsync(() -> coursePlaceService.createCoursePlace(event.getPlaces(), event.getCourse()), executor);
+            CompletableFuture<Void> tagFuture = CompletableFuture.runAsync(() -> courseTagService.createCourseTags(event.getTags(), event.getCourse()),executor);
             CompletableFuture.allOf(placeFuture, tagFuture).join();
         }
     }
 
-    @Transactional
     public String createCourseImages(List<MultipartFile> images, Course course) {
         List<Image> imageList = createImage(images, course);
         return imageList.getFirst().getImageUrl();

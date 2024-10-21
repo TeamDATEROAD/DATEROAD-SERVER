@@ -7,26 +7,35 @@ import static org.dateroad.common.ValidatorUtil.validateListSizeMin;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.code.FailureCode;
-import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CourseCreateReq;
+import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
 import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.request.TagCreateReq;
+import org.dateroad.course.dto.response.CourseAccessGetAllRes;
 import org.dateroad.course.dto.response.CourseCreateRes;
 import org.dateroad.course.dto.response.CourseGetAllRes;
-import org.dateroad.course.dto.response.CourseAccessGetAllRes;
 import org.dateroad.course.dto.response.DateAccessCreateRes;
-import org.dateroad.course.service.AsyncService;
 import org.dateroad.course.service.CourseService;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -65,7 +74,7 @@ public class CourseController implements CourseApi {
             @RequestPart("tags") @Validated @Size(min = 1, max = 3) final List<TagCreateReq> tags,
             @RequestPart("places") @Validated @Size(min = 1) final List<CoursePlaceGetReq> places,
             @RequestPart("images") @Validated @Size(min =1, max = 10) final List<MultipartFile> images
-    ) {
+    ) throws ExecutionException, InterruptedException {
         validateListSizeMin(places, 1, FailureCode.WRONG_COURSE_PLACE_SIZE);
         validateListSizeMin(tags, 1, FailureCode.WRONG_TAG_SIZE);
         validateListSizeMax(tags, 3, FailureCode.WRONG_TAG_SIZE);

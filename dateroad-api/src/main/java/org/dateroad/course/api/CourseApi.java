@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.course.dto.request.CourseCreateReq;
 import org.dateroad.course.dto.request.CourseCreateSwaggerDto;
@@ -355,7 +356,7 @@ public interface CourseApi {
             @RequestPart("tags") @Validated @Size(min = 1, max = 3) final List<TagCreateReq> tags,
             @RequestPart("places") @Validated @Size(min = 1) final List<CoursePlaceGetReq> places,
             @RequestPart("images") @Validated @Size(min =1, max = 10) final List<MultipartFile> images
-    );
+    ) throws ExecutionException, InterruptedException;
 
 
     @Operation(
