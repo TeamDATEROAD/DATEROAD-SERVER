@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
 import org.dateroad.common.Constants;
+import org.dateroad.course.dto.CourseWithPlacesAndTagsDto;
 import org.dateroad.course.dto.request.CourseCreateEvent;
 import org.dateroad.course.dto.request.CourseCreateReq;
 import org.dateroad.course.dto.request.CourseGetAllReq;
@@ -43,7 +44,6 @@ import org.dateroad.user.domain.User;
 import org.dateroad.user.repository.UserRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -66,7 +66,6 @@ public class CourseService {
     private final ImageRepository imageRepository;
     private final CoursePlaceRepository coursePlaceRepository;
     private final CourseTagRepository courseTagRepository;
-    private final ApplicationEventPublisher eventPublisher;
     private final CourseRollbackService courseRollbackService;
 
     @Cacheable(value = "courses", key = "#courseGetAllReq")
@@ -204,19 +203,16 @@ public class CourseService {
                 totalTime
         );
         Course newcourse = courseRepository.save(course);
-        eventPublisher.publishEvent(CourseCreateEvent.of(newcourse, places, tags));
-        String thumbnail = asyncService.createCourseImages(images, newcourse);// 썸
+        CourseWithPlacesAndTagsDto courseWithPlacesAndTagsDto = asyncService.runAsyncTasks(CourseCreateEvent.of(newcourse, places, tags));
+        String thumbnail = asyncService.createCourseImages(images, newcourse);
         course.setThumbnail(thumbnail);
-        courseRepository.save(newcourse);  // 최종적으로 썸네일을 반영하여 저장
+        courseRepository.save(newcourse);
+        coursePlaceRepository.saveAll(courseWithPlacesAndTagsDto.coursePlaces());
+        courseTagRepository.saveAll(courseWithPlacesAndTagsDto.courseTags());
         RecordId recordId = asyncService.publishEvenUserPoint(userId, PointUseReq.of(Constants.COURSE_CREATE_POINT, TransactionType.POINT_GAINED, "코스 등록하기"));
         Long userCourseCount = courseRepository.countByUser(user);
         courseRollbackService.rollbackCourse(recordId);
         return CourseCreateRes.of(newcourse.getId(), user.getTotalPoint() + Constants.COURSE_CREATE_POINT, userCourseCount);
-    }
-
-    @TransactionalEventListener
-    public void handleCourseCreatedEvent(CourseCreateEvent event) {
-        asyncService.runAsyncTasks(event);
     }
 
     @Transactional
