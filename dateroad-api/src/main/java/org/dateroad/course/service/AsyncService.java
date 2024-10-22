@@ -8,14 +8,17 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;
+import org.dateroad.course.dto.CourseWithPlacesAndTagsDto;
 import org.dateroad.course.dto.request.CourseCreateEvent;
 import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.date.domain.Course;
 import org.dateroad.exception.DateRoadException;
 import org.dateroad.image.domain.Image;
 import org.dateroad.image.service.ImageService;
+import org.dateroad.place.domain.CoursePlace;
 import org.dateroad.point.event.MessageDto.FreeMessageDTO;
 import org.dateroad.point.event.MessageDto.PointMessageDTO;
+import org.dateroad.tag.domain.CourseTag;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -64,11 +67,13 @@ public class AsyncService {
     }
 
     @Transactional
-    public void runAsyncTasks(CourseCreateEvent event) {
+    public CourseWithPlacesAndTagsDto runAsyncTasks(CourseCreateEvent event) {
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            CompletableFuture<Void> placeFuture = CompletableFuture.runAsync(() -> coursePlaceService.createCoursePlace(event.getPlaces(), event.getCourse()), executor);
-            CompletableFuture<Void> tagFuture = CompletableFuture.runAsync(() -> courseTagService.createCourseTags(event.getTags(), event.getCourse()),executor);
-            CompletableFuture.allOf(placeFuture, tagFuture).join();
+            CompletableFuture<List<CoursePlace>> placeFuture = CompletableFuture.supplyAsync(() -> coursePlaceService.createCoursePlace(event.getPlaces(), event.getCourse()), executor);
+            CompletableFuture<List<CourseTag>> tagFuture = CompletableFuture.supplyAsync(() -> courseTagService.createCourseTags(event.getTags(), event.getCourse()), executor);
+            CompletableFuture<Void> allFutures = CompletableFuture.allOf(placeFuture, tagFuture);
+            allFutures.join();
+            return CourseWithPlacesAndTagsDto.of(placeFuture.join(), tagFuture.join());
         }
     }
 
