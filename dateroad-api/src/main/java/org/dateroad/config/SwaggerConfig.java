@@ -22,9 +22,9 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 )
 @OpenAPIDefinition(
         info = @io.swagger.v3.oas.annotations.info.Info(
-                title = "SOPT APP Team API",
+                title = "Team DateRoad API",
                 version = "v2",
-                description = "SOPT 공식 앱팀 API입니다."
+                description = "팀 DateRoad API입니다."
         ),
         servers= {
                 @Server(url = "${app.base.url}")

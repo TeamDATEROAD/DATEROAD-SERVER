@@ -34,6 +34,11 @@ public record DateCreateReq(
         @Size(min = 2, message = "장소는 최소 2개 이상 입력해야 합니다.")
         List<PlaceCreateReq> places
 ) {
+    public DateCreateReq {
+        if (date == null) {
+            date = LocalDate.now();
+        }
+    }
     public static DateCreateReq of(String title,
                                    @JsonFormat(shape = Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
                                    LocalDate date,
