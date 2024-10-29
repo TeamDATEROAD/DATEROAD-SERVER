@@ -103,7 +103,7 @@ public class RedisStreamSubscriber {
                                 StreamOffset.create(streamKey, ReadOffset.lastConsumed()))
                         .cancelOnError(t -> true) // 오류 발생 시 구독 취소
                         .consumer(Consumer.from(consumerGroup, consumerName))
-                        .autoAcknowledge(true)
+                        .autoAcknowledge(false)
                         .build(), eventListener);
 
         container.start();

@@ -4,26 +4,31 @@ import static org.dateroad.common.ValidatorUtil.validateUserAndCourse;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
 import org.dateroad.common.Constants;
+import org.dateroad.course.dto.CourseWithPlacesAndTagsDto;
 import org.dateroad.course.dto.request.CourseCreateEvent;
 import org.dateroad.course.dto.request.CourseCreateReq;
 import org.dateroad.course.dto.request.CourseGetAllReq;
 import org.dateroad.course.dto.request.CoursePlaceGetReq;
 import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.course.dto.request.TagCreateReq;
-import org.dateroad.course.dto.response.*;
+import org.dateroad.course.dto.response.CourseAccessGetAllRes;
+import org.dateroad.course.dto.response.CourseCreateRes;
+import org.dateroad.course.dto.response.CourseDtoGetRes;
+import org.dateroad.course.dto.response.CourseGetAllRes;
+import org.dateroad.course.dto.response.DateAccessCreateRes;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.dateAccess.domain.DateAccess;
 import org.dateroad.dateAccess.repository.DateAccessRepository;
 import org.dateroad.exception.ConflictException;
-import org.dateroad.exception.DateRoadException;
 import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.exception.ForbiddenException;
 import org.dateroad.image.domain.Image;
@@ -39,11 +44,11 @@ import org.dateroad.user.domain.User;
 import org.dateroad.user.repository.UserRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -61,7 +66,7 @@ public class CourseService {
     private final ImageRepository imageRepository;
     private final CoursePlaceRepository coursePlaceRepository;
     private final CourseTagRepository courseTagRepository;
-    private final ApplicationEventPublisher eventPublisher;
+    private final CourseRollbackService courseRollbackService;
 
     @Cacheable(value = "courses", key = "#courseGetAllReq")
     public CourseGetAllRes getAllCourses(final CourseGetAllReq courseGetAllReq) {
@@ -181,7 +186,7 @@ public class CourseService {
     @CacheEvict(value = "courses", allEntries = true)
     public CourseCreateRes createCourse(final Long userId, final CourseCreateReq courseRegisterReq,
                                         final List<CoursePlaceGetReq> places, final List<MultipartFile> images,
-                                        List<TagCreateReq> tags) {
+                                        List<TagCreateReq> tags) throws ExecutionException, InterruptedException {
         final float totalTime = places.stream()
                 .map(CoursePlaceGetReq::getDuration)
                 .reduce(0.0f, Float::sum);
@@ -198,25 +203,16 @@ public class CourseService {
                 totalTime
         );
         Course newcourse = courseRepository.save(course);
-        eventPublisher.publishEvent(CourseCreateEvent.of(newcourse, places, tags));
-        String thumbnail = asyncService.createCourseImages(images, newcourse);// 썸
+        CourseWithPlacesAndTagsDto courseWithPlacesAndTagsDto = asyncService.runAsyncTasks(CourseCreateEvent.of(newcourse, places, tags));
+        String thumbnail = asyncService.createCourseImages(images, newcourse);
         course.setThumbnail(thumbnail);
-        courseRepository.save(newcourse);  // 최종적으로 썸네일을 반영하여 저장
-        asyncService.publishEvenUserPoint(userId, PointUseReq.of(Constants.COURSE_CREATE_POINT, TransactionType.POINT_GAINED, "코스 등록하기"));
+        courseRepository.save(newcourse);
+        coursePlaceRepository.saveAll(courseWithPlacesAndTagsDto.coursePlaces());
+        courseTagRepository.saveAll(courseWithPlacesAndTagsDto.courseTags());
+        RecordId recordId = asyncService.publishEvenUserPoint(userId, PointUseReq.of(Constants.COURSE_CREATE_POINT, TransactionType.POINT_GAINED, "코스 등록하기"));
         Long userCourseCount = courseRepository.countByUser(user);
+        courseRollbackService.rollbackCourse(recordId);
         return CourseCreateRes.of(newcourse.getId(), user.getTotalPoint() + Constants.COURSE_CREATE_POINT, userCourseCount);
-    }
-
-    @TransactionalEventListener
-    public void handleCourseCreatedEvent(CourseCreateEvent event) {
-        Course course = event.getCourse();
-        List<CoursePlaceGetReq> places = event.getPlaces();
-        List<TagCreateReq> tags = event.getTags();
-        try {
-            asyncService.runAsyncTasks(places, tags, course);
-        } catch (Exception e) {
-            throw new DateRoadException(FailureCode.COURSE_CREATE_ERROR);
-        }
     }
 
     @Transactional
@@ -234,7 +230,6 @@ public class CourseService {
     private DateAccessCreateRes calculateUserInfo(CoursePaymentType coursePaymentType, int userTotalPoint, int userFree, Long userPurchaseCount) {
         if (coursePaymentType == CoursePaymentType.FREE) {
             return DateAccessCreateRes.of(userTotalPoint, userFree-1, userPurchaseCount);
-
         } else if (coursePaymentType == CoursePaymentType.POINT) {
             return DateAccessCreateRes.of(userTotalPoint - Constants.COURSE_OPEN_POINT, userFree, userPurchaseCount);
         }

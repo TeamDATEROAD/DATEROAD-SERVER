@@ -16,20 +16,16 @@ import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.stream.StreamListener;
-import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
-
 public class PointEventListener implements StreamListener<String, MapRecord<String,String,String>>{
     private final UserService userService;
     private final RedisTemplate<String, String> redistemplateForCluster;
     private final PointRepository pointRepository;
-
-    private StreamMessageListenerContainer<String, MapRecord<String, Object, Object>> listenerContainer;
 
     @Override
     @Transactional
@@ -44,7 +40,6 @@ public class PointEventListener implements StreamListener<String, MapRecord<Stri
             int point = Integer.parseInt(map.get("point"));
             String description = map.get("description");
             int beforePoint = user.getTotalPoint();
-
             switch (type) {
                 case POINT_GAINED:
                     user.setTotalPoint(user.getTotalPoint() + point);

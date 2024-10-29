@@ -6,6 +6,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -25,7 +26,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "courses")
+@Table(name = "courses", indexes = {
+    @Index(columnList = "user_id"),
+    @Index(name = "idx_country_city", columnList = "country, city"),
+    @Index(name = "idx_cost", columnList = "cost"),
+    @Index(name = "idx_created_at", columnList = "createdAt")}
+)
 public class Course extends DateBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
