@@ -17,15 +17,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public class CourseRollbackService {
-    private final RedisTemplate<String, String> redistemplateForCluster;
+    private final RedisTemplate<String, String> redisTemplateForCluster;
 
     public void rollbackCourse(final RecordId recordId) {
-        PendingMessages pendingMessage = redistemplateForCluster.opsForStream().pending(
+        PendingMessages pendingMessage = redisTemplateForCluster.opsForStream().pending(
                 "coursePoint", Consumer.from("coursePointGroup", "instance-1"), Range.unbounded(), 100L
         );
         for (PendingMessage message : pendingMessage) {
             if(message.getId() == recordId){
-                redistemplateForCluster.opsForStream().acknowledge("coursePoint", "coursePointGroup", recordId);
+                redisTemplateForCluster.opsForStream().acknowledge("coursePoint", "coursePointGroup", recordId);
                 throw new DateRoadException(FailureCode.COURSE_CREATE_ERROR);
             }
         }

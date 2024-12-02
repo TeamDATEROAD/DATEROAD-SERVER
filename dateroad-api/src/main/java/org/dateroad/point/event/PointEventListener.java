@@ -24,14 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class PointEventListener implements StreamListener<String, MapRecord<String,String,String>>{
     private final UserService userService;
-    private final RedisTemplate<String, String> redistemplateForCluster;
+    private final RedisTemplate<String, String> redisTemplateForCluster;
     private final PointRepository pointRepository;
 
     @Override
     @Transactional
     public void onMessage(final MapRecord<String, String, String> message) throws DateRoadException {
         try {
-            String stream = message.getStream();
             String recordId = message.getId().getValue();
             Map<String, String> map = message.getValue();
             Long userId = Long.valueOf(map.get("userId"));
@@ -52,7 +51,7 @@ public class PointEventListener implements StreamListener<String, MapRecord<Stri
             }
             userService.saveUser(user);
             pointRepository.save(Point.create(user, point, type, description));
-            redistemplateForCluster.opsForStream().acknowledge("coursePoint", "coursePointGroup", recordId);
+            redisTemplateForCluster.opsForStream().acknowledge("coursePoint", "coursePointGroup", recordId);
             log.info("Redis onMessage[POINT]:{}:{}:BEFORE:{} => AFTER:{}", user.getId(), type.getDescription(), beforePoint, user.getTotalPoint());
         } catch (RedisSystemException e) {
             log.error("Redis Listener Error: ERROR: {}", e.getMessage());
