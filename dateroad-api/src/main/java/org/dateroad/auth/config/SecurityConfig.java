@@ -32,7 +32,6 @@ public class SecurityConfig {
             "/api/v1/users/signup",
             "/api/v1/users/signin",
             "/api/v1/users/reissue",
-            "/",
             "/swagger-ui/**",
             "/error",
             "/v3/api-docs/**"
@@ -53,8 +52,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorizationManagerRequestMatcherRegistry ->
                                 authorizationManagerRequestMatcherRegistry
-                                        .anyRequest()
-                                        .authenticated())
+                                        .anyRequest().authenticated())
 
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
