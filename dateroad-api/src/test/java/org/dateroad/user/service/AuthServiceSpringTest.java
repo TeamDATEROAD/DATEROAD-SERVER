@@ -83,4 +83,46 @@ class AuthServiceSpringTest {
         // then
         assertThat(userRepository.count()).isEqualTo(1); // 중복 회원가입이 발생하지 않아야 함
     }
+
+    @DisplayName("서로 다른 토큰으로(사용자가) 동시에 회원가입 요청 시 모두 회원가입이 성공한다.")
+    @Test
+    void signUpWithDifferentTokensLatch() throws InterruptedException {
+        // given
+        int threadCount = 2; // 두 명의 동시 요청
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch startLatch = new CountDownLatch(1); // 요청 시작 신호
+        CountDownLatch latch = new CountDownLatch(threadCount); // 요청 완료 대기
+
+        // when
+        executorService.submit(() -> {
+            try {
+                startLatch.await(); // 모든 스레드가 시작 신호를 기다림
+                authFacade.lettuceSignUp(testToken1, USER1_SIGN_UP_REQ, null, USER1_TAGS);
+            } catch (Exception e) {
+                log.error("회원가입 동시성 테스트 중 예외 발생 (user1): ", e);
+            } finally {
+                latch.countDown();
+            }
+        });
+
+        executorService.submit(() -> {
+            try {
+                startLatch.await(); // 모든 스레드가 시작 신호를 기다림
+                authFacade.lettuceSignUp(testToken2, USER2_SIGN_UP_REQ, null, USER2_TAGS);
+            } catch (Exception e) {
+                log.error("회원가입 동시성 테스트 중 예외 발생 (user2): ", e);
+            } finally {
+                latch.countDown();
+            }
+        });
+
+        // 모든 요청이 동시에 시작되도록 신호를 줌
+        startLatch.countDown();
+
+        latch.await(); // 모든 요청이 완료될 때까지 대기
+        executorService.shutdown();
+
+        // then
+        assertThat(userRepository.count()).isEqualTo(2); // 두 명 모두 가입되어야 함
+    }
 }
