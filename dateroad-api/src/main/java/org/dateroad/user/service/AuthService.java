@@ -103,27 +103,20 @@ public class AuthService {
     }
 
     @Transactional
-    public void withdraw(final Long userId, final AppleWithdrawAuthCodeReq AppleWithdrawAuthCodeReq) {
+    public void withdraw(final Long userId, final AppleWithdrawAuthCodeReq appleWithdrawAuthCodeReq) {
         User foundUser = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
-        if (foundUser.getPlatForm() == Platform.KAKAO) {    //카카오 유저면 카카오와 연결 끊기
+        if (foundUser.getPlatForm() == Platform.KAKAO) {
             kakaoFeignProvider.unLinkWithKakao(foundUser.getPlatformUserId());
-        } else if (foundUser.getPlatForm() == Platform.APPLE) {    //애플 유저면 애플이랑 연결 끊기
-            appleFeignProvider.revokeUser(AppleWithdrawAuthCodeReq.authCode());
+        } else if (foundUser.getPlatForm() == Platform.APPLE) {
+            appleFeignProvider.revokeUser(appleWithdrawAuthCodeReq.authCode());
         } else {
             throw new InvalidValueException(FailureCode.INVALID_PLATFORM_TYPE);
         }
         deleteAllDataByUser(foundUser);
     }
 
-    //닉네임 중복체크
-    public void checkNickname(final String nickname) {
-        if (userRepository.existsByName(nickname)) {
-            throw new ConflictException(FailureCode.DUPLICATE_NICKNAME);
-        }
-	}
-
     @Transactional
-    public void signout(final long userId) {
+    public void signOut(final long userId) {
         User foundUser = getUserByUserId(userId);
         deleteRefreshToken(foundUser.getId());
     }
