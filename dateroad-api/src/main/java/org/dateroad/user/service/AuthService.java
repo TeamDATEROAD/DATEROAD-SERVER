@@ -52,11 +52,23 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PointRepository pointRepository;
     private final DiscordFeignProvider discordFeignProvider;
-    private final ImageService imageService;;
+    private final ImageService imageService;
+    private final RedisLockManager redisLockManager;
+
+    public UserJwtInfoRes lettuceSignUp(final String token, final UserSignUpReq userSignUpReq, @Nullable final MultipartFile image, final List<DateTagType> tag) {
+        String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
+
+        if (!redisLockManager.acquireLock(platformUserId, Constants.SIGN_UP_LOCK_TYPE, 3L)) {
+            throw new DateRoadException(FailureCode.REDIS_LOCK_ERROR);
+        } try {
+            return signUp(platformUserId, userSignUpReq, image, tag);
+        } finally {
+            redisLockManager.releaseLock(platformUserId);
+        }
+    }
 
     @Transactional
-    public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, @Nullable final MultipartFile image, final List<DateTagType> tag) {
-        String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
+    public UserJwtInfoRes signUp(final String platformUserId, final UserSignUpReq userSignUpReq, @Nullable final MultipartFile image, final List<DateTagType> tag) {
         validateTagSize(tag,FailureCode.WRONG_USER_TAG_SIZE);
         checkNickname(userSignUpReq.name());
         validateDuplicatedUser(userSignUpReq.platform(), platformUserId);
