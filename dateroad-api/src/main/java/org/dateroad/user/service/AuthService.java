@@ -7,8 +7,6 @@ import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.Token;
 import org.dateroad.code.EventCode;
 import org.dateroad.code.FailureCode;
-import org.dateroad.common.Constants;
-import org.dateroad.config.RedisLockManager;
 import org.dateroad.event.SignUpEventInfo;
 import org.dateroad.exception.*;
 import org.dateroad.feign.apple.AppleFeignProvider;
@@ -55,22 +53,10 @@ public class AuthService {
     private final PointRepository pointRepository;
     private final DiscordFeignProvider discordFeignProvider;
     private final ImageService imageService;
-    private final RedisLockManager redisLockManager;
-
-    public UserJwtInfoRes lettuceSignUp(final String token, final UserSignUpReq userSignUpReq, @Nullable final MultipartFile image, final List<DateTagType> tag) {
-        String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
-
-        if (!redisLockManager.acquireLock(platformUserId, Constants.SIGN_UP_LOCK_TYPE, 3L)) {
-            throw new DateRoadException(FailureCode.REDIS_LOCK_ERROR);
-        } try {
-            return signUp(platformUserId, userSignUpReq, image, tag);
-        } finally {
-            redisLockManager.releaseLock(platformUserId);
-        }
-    }
 
     @Transactional
-    public UserJwtInfoRes signUp(final String platformUserId, final UserSignUpReq userSignUpReq, @Nullable final MultipartFile image, final List<DateTagType> tag) {
+    public UserJwtInfoRes signUp(final String token, final UserSignUpReq userSignUpReq, @Nullable final MultipartFile image, final List<DateTagType> tag) {
+        String platformUserId = getUserPlatformId(userSignUpReq.platform(), token);
         validateTagSize(tag,FailureCode.WRONG_USER_TAG_SIZE);
         checkNickname(userSignUpReq.name());
         validateDuplicatedUser(userSignUpReq.platform(), platformUserId);
@@ -78,7 +64,6 @@ public class AuthService {
         saveUserTag(newUser, tag);
         Token issuedToken = issueToken(newUser.getId());
 
-        //디스코드 웹훅
         sendSignUpEventToDiscord(userSignUpReq);
         return UserJwtInfoRes.of(newUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
@@ -121,7 +106,6 @@ public class AuthService {
         deleteRefreshToken(foundUser.getId());
     }
 
-    //닉네임 중복체크
     public void checkNickname(final String nickname) {
         if (userRepository.existsByName(nickname)) {
             throw new ConflictException(FailureCode.DUPLICATE_NICKNAME);
@@ -138,7 +122,6 @@ public class AuthService {
                 String.valueOf(userSignUpReq.platform())));
     }
 
-    //플랫폼 유저 아이디 가져오기 (카카오 or 애플)
     private String getUserPlatformId(final Platform platform, final String token) {
         if (platform == Platform.APPLE) {
             return appleFeignProvider.getApplePlatformUserId(token);
@@ -149,39 +132,31 @@ public class AuthService {
         }
     }
 
-    //중복유저 검증 메서드
     private void validateDuplicatedUser(final Platform platform, final String platformUserId) {
         if (userRepository.existsUserByPlatFormAndPlatformUserId(platform, platformUserId)) {
             throw new ConflictException(FailureCode.DUPLICATE_USER);
         }
     }
 
-    //유저 생성
     private User saveUser(final String name, final String image, final Platform platform, final String platformUserId) {
         User user = User.create(name, platformUserId, platform, image);
         return userRepository.save(user);
     }
 
-    //유저 태그 생성
     private void saveUserTag(final User savedUser, final List<DateTagType> userTags) {
-        List<UserTag> userTageList = userTags.stream()
+        userTags.stream()
                 .map(dateTagType -> UserTag.create(savedUser, dateTagType))
-                .map(userTagRepository::save)
-                .toList();
+                .forEach(userTagRepository::save);
     }
 
-    //유저 가져오기(platform이랑 platformUserId 사용)
     private User getUserByPlatformAndPlatformUserId(final Platform platform, final String platformUserId) {
         return userRepository.findUserByPlatFormAndPlatformUserId(platform, platformUserId)
-                .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND)
-                );
+                .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }
 
-    //유저 가져오기(userId 사용)
     private User getUserByUserId(final long userId) {
-        return userRepository.findById(userId).orElseThrow(
-                () -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND)
-        );
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }
 
     private RefreshToken getRefreshTokenByToken(final String refreshToken) {
@@ -197,12 +172,10 @@ public class AuthService {
         }
     }
 
-    //토큰 발급
     private Token issueToken(final Long userId) {
         return jwtProvider.issueToken(userId);
     }
 
-    //리프레시 토큰 삭제
     private void deleteRefreshToken(final Long userId) {
         refreshTokenRepository.deleteRefreshTokenByUserId(userId);
     }
