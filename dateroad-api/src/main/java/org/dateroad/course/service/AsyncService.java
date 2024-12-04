@@ -33,7 +33,7 @@ public class AsyncService {
     private final CoursePlaceService coursePlaceService;
     private final CourseTagService courseTagService;
     private final ImageService imageService;
-    private final RedisTemplate<String, String> redistemplateForCluster;
+    private final RedisTemplate<String, String> redisTemplateForCluster;
     public List<Image> createImage(final List<MultipartFile> images, final Course course) {
         return imageService.saveImages(images, course);
     }
@@ -42,7 +42,7 @@ public class AsyncService {
     public RecordId publishEvenUserPoint(final Long userId, PointUseReq pointUseReq) {
         try {
             PointMessageDTO pointMessage = PointMessageDTO.of(userId, pointUseReq);
-            return redistemplateForCluster.opsForStream().add("coursePoint", pointMessage.toMap());
+            return redisTemplateForCluster.opsForStream().add("coursePoint", pointMessage.toMap());
         } catch (QueryTimeoutException e) {
             log.error("Redis command timed out for userId: {} - Retrying...", userId, e);
             throw new DateRoadException(FailureCode.REDIS_CONNECTION_ERROR);
@@ -56,7 +56,7 @@ public class AsyncService {
     public void publishEventUserFree(final Long userId) {
         try {
             FreeMessageDTO freeMessage = FreeMessageDTO.of(userId);
-            redistemplateForCluster.opsForStream().add("courseFree", freeMessage.toMap());
+            redisTemplateForCluster.opsForStream().add("courseFree", freeMessage.toMap());
         } catch (QueryTimeoutException e) {
             log.error("Redis command timed out for userId: {} - Retrying...", userId, e);
             throw new DateRoadException(FailureCode.REDIS_CONNECTION_ERROR);

@@ -33,7 +33,7 @@ public class RedisStreamSubscriber {
 
     private final PointEventListener pointEventListener;
     private final FreeEventListener freeEventListener;
-    private final RedisTemplate<String, String> redistemplateForCluster;
+    private final RedisTemplate<String, String> redisTemplateForCluster;
     private final RedisConnectionFactory redisConnectionFactoryForCluster;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -47,9 +47,9 @@ public class RedisStreamSubscriber {
     }
 
     public void createStreamConsumerGroup(final String streamKey, final String consumerGroupName) {
-        boolean streamExists = Boolean.TRUE.equals(redistemplateForCluster.hasKey(streamKey));
+        boolean streamExists = Boolean.TRUE.equals(redisTemplateForCluster.hasKey(streamKey));
         if (!streamExists) {
-            redistemplateForCluster.execute((RedisCallback<Void>) connection -> {
+            redisTemplateForCluster.execute((RedisCallback<Void>) connection -> {
                 byte[] streamKeyBytes = streamKey.getBytes();
                 byte[] consumerGroupNameBytes = consumerGroupName.getBytes();
                 connection.execute("XGROUP", "CREATE".getBytes(), streamKeyBytes, consumerGroupNameBytes,
@@ -57,12 +57,12 @@ public class RedisStreamSubscriber {
                 return null;
             });
         } else if (!isStreamConsumerGroupExist(streamKey, consumerGroupName)) {
-            redistemplateForCluster.opsForStream().createGroup(streamKey, ReadOffset.from("0"), consumerGroupName);
+            redisTemplateForCluster.opsForStream().createGroup(streamKey, ReadOffset.from("0"), consumerGroupName);
         }
     }
 
     public boolean isStreamConsumerGroupExist(final String streamKey, final String consumerGroupName) {
-        return redistemplateForCluster
+        return redisTemplateForCluster
                 .opsForStream().groups(streamKey).stream()
                 .anyMatch(group -> group.groupName().equals(consumerGroupName));
     }

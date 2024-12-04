@@ -90,7 +90,7 @@ public class RedisClusterConfig {
 
 
     @Bean
-    public RedisTemplate<String, String> redistemplateForCluster() {
+    public RedisTemplate<String, String> redisTemplateForCluster() {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactoryForCluster());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
