@@ -7,6 +7,8 @@ import org.dateroad.auth.jwt.JwtProvider;
 import org.dateroad.auth.jwt.Token;
 import org.dateroad.code.EventCode;
 import org.dateroad.code.FailureCode;
+import org.dateroad.common.Constants;
+import org.dateroad.config.RedisLockManager;
 import org.dateroad.event.SignUpEventInfo;
 import org.dateroad.exception.*;
 import org.dateroad.feign.apple.AppleFeignProvider;
@@ -77,12 +79,7 @@ public class AuthService {
         Token issuedToken = issueToken(newUser.getId());
 
         //디스코드 웹훅
-        int userCount = (int) userRepository.countByNameNot("삭제된유저");
-        discordFeignProvider.sendSignUpInfoToDiscord(SignUpEventInfo.of(
-                EventCode.DISCORD_SIGNUP_EVENT,
-                userSignUpReq.name(),
-                userCount,
-                String.valueOf(userSignUpReq.platform())));
+        sendSignUpEventToDiscord(userSignUpReq);
         return UserJwtInfoRes.of(newUser.getId(), issuedToken.accessToken(), issuedToken.refreshToken());
     }
 
@@ -129,6 +126,23 @@ public class AuthService {
     public void signout(final long userId) {
         User foundUser = getUserByUserId(userId);
         deleteRefreshToken(foundUser.getId());
+    }
+
+    //닉네임 중복체크
+    public void checkNickname(final String nickname) {
+        if (userRepository.existsByName(nickname)) {
+            throw new ConflictException(FailureCode.DUPLICATE_NICKNAME);
+        }
+    }
+
+    private void sendSignUpEventToDiscord(final UserSignUpReq userSignUpReq) {
+        int userCount = (int) userRepository.countByNameNot("삭제된유저");
+
+        discordFeignProvider.sendSignUpInfoToDiscord(SignUpEventInfo.of(
+                EventCode.DISCORD_SIGNUP_EVENT,
+                userSignUpReq.name(),
+                userCount,
+                String.valueOf(userSignUpReq.platform())));
     }
 
     //플랫폼 유저 아이디 가져오기 (카카오 or 애플)
