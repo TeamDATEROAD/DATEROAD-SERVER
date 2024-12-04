@@ -101,7 +101,8 @@ public enum FailureCode {
     COURSE_CREATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"e5001" , "코스 생성에 실패했습니다."),
     POINT_CREATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "e5002", "포인트 생성에 실패했습니다."),
     REDIS_CONNECTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "e5003", "Redis 연결에 실패했습니다."),
-    DISCORD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "e5004", "디스코드 로그 전송 내용이 존재하지 않습니다.");
+    DISCORD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "e5004", "디스코드 로그 전송 내용이 존재하지 않습니다."),
+    REDIS_LOCK_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "e5005", "동일한 요청이 너무 많이 발생했습니다. 잠시 후 다시 시도해주세요.");
 
 
     private final HttpStatus httpStatus;
