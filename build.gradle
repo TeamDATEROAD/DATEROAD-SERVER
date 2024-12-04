@@ -52,6 +52,8 @@ subprojects {
 		testImplementation 'org.springframework.boot:spring-boot-starter-test'
 		testCompileOnly 'org.projectlombok:lombok'
 		testAnnotationProcessor 'org.projectlombok:lombok'
+		// test db
+		runtimeOnly 'com.h2database:h2'
 		
 		implementation 'org.springframework.boot:spring-boot-starter-actuator'
 

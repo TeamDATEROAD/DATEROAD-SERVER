@@ -3,7 +3,6 @@ package org.dateroad.user.service;
 import static org.dateroad.common.ValidatorUtil.validateTagSize;
 
 import io.micrometer.common.lang.Nullable;
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;
@@ -32,7 +31,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
     private final UserTagRepository userTagRepository;
     private final S3Service s3Service;
@@ -43,8 +41,7 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
         List<UserTag> userTags = userTagRepository.findAllByUserId(userId);
         List<DateTagType> dateTagTypes =
-                userTags
-                        .stream()
+                userTags.stream()
                         .map(UserTag::getDateTagType)
                         .toList();
         return UserInfoGetMyPageRes.of(foundUser.getName(), dateTagTypes, foundUser.getTotalPoint(),
