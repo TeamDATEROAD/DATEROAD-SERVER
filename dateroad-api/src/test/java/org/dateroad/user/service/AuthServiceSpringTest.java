@@ -131,7 +131,7 @@ class AuthServiceSpringTest {
     void signUpWithDifferentTokensCallable() throws InterruptedException, ExecutionException {
         // given
         int threadCount = 2; // 동시 요청 개수
-        ExecutorService executorService = Executors.newFixedThreadPool(2); // 가용 쓰레드 제한
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount); // 가용 쓰레드 제한
         List<Callable<String>> tasks = new ArrayList<>();
 
         // Callable tasks 생성
@@ -159,5 +159,33 @@ class AuthServiceSpringTest {
 
         // 추가 검증
         assertThat(userRepository.count()).isEqualTo(2); // 두 명 모두 가입되어야 함
+    }
+
+    @DisplayName("단일 회원가입 요청 시 User와 UserTag가 정상적으로 저장된다.")
+    @Test
+    void signUpUserAndTagsSaved() {
+
+        // when
+        authFacade.lettuceSignUp(testToken1, USER1_SIGN_UP_REQ, null, USER1_TAGS);
+
+        // then
+        // 저장된 User 확인
+        long userCount = userRepository.count();
+        assertThat(userCount).isEqualTo(1);
+
+        User savedUser = userRepository.findAll().getFirst(); // 유일한 User 가져오기
+        assertThat(savedUser.getName()).isEqualTo("테스트유저1");
+        assertThat(savedUser.getPlatForm()).isEqualTo(Platform.KAKAO);
+
+        // 저장된 UserTag 확인
+        List<UserTag> savedTags = userTagRepository.findAllByUserId(savedUser.getId());
+
+        // 개별 태그 확인
+        assertThat(savedTags.stream().anyMatch(tag -> tag.getDateTagType() == DateTagType.DRIVE)).isTrue();
+        assertThat(savedTags.stream().anyMatch(tag -> tag.getDateTagType() == DateTagType.SHOPPING)).isTrue();
+
+        // 로그 출력
+        log.info("저장된 User: {}", savedUser);
+        log.info("저장된 UserTags: {}", savedTags);
     }
 }
