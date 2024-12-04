@@ -125,4 +125,39 @@ class AuthServiceSpringTest {
         // then
         assertThat(userRepository.count()).isEqualTo(2); // 두 명 모두 가입되어야 함
     }
+
+    @DisplayName("서로 다른 토큰으로(사용자가) 동시에 회원가입 요청 시 모두 회원가입이 성공한다.")
+    @Test
+    void signUpWithDifferentTokensCallable() throws InterruptedException, ExecutionException {
+        // given
+        int threadCount = 2; // 동시 요청 개수
+        ExecutorService executorService = Executors.newFixedThreadPool(2); // 가용 쓰레드 제한
+        List<Callable<String>> tasks = new ArrayList<>();
+
+        // Callable tasks 생성
+        tasks.add(() -> {
+            authFacade.lettuceSignUp(testToken1, USER1_SIGN_UP_REQ, null, USER1_TAGS);
+            return "USER1 회원가입 성공";
+        });
+
+        tasks.add(() -> {
+            authFacade.lettuceSignUp(testToken2, USER2_SIGN_UP_REQ, null, USER2_TAGS);
+            return "USER2 회원가입 성공";
+        });
+
+        System.out.println("-------작업 실행------");
+        List<Future<String>> results = executorService.invokeAll(tasks); // 모든 요청 실행
+        System.out.println("-------작업 종료------");
+
+        // then
+        System.out.println("-------결과 출력------");
+        for (Future<String> result : results) {
+            System.out.println(result.get()); // 작업 결과 출력
+        }
+
+        executorService.shutdown();
+
+        // 추가 검증
+        assertThat(userRepository.count()).isEqualTo(2); // 두 명 모두 가입되어야 함
+    }
 }
