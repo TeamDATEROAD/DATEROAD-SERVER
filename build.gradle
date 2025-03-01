@@ -11,11 +11,6 @@ repositories {
 	mavenCentral()
 }
 
-
-
-
-
-
 subprojects {
 	apply plugin: 'java-library'
 	apply plugin: 'idea'
@@ -42,8 +37,6 @@ subprojects {
 	}
 
 	dependencies {
-
-
 		// lombok
 		compileOnly 'org.projectlombok:lombok'
 		annotationProcessor 'org.projectlombok:lombok'
@@ -56,7 +49,6 @@ subprojects {
 		runtimeOnly 'com.h2database:h2'
 		
 		implementation 'org.springframework.boot:spring-boot-starter-actuator'
-
 	}
 
 	tasks.named('test') {
