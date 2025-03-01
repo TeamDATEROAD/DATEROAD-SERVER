@@ -24,7 +24,7 @@ public class AuthFacade {
     private final AuthService authService;
 
     public UserJwtInfoRes lettuceSignUp(final String token, final UserSignUpReq userSignUpReq, @Nullable final MultipartFile image, final List<DateTagType> tag) {
-        boolean lockAcquired = redisLockManager.acquireLock(token, Constants.SIGN_UP_LOCK_TYPE, 3L);
+        boolean lockAcquired = redisLockManager.acquireLock(token, Constants.SIGN_UP_LOCK_TYPE, 10L);
 
         if (!lockAcquired) {
             throw new DateRoadException(FailureCode.REDIS_LOCK_ERROR);
