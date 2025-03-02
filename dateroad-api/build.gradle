@@ -9,6 +9,10 @@ dependencies {
     implementation project(path: ':dateroad-external')
 
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
     runtimeOnly 'org.postgresql:postgresql'
     //swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
