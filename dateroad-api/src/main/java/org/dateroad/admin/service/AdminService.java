@@ -3,8 +3,10 @@ package org.dateroad.admin.service;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.admin.domain.Warning;
 import org.dateroad.admin.dto.CourseAdminDto;
+import org.dateroad.admin.dto.response.AdminUserResponse;
 import org.dateroad.admin.repository.WarningRepository;
 import org.dateroad.code.FailureCode;
+import org.dateroad.course.dto.response.CourseResponse;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.exception.EntityNotFoundException;
@@ -21,6 +23,7 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +35,24 @@ public class AdminService {
 
     public Page<User> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
+    }
+
+    // 사용자 상세 정보 조회
+    public AdminUserResponse getUserDetail(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
+        return AdminUserResponse.from(user);
+    }
+
+    // 사용자의 코스 목록 조회
+    public List<CourseResponse> getUserCourses(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
+        
+        List<Course> courses = courseRepository.findByUser(user);
+        return courses.stream()
+                .map(CourseResponse::from)
+                .collect(Collectors.toList());
     }
 
     public Page<CourseAdminDto> getAllCourses(String search, Pageable pageable) {
@@ -61,8 +82,16 @@ public class AdminService {
     public void warnUser(Long userId, String reason) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
+        
         Warning warning = Warning.create(user, reason);
         warningRepository.save(warning);
+
+        //TODO !
+//        // 경고 횟수 증가 및 상태 변경
+//        user.increaseWarningCount();
+//        if (user.getWarningCount() >= 3) {
+//            user.updateStatus(UserStatus.BANNED);
+//        }
     }
 
     @Transactional
