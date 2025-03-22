@@ -29,7 +29,7 @@ public class Warning extends BaseTimeEntity {
 
     @Column(name = "is_active")
     @NotNull
-    private boolean isActive;
+    private Boolean isActive;
 
     public static Warning create(final User user, final String reason) {
         return Warning.builder()
