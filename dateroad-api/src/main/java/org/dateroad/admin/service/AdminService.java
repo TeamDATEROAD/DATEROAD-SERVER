@@ -74,7 +74,7 @@ public class AdminService {
     public long getActiveWarningCount(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
-        return warningRepository.countByUserAndActiveTrue(user);
+        return warningRepository.countByUserAndIsActiveTrue(user);
     }
 
     @Transactional
