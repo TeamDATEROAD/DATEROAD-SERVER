@@ -26,6 +26,7 @@ ENV JAVA_HOME=/custom-jre
 ENV PATH="$JAVA_HOME/bin:$PATH"
 ENV TZ=Asia/Seoul
 
+
 WORKDIR /app
 
 # 커스텀 JRE와 빌드된 애플리케이션 복사

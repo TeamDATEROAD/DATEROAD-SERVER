@@ -1,8 +1,11 @@
 package org.dateroad.admin.api;
 
 import lombok.RequiredArgsConstructor;
+import org.dateroad.admin.dto.AdminLoginReq;
+import org.dateroad.admin.dto.AdminLoginRes;
 import org.dateroad.admin.dto.CourseAdminDto;
 import org.dateroad.admin.dto.response.AdminUserResponse;
+import org.dateroad.admin.service.AdminAuthService;
 import org.dateroad.admin.service.AdminService;
 import org.dateroad.course.dto.response.CourseResponse;
 import org.dateroad.date.domain.Course;
@@ -19,10 +22,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
+    private final AdminAuthService adminAuthService;
 
     @GetMapping("/users")
     public ResponseEntity<Page<User>> getAllUsers(Pageable pageable) {
         return ResponseEntity.ok(adminService.getAllUsers(pageable));
+    }
+
+    @PostMapping("/login")
+    @ResponseBody
+    public ResponseEntity<AdminLoginRes> login(@RequestBody AdminLoginReq req) {
+        return ResponseEntity.ok(adminAuthService.login(req));
     }
 
     @GetMapping("/users/{userId}/detail")
