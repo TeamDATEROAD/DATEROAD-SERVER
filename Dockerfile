@@ -26,6 +26,13 @@ ENV JAVA_HOME=/custom-jre
 ENV PATH="$JAVA_HOME/bin:$PATH"
 ENV TZ=Asia/Seoul
 
+# 데이터베이스 설정을 위한 환경 변수
+ENV SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/dateroad
+ENV SPRING_DATASOURCE_USERNAME=root
+ENV SPRING_DATASOURCE_PASSWORD=password
+ENV SPRING_JPA_HIBERNATE_DDL_AUTO=update
+ENV SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
+
 WORKDIR /app
 
 # 커스텀 JRE와 빌드된 애플리케이션 복사

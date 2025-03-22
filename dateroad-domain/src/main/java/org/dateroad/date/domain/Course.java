@@ -60,7 +60,6 @@ public class Course extends DateBase {
     @Column(name = "thumbnail")
     private String thumbnail;
 
-    @JsonIgnore
     @Column(name = "deleted")
     @Builder.Default
     private Boolean deleted = false;
