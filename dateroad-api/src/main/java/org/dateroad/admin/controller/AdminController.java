@@ -24,7 +24,7 @@ public class AdminController {
 
     @PostMapping
     @ResponseBody
-    @RequestMapping("/${admin.create.url}")
+    @RequestMapping("/asldkfjlaksjdfaasdlkfj")
     public ResponseEntity<Void> createAdmin(@RequestBody AdminCreateDto dto) {
         adminAuthService.createAdmin(dto);
         return ResponseEntity.ok().build();
