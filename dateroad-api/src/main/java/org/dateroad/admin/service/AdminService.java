@@ -2,6 +2,7 @@ package org.dateroad.admin.service;
 
 import lombok.RequiredArgsConstructor;
 import org.dateroad.admin.domain.Warning;
+import org.dateroad.admin.dto.CourseAdminDto;
 import org.dateroad.admin.repository.WarningRepository;
 import org.dateroad.code.FailureCode;
 import org.dateroad.date.domain.Course;
@@ -33,9 +34,9 @@ public class AdminService {
         return userRepository.findAll(pageable);
     }
 
-    public Page<Course> getAllCourses(String search, Pageable pageable) {
+    public Page<CourseAdminDto> getAllCourses(String search, Pageable pageable) {
         if (!StringUtils.hasText(search)) {
-            return courseRepository.findAll(pageable);
+            return courseRepository.findAll(pageable).map(CourseAdminDto::from);
         }
 
         Specification<Course> spec = (root, query, cb) -> {
@@ -53,7 +54,7 @@ public class AdminService {
             return cb.or(predicates.toArray(new Predicate[0]));
         };
 
-        return courseRepository.findAll(spec, pageable);
+        return courseRepository.findAll(spec, pageable).map(CourseAdminDto::from);
     }
 
     @Transactional
