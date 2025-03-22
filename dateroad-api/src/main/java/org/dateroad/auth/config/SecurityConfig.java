@@ -6,6 +6,7 @@ import org.dateroad.auth.exception.ExceptionHandlerFilter;
 import org.dateroad.auth.exception.JwtAuthenticationEntryPoint;
 import org.dateroad.auth.filter.JwtAuthenticationFilter;
 import org.dateroad.auth.jwt.JwtProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,6 +27,7 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtProvider jwtProvider;
     private final ExceptionHandlerFilter exceptionHandlerFilter;
+
     private static final String[] whiteList = {
             "/actuator/health",
             "/api/v1/users/check",
@@ -34,7 +36,9 @@ public class SecurityConfig {
             "/api/v1/users/reissue",
             "/swagger-ui/**",
             "/error",
-            "/v3/api-docs/**"
+            "/v3/api-docs/**",
+            "/api/v1/admin/asldkfjlaksjdfaasdlkfj",
+            "/api/v1/admin/login",
     };
 
     @Bean
@@ -52,8 +56,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorizationManagerRequestMatcherRegistry ->
                                 authorizationManagerRequestMatcherRegistry
+                                        .requestMatchers(whiteList).permitAll()
                                         .anyRequest().authenticated())
-
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
                 .build();
