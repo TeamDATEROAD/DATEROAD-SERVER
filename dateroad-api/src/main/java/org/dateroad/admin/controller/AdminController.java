@@ -22,14 +22,6 @@ public class AdminController {
     private final AdminService adminService;
     private final AdminAuthService adminAuthService;
 
-    @PostMapping
-    @ResponseBody
-    @RequestMapping("/asldkfjlaksjdfaasdlkfj")
-    public ResponseEntity<Void> createAdmin(@RequestBody AdminCreateDto dto) {
-        adminAuthService.createAdmin(dto);
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/login")
     @ResponseBody
     public ResponseEntity<AdminLoginRes> login(@RequestBody AdminLoginReq req) {
