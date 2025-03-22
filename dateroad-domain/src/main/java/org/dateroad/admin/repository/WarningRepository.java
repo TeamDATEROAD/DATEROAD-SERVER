@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface WarningRepository extends JpaRepository<Warning, Long> {
-    List<Warning> findAllByUserAndIsActiveTrue(User user);
+    List<Warning> findAllByUserAndActiveIsTrue(User user);
     long countByUserAndActiveTrue(User user);
 }
