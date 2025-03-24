@@ -8,8 +8,8 @@ import org.dateroad.admin.dto.response.AdminUserResponse;
 import org.dateroad.admin.service.AdminAuthService;
 import org.dateroad.admin.service.AdminService;
 import org.dateroad.course.dto.response.CourseResponse;
-import org.dateroad.date.domain.Course;
 import org.dateroad.user.domain.User;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -72,6 +72,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/courses/{courseId}")
+    @CacheEvict(value = "courses", allEntries = true)
     public ResponseEntity<Void> deleteCourse(@PathVariable Long courseId) {
         adminService.deleteCourse(courseId);
         return ResponseEntity.ok().build();
