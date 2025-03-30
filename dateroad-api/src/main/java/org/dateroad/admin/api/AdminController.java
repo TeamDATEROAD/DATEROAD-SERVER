@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.dateroad.admin.dto.AdminLoginReq;
 import org.dateroad.admin.dto.AdminLoginRes;
 import org.dateroad.admin.dto.CourseAdminDto;
+import org.dateroad.admin.dto.CourseFilterReq;
 import org.dateroad.admin.dto.response.AdminUserResponse;
 import org.dateroad.admin.service.AdminAuthService;
 import org.dateroad.admin.service.AdminService;
@@ -25,8 +26,8 @@ public class AdminController {
     private final AdminAuthService adminAuthService;
 
     @GetMapping("/users")
-    public ResponseEntity<Page<User>> getAllUsers(Pageable pageable) {
-        return ResponseEntity.ok(adminService.getAllUsers(pageable));
+    public ResponseEntity<Page<User>> getAllUsers(Pageable pageable, @RequestParam(required = false) Boolean active) {
+        return ResponseEntity.ok(adminService.getAllUsers(pageable, active));
     }
 
     @PostMapping("/login")
@@ -48,8 +49,9 @@ public class AdminController {
     @GetMapping("/courses")
     public ResponseEntity<Page<CourseAdminDto>> getAllCourses(
             @RequestParam(required = false) String search,
+            @ModelAttribute(value = "sort") CourseFilterReq courseFilterReq,
             Pageable pageable) {
-        return ResponseEntity.ok(adminService.getAllCourses(search, pageable));
+        return ResponseEntity.ok(adminService.getAllCourses(search, pageable, courseFilterReq));
     }
 
     @PostMapping("/users/{userId}/warn")

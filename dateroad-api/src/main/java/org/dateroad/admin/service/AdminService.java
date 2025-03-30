@@ -3,23 +3,29 @@ package org.dateroad.admin.service;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.admin.domain.Warning;
 import org.dateroad.admin.dto.CourseAdminDto;
+import org.dateroad.admin.dto.CourseFilterReq;
 import org.dateroad.admin.dto.response.AdminUserResponse;
 import org.dateroad.admin.repository.WarningRepository;
 import org.dateroad.code.FailureCode;
 import org.dateroad.course.dto.response.CourseResponse;
 import org.dateroad.date.domain.Course;
+
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.exception.EntityNotFoundException;
+import org.dateroad.like.domain.Like;
 import org.dateroad.user.domain.User;
 import org.dateroad.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +39,12 @@ public class AdminService {
     private final CourseRepository courseRepository;
     private final WarningRepository warningRepository;
 
-    public Page<User> getAllUsers(Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public Page<User> getAllUsers(Pageable pageable, Boolean active) {
+        if(!active){
+            return userRepository.findAll(pageable);
+        }
+        String activeUserFilter = "USER DELETED";
+        return userRepository.findAllByPlatformUserIdNotContaining(pageable, activeUserFilter);
     }
 
     // 사용자 상세 정보 조회
@@ -55,25 +65,47 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
-    public Page<CourseAdminDto> getAllCourses(String search, Pageable pageable) {
-        if (!StringUtils.hasText(search)) {
-            return courseRepository.findAll(pageable).map(CourseAdminDto::from);
-        }
-
+    public Page<CourseAdminDto> getAllCourses(String search, Pageable pageable, CourseFilterReq courseFilterReq) {
         Specification<Course> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             
-            // 코스 제목 검색
-            predicates.add(cb.like(cb.lower(root.get("title")), 
-                "%" + search.toLowerCase() + "%"));
-            
-            // 작성자 이름 검색
-            Join<Course, User> userJoin = root.join("user");
-            predicates.add(cb.like(cb.lower(userJoin.get("name")), 
-                "%" + search.toLowerCase() + "%"));
+            if (StringUtils.hasText(search)) {
+                // 코스 제목 검색
+                predicates.add(cb.like(cb.lower(root.get("title")), 
+                    "%" + search.toLowerCase() + "%"));
+                
+                // 작성자 이름 검색
+                Join<Course, User> userJoin = root.join("user");
+                predicates.add(cb.like(cb.lower(userJoin.get("name")), 
+                    "%" + search.toLowerCase() + "%"));
+            }
+
+            if (predicates.isEmpty()) {
+                return null;
+            }
             
             return cb.or(predicates.toArray(new Predicate[0]));
         };
+
+        // 정렬 조건 추가
+        if (courseFilterReq != null) {
+            if (Boolean.TRUE.equals(courseFilterReq.getLatest())) {
+                // 최신순 정렬
+                pageable = PageRequest.of(
+                    pageable.getPageNumber(),
+                    pageable.getPageSize(),
+                    Sort.by(Sort.Direction.DESC, "createdAt")
+                );
+            } else if (Boolean.TRUE.equals(courseFilterReq.getPopular())) {
+                // 인기순 정렬 (좋아요 수 기준)
+                spec = spec.and((root, query, cb) -> {
+                    Join<Course, Like> likeJoin = root.join("likes", JoinType.LEFT);
+                    query.groupBy(root.get("id"));
+                    query.orderBy(cb.desc(cb.count(likeJoin)));
+                    return null;
+                });
+            }
+        }
 
         return courseRepository.findAll(spec, pageable).map(CourseAdminDto::from);
     }
