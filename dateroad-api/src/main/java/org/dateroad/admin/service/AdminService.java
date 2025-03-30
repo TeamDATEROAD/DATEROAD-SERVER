@@ -66,46 +66,41 @@ public class AdminService {
     }
 
     public Page<CourseAdminDto> getAllCourses(String search, Pageable pageable, CourseFilterReq courseFilterReq) {
-        Specification<Course> spec = (root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            
-            if (StringUtils.hasText(search)) {
-                // 코스 제목 검색
-                predicates.add(cb.like(cb.lower(root.get("title")), 
-                    "%" + search.toLowerCase() + "%"));
-                
-                // 작성자 이름 검색
-                Join<Course, User> userJoin = root.join("user");
-                predicates.add(cb.like(cb.lower(userJoin.get("name")), 
-                    "%" + search.toLowerCase() + "%"));
-            }
-
-            if (predicates.isEmpty()) {
-                return null;
-            }
-            
-            return cb.or(predicates.toArray(new Predicate[0]));
-        };
-
-        // 정렬 조건 추가
+        // 기본 정렬 조건 설정
         if (courseFilterReq != null) {
             if (Boolean.TRUE.equals(courseFilterReq.getLatest())) {
-                // 최신순 정렬
                 pageable = PageRequest.of(
                     pageable.getPageNumber(),
                     pageable.getPageSize(),
                     Sort.by(Sort.Direction.DESC, "createdAt")
                 );
-            } else if (Boolean.TRUE.equals(courseFilterReq.getPopular())) {
-                // 인기순 정렬 (좋아요 수 기준)
-                spec = spec.and((root, query, cb) -> {
-                    Join<Course, Like> likeJoin = root.join("likes", JoinType.LEFT);
-                    query.groupBy(root.get("id"));
-                    query.orderBy(cb.desc(cb.count(likeJoin)));
-                    return null;
-                });
             }
         }
+
+        Specification<Course> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            
+            // 기본 조건: deleted = false
+            predicates.add(cb.equal(root.get("deleted"), false));
+            
+            if (StringUtils.hasText(search)) {
+                // 검색 조건 추가
+                Predicate searchPredicate = cb.or(
+                    cb.like(cb.lower(root.get("title")), "%" + search.toLowerCase() + "%"),
+                    cb.like(cb.lower(root.join("user").get("name")), "%" + search.toLowerCase() + "%")
+                );
+                predicates.add(searchPredicate);
+            }
+
+            // 인기순 정렬
+            if (courseFilterReq != null && Boolean.TRUE.equals(courseFilterReq.getPopular())) {
+                Join<Course, Like> likeJoin = root.join("likes", JoinType.LEFT);
+                query.groupBy(root.get("id"));
+                query.orderBy(cb.desc(cb.count(likeJoin)));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
 
         return courseRepository.findAll(spec, pageable).map(CourseAdminDto::from);
     }

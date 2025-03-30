@@ -49,9 +49,9 @@ public class AdminController {
     @GetMapping("/courses")
     public ResponseEntity<Page<CourseAdminDto>> getAllCourses(
             @RequestParam(required = false) String search,
-            @ModelAttribute(value = "sort") CourseFilterReq courseFilterReq,
+            @ModelAttribute CourseFilterReq filterReq,
             Pageable pageable) {
-        return ResponseEntity.ok(adminService.getAllCourses(search, pageable, courseFilterReq));
+        return ResponseEntity.ok(adminService.getAllCourses(search, pageable, filterReq));
     }
 
     @PostMapping("/users/{userId}/warn")
