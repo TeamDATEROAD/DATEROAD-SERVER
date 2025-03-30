@@ -2,8 +2,6 @@ package org.dateroad.point.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.dateroad.code.FailureCode;
-import org.dateroad.exception.EntityNotFoundException;
 import org.dateroad.point.domain.Point;
 import org.dateroad.point.domain.TransactionType;
 import org.dateroad.point.dto.response.PointGetAllRes;
@@ -12,7 +10,7 @@ import org.dateroad.point.dto.response.PointGetAllRes.PointsDto;
 import org.dateroad.point.dto.response.PointDto;
 import org.dateroad.point.repository.PointRepository;
 import org.dateroad.user.domain.User;
-import org.dateroad.user.repository.UserRepository;
+import org.dateroad.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PointService {
     private final PointRepository pointRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     private static final int ADS_POINT = 50;
     private static final String ADS_DESCRIPTION = "광고 시청";
@@ -36,9 +34,9 @@ public class PointService {
 
     @Transactional
     public void awardAdsPoints(final Long userId) {
-        User user = getUser(userId);
+        User user = userService.getUser(userId);
         user.setTotalPoint(user.getTotalPoint() + ADS_POINT);
-        userRepository.save(user);
+        userService.saveUser(user);
         pointRepository.save(Point.create(user, ADS_POINT, TransactionType.POINT_GAINED, ADS_DESCRIPTION));
     }
 
@@ -47,10 +45,5 @@ public class PointService {
                 .filter(point -> point.transactionType() == type)
                 .map(PointDtoRes::of)
                 .toList());
-    }
-
-    private User getUser(final Long userId) {
-        return userRepository.findUserById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }
 }
