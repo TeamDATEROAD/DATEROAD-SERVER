@@ -51,7 +51,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -156,7 +155,7 @@ public class CourseService {
         return CourseAccessGetAllRes.of(courseDtoGetResList);
     }
 
-    public User getUser(final Long userId) {
+    private User getUser(final Long userId) {
         return userRepository.findUserById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }
