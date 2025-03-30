@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dateroad.code.FailureCode;
 import org.dateroad.course.dto.CourseWithPlacesAndTagsDto;
 import org.dateroad.course.dto.request.CourseCreateEvent;
+import org.dateroad.course.dto.request.CourseCreateEventV2;
 import org.dateroad.course.dto.request.PointUseReq;
 import org.dateroad.date.domain.Course;
 import org.dateroad.exception.DateRoadException;
@@ -70,6 +71,17 @@ public class AsyncService {
     public CourseWithPlacesAndTagsDto runAsyncTasks(CourseCreateEvent event) {
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             CompletableFuture<List<CoursePlace>> placeFuture = CompletableFuture.supplyAsync(() -> coursePlaceService.createCoursePlace(event.getPlaces(), event.getCourse()), executor);
+            CompletableFuture<List<CourseTag>> tagFuture = CompletableFuture.supplyAsync(() -> courseTagService.createCourseTags(event.getTags(), event.getCourse()), executor);
+            CompletableFuture<Void> allFutures = CompletableFuture.allOf(placeFuture, tagFuture);
+            allFutures.join();
+            return CourseWithPlacesAndTagsDto.of(placeFuture.join(), tagFuture.join());
+        }
+    }
+
+    @Transactional
+    public CourseWithPlacesAndTagsDto runAsyncTasksV2(CourseCreateEventV2 event) {
+        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            CompletableFuture<List<CoursePlace>> placeFuture = CompletableFuture.supplyAsync(() -> coursePlaceService.createCoursePlaceV2(event.getPlaces(), event.getCourse()), executor);
             CompletableFuture<List<CourseTag>> tagFuture = CompletableFuture.supplyAsync(() -> courseTagService.createCourseTags(event.getTags(), event.getCourse()), executor);
             CompletableFuture<Void> allFutures = CompletableFuture.allOf(placeFuture, tagFuture);
             allFutures.join();

@@ -28,6 +28,9 @@ public abstract class Place extends BaseTimeEntity {
     @NotNull
     private String name;
 
+    @Column(name = "address")
+    private String address;
+
     @Column(name = "duration")
     @NotNull
     private float duration;
@@ -35,5 +38,4 @@ public abstract class Place extends BaseTimeEntity {
     @Column(name = "sequence")
     @NotNull
     private int sequence;
-
 }

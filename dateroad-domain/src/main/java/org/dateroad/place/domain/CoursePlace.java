@@ -32,4 +32,14 @@ public class CoursePlace extends Place {
                 .sequence(sequence)
                 .build();
     }
+
+    public static CoursePlace createV2(final String name, float duration, final Course course, final int sequence, final String address) {
+        return CoursePlace.builder()
+                .name(name)
+                .duration(duration)
+                .course(course)
+                .sequence(sequence)
+                .address(address)
+                .build();
+    }
 }
