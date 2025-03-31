@@ -3,9 +3,7 @@ package org.dateroad.date.service;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
 import org.dateroad.date.domain.Date;
-import org.dateroad.date.dto.request.DateCreateReq;
-import org.dateroad.date.dto.request.PlaceCreateReq;
-import org.dateroad.date.dto.request.TagCreateReq;
+import org.dateroad.date.dto.request.*;
 import org.dateroad.date.dto.response.*;
 import org.dateroad.date.repository.DatePlaceRepository;
 import org.dateroad.date.repository.DateTagRepository;
@@ -44,6 +42,17 @@ public class DateService {
         return DateCreateRes.of(dateScheduleNum);
     }
 
+    @Transactional
+    public DateCreateRes createDateV2(final Long userId, final DateCreateReqV2 dateCreateReq) {
+        User findUser = getUser(userId);
+        Date date = saveDateV2(findUser, dateCreateReq);
+        saveDateTag(date, dateCreateReq.tags());
+        saveDatePlaceV2(date, dateCreateReq.places());
+        LocalDate currentDate = LocalDate.now();
+        Long dateScheduleNum = dateRepository.countFutureDatesByUserId(userId, currentDate);
+        return DateCreateRes.of(dateScheduleNum);
+    }
+
     public DatesGetRes getDates(final Long userId, final String time) {
         LocalDate currentDate = LocalDate.now();
         List<Date> dates = fetchDatesByUserIdAndTime(userId, time, currentDate);
@@ -61,6 +70,17 @@ public class DateService {
         List<DatePlace> findDatePlaces = getDatePlace(findDate);
         int dDay = calculateDDay(findDate.getDate(), currentDate);
         return DateDetailRes.of(findDate, findDateTags, findDatePlaces, dDay);
+    }
+
+    public DateDetailResV2 getDateDetailV2(final Long userId, final Long dateId) {
+        LocalDate currentDate = LocalDate.now();
+        User findUser = getUser(userId);
+        Date findDate = getDate(dateId);
+        validateDate(findUser, findDate);
+        List<DateTag> findDateTags = getDateTag(findDate);
+        List<DatePlace> findDatePlaces = getDatePlace(findDate);
+        int dDay = calculateDDay(findDate.getDate(), currentDate);
+        return DateDetailResV2.of(findDate, findDateTags, findDatePlaces, dDay);
     }
 
     @Transactional
@@ -93,6 +113,12 @@ public class DateService {
         return dateRepository.save(date);
     }
 
+    private Date saveDateV2(final User findUser, final DateCreateReqV2 dateCreateReq) {
+        Date date = Date.create(findUser, dateCreateReq.title(), dateCreateReq.date(),
+                dateCreateReq.startAt(), dateCreateReq.country(), dateCreateReq.city());
+        return dateRepository.save(date);
+    }
+
     private void saveDateTag(final Date date, final List<TagCreateReq> tags) {
         List<DateTag> dateTags = tags.stream()
                 .map(t -> DateTag.create(date, t.tag())).toList();
@@ -102,6 +128,12 @@ public class DateService {
     private void saveDatePlace(final Date date, final List<PlaceCreateReq> places) {
         List<DatePlace> datePlaces = places.stream()
                         .map(p -> DatePlace.create(date, p.title(), p.duration(), p.sequence())).toList();
+        datePlaceRepository.saveAll(datePlaces);
+    }
+
+    private void saveDatePlaceV2(final Date date, final List<PlaceCreateReqV2> places) {
+        List<DatePlace> datePlaces = places.stream()
+                .map(p -> DatePlace.createV2(date, p.title(), p.duration(), p.sequence(), p.address())).toList();
         datePlaceRepository.saveAll(datePlaces);
     }
 
