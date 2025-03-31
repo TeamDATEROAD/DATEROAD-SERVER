@@ -31,4 +31,14 @@ public class DatePlace extends Place {
                 .sequence(sequence)
                 .build();
     }
+
+    public static DatePlace createV2(final Date date, final String name, final float duration, final int sequence, final String address) {
+        return DatePlace.builder()
+                .name(name)
+                .duration(duration)
+                .date(date)
+                .sequence(sequence)
+                .address(address)
+                .build();
+    }
 }
