@@ -212,7 +212,7 @@ public class CourseService {
 
     @Transactional
     @CacheEvict(value = "courses", allEntries = true)
-    public CourseCreateRes createCourseV2(final Long userId, final CourseCreateReq courseRegisterReq,
+    public CourseCreateRes createCourseV2(final Long userId, final CourseCreateReqV2 courseRegisterReq,
                                           final List<CoursePlaceGetReqV2> places, final List<MultipartFile> images,
                                           List<TagCreateReq> tags) throws ExecutionException, InterruptedException {
         final float totalTime = places.stream()
@@ -232,7 +232,10 @@ public class CourseService {
         );
         Course newcourse = courseRepository.save(course);
         CourseWithPlacesAndTagsDto courseWithPlacesAndTagsDto = asyncService.runAsyncTasksV2(CourseCreateEventV2.of(newcourse, places, tags));
-        String thumbnail = asyncService.createCourseImages(images, newcourse);
+        int thumbnailIndex = courseRegisterReq.getThumbnailIndex();
+        List<Image> imageList = asyncService.createImage(images, newcourse);
+        thumbnailIndex = validateThumbnailIndex(thumbnailIndex, imageList.size());
+        String thumbnail = imageList.get(thumbnailIndex).getImageUrl();
         course.setThumbnail(thumbnail);
         courseRepository.save(newcourse);
         coursePlaceRepository.saveAll(courseWithPlacesAndTagsDto.coursePlaces());
@@ -447,5 +450,12 @@ public class CourseService {
         if (!findUser.equals(findCourse.getUser())) {
             throw new ForbiddenException(FailureCode.COURSE_DELETE_ACCESS_DENIED);
         }
+    }
+
+    private int validateThumbnailIndex(final int thumbnailIndex, final int listSize) {
+        if (thumbnailIndex < 0 || thumbnailIndex >= listSize) {
+            return 0;
+        }
+        return thumbnailIndex;
     }
 }
