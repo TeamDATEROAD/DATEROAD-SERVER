@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.code.FailureCode;
-import org.dateroad.course.dto.request.CourseCreateReq;
+import org.dateroad.course.dto.request.CourseCreateReqV2;
 import org.dateroad.course.dto.request.CoursePlaceGetReqV2;
 import org.dateroad.course.dto.request.TagCreateReq;
 import org.dateroad.course.dto.response.CourseCreateRes;
@@ -35,7 +35,7 @@ public class CourseControllerV2 implements CourseApiV2 {
             MediaType.APPLICATION_OCTET_STREAM_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CourseCreateRes> createCourse(
             @UserId final Long userId,
-            @RequestPart("course") @Valid final CourseCreateReq courseCreateReq,
+            @RequestPart("course") @Valid final CourseCreateReqV2 courseCreateReq,
             @RequestPart("tags") @Validated @Size(min = 1, max = 3) final List<TagCreateReq> tags,
             @RequestPart("places") @Validated @Size(min = 1) final List<CoursePlaceGetReqV2> places,
             @RequestPart("images") @Validated @Size(min =1, max = 10) final List<MultipartFile> images
