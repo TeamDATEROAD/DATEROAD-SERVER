@@ -27,7 +27,7 @@ import static org.dateroad.common.ValidatorUtil.validateListSizeMin;
 @RestController
 @RequestMapping("/api/v2/courses")
 @RequiredArgsConstructor
-public class CourseControllerV2 {
+public class CourseControllerV2 implements CourseApiV2 {
     private final CourseService courseService;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,
