@@ -1,12 +1,16 @@
 package org.dateroad.admin.api;
 
 import lombok.RequiredArgsConstructor;
+import org.dateroad.admin.dto.AdminLoginReq;
+import org.dateroad.admin.dto.AdminLoginRes;
 import org.dateroad.admin.dto.CourseAdminDto;
+import org.dateroad.admin.dto.CourseFilterReq;
 import org.dateroad.admin.dto.response.AdminUserResponse;
+import org.dateroad.admin.service.AdminAuthService;
 import org.dateroad.admin.service.AdminService;
 import org.dateroad.course.dto.response.CourseResponse;
-import org.dateroad.date.domain.Course;
 import org.dateroad.user.domain.User;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +23,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
+    private final AdminAuthService adminAuthService;
 
     @GetMapping("/users")
-    public ResponseEntity<Page<User>> getAllUsers(Pageable pageable) {
-        return ResponseEntity.ok(adminService.getAllUsers(pageable));
+    public ResponseEntity<Page<User>> getAllUsers(Pageable pageable, @RequestParam(required = false) Boolean active) {
+        return ResponseEntity.ok(adminService.getAllUsers(pageable, active));
+    }
+
+    @PostMapping("/login")
+    @ResponseBody
+    public ResponseEntity<AdminLoginRes> login(@RequestBody AdminLoginReq req) {
+        return ResponseEntity.ok(adminAuthService.login(req));
     }
 
     @GetMapping("/users/{userId}/detail")
@@ -38,8 +49,9 @@ public class AdminController {
     @GetMapping("/courses")
     public ResponseEntity<Page<CourseAdminDto>> getAllCourses(
             @RequestParam(required = false) String search,
+            @ModelAttribute CourseFilterReq filterReq,
             Pageable pageable) {
-        return ResponseEntity.ok(adminService.getAllCourses(search, pageable));
+        return ResponseEntity.ok(adminService.getAllCourses(search, pageable, filterReq));
     }
 
     @PostMapping("/users/{userId}/warn")
@@ -62,6 +74,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/courses/{courseId}")
+    @CacheEvict(value = "courses", allEntries = true)
     public ResponseEntity<Void> deleteCourse(@PathVariable Long courseId) {
         adminService.deleteCourse(courseId);
         return ResponseEntity.ok().build();

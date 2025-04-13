@@ -33,7 +33,6 @@ public class RedisCacheConfig {
     }
 
     @Bean
-    @Primary
     public RedisTemplate<String, String> redisTemplateForOne() {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactoryForOne());

@@ -16,7 +16,7 @@ import java.time.LocalTime;
 @Builder(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class CourseCreateReq {
+public class CourseCreateReqV2 {
     @Size(min = 5)
     private String title;
 
@@ -41,10 +41,12 @@ public class CourseCreateReq {
     @Min(0)
     private int cost;
 
-    public static CourseCreateReq of(final String title, final LocalDate date, final LocalTime startAt,
+    private int thumbnailIndex;
+
+    public static CourseCreateReqV2 of(final String title, final LocalDate date, final LocalTime startAt,
                                      final Region.MainRegion country, final Region.SubRegion city,
-                                     final String description, final int cost) {
-        return CourseCreateReq.builder()
+                                     final String description, final int cost, final int thumbnailIndex) {
+        return CourseCreateReqV2.builder()
                 .title(title)
                 .date(date)
                 .startAt(startAt)
@@ -52,6 +54,7 @@ public class CourseCreateReq {
                 .city(city)
                 .description(description)
                 .cost(cost)
+                .thumbnailIndex(thumbnailIndex)
                 .build();
     }
 }

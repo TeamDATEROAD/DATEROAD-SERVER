@@ -33,14 +33,4 @@ public class AdminAuthService {
         Token responseToken = jwtProvider.issueToken(admin.getId());
         return AdminLoginRes.of(responseToken, admin.getUsername());
     }
-
-    @Transactional
-    public void createAdmin(AdminCreateDto dto) {
-        boolean check = adminRepository.existsByUsername(dto.username());
-        if (check) {
-            throw new IllegalArgumentException("이미 존재하는 관리자 계정입니다.");
-        }
-        Admin admin = Admin.create(dto.username(), dto.password() , passwordEncoder);
-        adminRepository.save(admin);
-    }
 } 

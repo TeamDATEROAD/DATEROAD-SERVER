@@ -12,12 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.dateroad.code.FailureCode;
 import org.dateroad.common.Constants;
 import org.dateroad.course.dto.CourseWithPlacesAndTagsDto;
-import org.dateroad.course.dto.request.CourseCreateEvent;
-import org.dateroad.course.dto.request.CourseCreateReq;
-import org.dateroad.course.dto.request.CourseGetAllReq;
-import org.dateroad.course.dto.request.CoursePlaceGetReq;
-import org.dateroad.course.dto.request.PointUseReq;
-import org.dateroad.course.dto.request.TagCreateReq;
+import org.dateroad.course.dto.request.*;
 import org.dateroad.course.dto.response.CourseAccessGetAllRes;
 import org.dateroad.course.dto.response.CourseCreateRes;
 import org.dateroad.course.dto.response.CourseDtoGetRes;
@@ -25,6 +20,7 @@ import org.dateroad.course.dto.response.CourseGetAllRes;
 import org.dateroad.course.dto.response.DateAccessCreateRes;
 import org.dateroad.date.domain.Course;
 import org.dateroad.date.dto.response.CourseGetDetailRes;
+import org.dateroad.date.dto.response.CourseGetDetailResV2;
 import org.dateroad.date.repository.CourseRepository;
 import org.dateroad.dateAccess.domain.DateAccess;
 import org.dateroad.dateAccess.repository.DateAccessRepository;
@@ -51,7 +47,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -156,7 +151,7 @@ public class CourseService {
         return CourseAccessGetAllRes.of(courseDtoGetResList);
     }
 
-    public User getUser(final Long userId) {
+    private User getUser(final Long userId) {
         return userRepository.findUserById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND));
     }
@@ -205,6 +200,42 @@ public class CourseService {
         Course newcourse = courseRepository.save(course);
         CourseWithPlacesAndTagsDto courseWithPlacesAndTagsDto = asyncService.runAsyncTasks(CourseCreateEvent.of(newcourse, places, tags));
         String thumbnail = asyncService.createCourseImages(images, newcourse);
+        course.setThumbnail(thumbnail);
+        courseRepository.save(newcourse);
+        coursePlaceRepository.saveAll(courseWithPlacesAndTagsDto.coursePlaces());
+        courseTagRepository.saveAll(courseWithPlacesAndTagsDto.courseTags());
+        RecordId recordId = asyncService.publishEvenUserPoint(userId, PointUseReq.of(Constants.COURSE_CREATE_POINT, TransactionType.POINT_GAINED, "코스 등록하기"));
+        Long userCourseCount = courseRepository.countByUser(user);
+        courseRollbackService.rollbackCourse(recordId);
+        return CourseCreateRes.of(newcourse.getId(), user.getTotalPoint() + Constants.COURSE_CREATE_POINT, userCourseCount);
+    }
+
+    @Transactional
+    @CacheEvict(value = "courses", allEntries = true)
+    public CourseCreateRes createCourseV2(final Long userId, final CourseCreateReqV2 courseRegisterReq,
+                                          final List<CoursePlaceGetReqV2> places, final List<MultipartFile> images,
+                                          List<TagCreateReq> tags) throws ExecutionException, InterruptedException {
+        final float totalTime = places.stream()
+                .map(CoursePlaceGetReqV2::getDuration)
+                .reduce(0.0f, Float::sum);
+        User user = getUser(userId);
+        Course course = Course.create(
+                user,
+                courseRegisterReq.getTitle(),
+                courseRegisterReq.getDescription(),
+                courseRegisterReq.getCountry(),
+                courseRegisterReq.getCity(),
+                courseRegisterReq.getCost(),
+                courseRegisterReq.getDate(),
+                courseRegisterReq.getStartAt(),
+                totalTime
+        );
+        Course newcourse = courseRepository.save(course);
+        CourseWithPlacesAndTagsDto courseWithPlacesAndTagsDto = asyncService.runAsyncTasksV2(CourseCreateEventV2.of(newcourse, places, tags));
+        int thumbnailIndex = courseRegisterReq.getThumbnailIndex();
+        List<Image> imageList = asyncService.createImage(images, newcourse);
+        thumbnailIndex = validateThumbnailIndex(thumbnailIndex, imageList.size());
+        String thumbnail = imageList.get(thumbnailIndex).getImageUrl();
         course.setThumbnail(thumbnail);
         courseRepository.save(newcourse);
         coursePlaceRepository.saveAll(courseWithPlacesAndTagsDto.coursePlaces());
@@ -311,6 +342,66 @@ public class CourseService {
         );
     }
 
+    public CourseGetDetailResV2 getCourseDetailV2(final Long userId, final Long courseId) {
+        Course foundCourse = findCourseById(courseId);
+        User foundUser = findUserById(userId);
+        List<Image> foundImages = imageRepository.findAllByCourseId(foundCourse.getId());
+        validateImage(foundImages);
+
+        List<CourseGetDetailResV2.ImagesList> images = foundImages.stream()
+                .map(imageList -> CourseGetDetailResV2.ImagesList.of(
+                        imageList.getImageUrl(),
+                        imageList.getSequence())
+                ).toList();
+
+        List<CoursePlace> foundCoursePlaces = coursePlaceRepository.findAllCoursePlacesByCourseId(foundCourse.getId(), Sort.by(Sort.Direction.ASC, "sequence"));
+        validateCoursePlace(foundCoursePlaces);
+
+        List<CourseGetDetailResV2.Places> places = foundCoursePlaces.stream()
+                .map(placesList -> CourseGetDetailResV2.Places.of(
+                        placesList.getSequence(),
+                        placesList.getName(),
+                        placesList.getDuration(),
+                        placesList.getAddress())
+                ).toList();
+
+        List<CourseTag> foundTags = courseTagRepository.findAllCourseTagByCourseId(foundCourse.getId());
+        validateCourseTag(foundTags);
+
+        List<CourseGetDetailResV2.CourseTag> tags = foundTags.stream()
+                .map(tagList -> CourseGetDetailResV2.CourseTag.of(
+                        tagList.getDateTagType())
+                ).toList();
+
+        int likesCount = likeRepository.countByCourse(foundCourse);
+
+        boolean isCourseMine = courseRepository.existsCourseByUserAndId(foundUser, courseId);
+
+        boolean isUserLiked = false;
+
+        boolean isAccess = dateAccessRepository.existsDateAccessByUserIdAndCourseId(foundUser.getId(),
+                foundCourse.getId());
+
+        if (!isCourseMine) {
+            isUserLiked = likeRepository.existsLikeByUserIdAndCourseId(foundUser.getId(), foundCourse.getId());
+        } else {
+            isAccess = true;
+        }
+
+        return CourseGetDetailResV2.of(
+                foundCourse,
+                images,
+                likesCount,
+                places,
+                tags,
+                isAccess,
+                foundUser,
+                isCourseMine,
+                isUserLiked
+        );
+    }
+
+
     private User findUserById(final Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(FailureCode.USER_NOT_FOUND)
@@ -359,5 +450,12 @@ public class CourseService {
         if (!findUser.equals(findCourse.getUser())) {
             throw new ForbiddenException(FailureCode.COURSE_DELETE_ACCESS_DENIED);
         }
+    }
+
+    private int validateThumbnailIndex(final int thumbnailIndex, final int listSize) {
+        if (thumbnailIndex < 0 || thumbnailIndex >= listSize) {
+            return 0;
+        }
+        return thumbnailIndex;
     }
 }

@@ -85,4 +85,9 @@ public interface PointApi {
             @Parameter(hidden = true)
             @UserId Long userId
     );
+
+    public ResponseEntity<Void> awardAdsPoints(
+            @Parameter(hidden = true)
+            @UserId Long userId
+    );
 }

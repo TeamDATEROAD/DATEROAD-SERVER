@@ -13,10 +13,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.dateroad.auth.argumentresolve.UserId;
 import org.dateroad.date.dto.request.DateCreateReq;
-import org.dateroad.date.dto.response.DateCreateRes;
-import org.dateroad.date.dto.response.DateDetailRes;
-import org.dateroad.date.dto.response.DateGetNearestRes;
-import org.dateroad.date.dto.response.DatesGetRes;
+import org.dateroad.date.dto.response.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -324,5 +321,4 @@ public interface DateApi {
     )
     ResponseEntity<DateGetNearestRes> getNearestDate(@Parameter(hidden = true)
                                                      @UserId final Long userId);
-
 }
