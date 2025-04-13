@@ -9,12 +9,14 @@ import lombok.Builder;
 @Builder(access = AccessLevel.PRIVATE)
 public record PointGetAllRes(
         PointsDto gained,
-        PointsDto used
+        PointsDto used,
+        Integer totalPoint
 ) {
-    public static PointGetAllRes of(PointsDto gained, PointsDto used) {
+    public static PointGetAllRes of(PointsDto gained, PointsDto used,Integer totalPoint) {
         return PointGetAllRes.builder()
                 .gained(gained)
                 .used(used)
+                .totalPoint(totalPoint)
                 .build();
     }
     @Builder(access = AccessLevel.PRIVATE)

@@ -8,6 +8,7 @@ import org.dateroad.point.dto.response.PointGetAllRes.PointDtoRes;
 import org.dateroad.point.dto.response.PointGetAllRes.PointsDto;
 import org.dateroad.point.dto.response.PointDto;
 import org.dateroad.point.repository.PointRepository;
+import org.dateroad.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +22,9 @@ public class PointService {
                 .toList();
         PointsDto gainedPoints = pointTypeCheckToList(points, TransactionType.POINT_GAINED);
         PointsDto usedPoints = pointTypeCheckToList(points, TransactionType.POINT_USED);
-        return PointGetAllRes.of(gainedPoints,usedPoints);
+        int totalPoint = gainedPoints.points().stream().mapToInt(PointDtoRes::point).sum()
+                - usedPoints.points().stream().mapToInt(PointDtoRes::point).sum();
+        return PointGetAllRes.of(gainedPoints,usedPoints,totalPoint);
     }
 
     public PointsDto pointTypeCheckToList(List<PointDto> points, TransactionType type){
