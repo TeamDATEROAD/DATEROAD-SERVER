@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Advertisements</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-100">
+<div class="container mx-auto px-6 py-8">
+    <h2 class="text-2xl font-semibold text-gray-800">Advertisements</h2>
+    <div class="mt-8">
+        <table class="min-w-full bg-white">
+            <thead>
+            <tr>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">Title</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">Description</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">Thumbnail</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">Tag</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="advertisement : ${advertisements}">
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${advertisement.title}"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${advertisement.description}"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${advertisement.thumbnail}"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${advertisement.tag}"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <a href="#" th:href="@{/advertisements/edit/{id}(id=${advertisement.id})}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

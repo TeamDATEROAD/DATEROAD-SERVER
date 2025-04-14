@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Courses</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-100">
+<div class="container mx-auto px-6 py-8">
+    <h2 class="text-2xl font-semibold text-gray-800">Courses</h2>
+    <div class="mt-8">
+        <table class="min-w-full bg-white">
+            <thead>
+            <tr>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">Title</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">Start Date</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">Location</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">Price</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">썸네일</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">만든 사람</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="course : ${courses}">
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${course.title}"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${#temporals.format(course.startAt, 'yyyy.MM.dd')}"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${course.city.name()}"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${course.getCost()} + 원"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${course.getThumbnail()}"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${course.getUser().getName()}"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <a href="#" th:href="@{/courses/edit/{id}(id=${course.id})}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
