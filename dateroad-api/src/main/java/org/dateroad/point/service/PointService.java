@@ -21,7 +21,7 @@ public class PointService {
     private final UserService userService;
 
     private static final int ADS_POINT = 50;
-    private static final String ADS_DESCRIPTION = "광고 시청";
+    private static final String ADS_DESCRIPTION = "광고 시청하기";
 
     public PointGetAllRes getAllPoints(Long userId) {
         List<PointDto> points = pointRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
