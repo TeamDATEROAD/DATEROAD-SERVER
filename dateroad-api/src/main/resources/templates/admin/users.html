@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Users</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-100">
+<div class="container mx-auto px-6 py-8">
+    <h2 class="text-2xl font-semibold text-gray-800">Courses</h2>
+    <div class="mt-8">
+        <table class="min-w-full bg-white">
+            <thead>
+            <tr>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">Name</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">Platform</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">썸네일</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">무료이용권</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">포인트</th>
+                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-500 uppercase tracking-wider">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${user.getName()}"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${user.platForm}"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${user.getImageUrl()}"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${user.getFree()}"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <div class="text-sm leading-5 text-gray-900" th:text="${user.getTotalPoint()}"></div>
+                </td>
+                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    <a href="#" th:href="@{/user/edit/{id}(id=${user.id})}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
