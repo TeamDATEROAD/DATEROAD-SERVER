@@ -21,7 +21,7 @@ public class PointService {
     private final UserService userService;
 
     private static final int ADS_POINT = 50;
-    private static final String ADS_DESCRIPTION = "광고 시청";
+    private static final String ADS_DESCRIPTION = "광고 시청하기";
 
     public PointGetAllRes getAllPoints(Long userId) {
         List<PointDto> points = pointRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
@@ -29,7 +29,9 @@ public class PointService {
                 .toList();
         PointsDto gainedPoints = pointTypeCheckToList(points, TransactionType.POINT_GAINED);
         PointsDto usedPoints = pointTypeCheckToList(points, TransactionType.POINT_USED);
-        return PointGetAllRes.of(gainedPoints,usedPoints);
+        int totalPoint = gainedPoints.points().stream().mapToInt(PointDtoRes::point).sum()
+                - usedPoints.points().stream().mapToInt(PointDtoRes::point).sum();
+        return PointGetAllRes.of(gainedPoints,usedPoints,totalPoint);
     }
 
     @Transactional
